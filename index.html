@@ -581,7 +581,7 @@
         // Global State Variables
         window.db = null;
         window.auth = null;
-        window.appId = typeof __app_id !== 'undefined' ? __app_id : '1:505927245562:web:999a2e96637a7c08c2b343';
+        window.appId = typeof __app_id !== 'undefined' ? __app_id : 'app-rt-rw-default';
         
         window.state = {
             warga: [],
@@ -597,7 +597,7 @@
             try {
                 const firebaseConfig = typeof __firebase_config !== 'undefined' 
                     ? JSON.parse(__firebase_config) 
-                    : { apiKey: "AIzaSyAyoo3UxgLf9HHom28W7fH_Nm_SlF29T9Q", projectId: "aplikasiwarga-afefb" };
+                    : { apiKey: "demo", projectId: "demo-rt-rw" };
 
                 const app = initializeApp(firebaseConfig);
                 window.db = getFirestore(app);
