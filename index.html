@@ -55,7 +55,7 @@
         }
 
         .glass-card {
-            background: rgba(255, 255, 255, 0.92);
+            background: rgba(255, 255, 255, 0.94);
             backdrop-filter: blur(10px);
         }
 
@@ -87,7 +87,7 @@
         </div>
         <div>
           <h1 class="text-xl sm:text-3xl font-extrabold text-amber-900 tracking-wide">SUPER EDUKASI HUB</h1>
-          <p id="header-subtitle" class="text-xs sm:text-sm font-semibold text-amber-800">Pilih Petualangan Belajarmu</p>
+          <p class="text-xs sm:text-sm font-semibold text-amber-800">Tempat Belajar Seru & Asyik!</p>
         </div>
       </div>
 
@@ -114,10 +114,10 @@
   <!-- MAIN CONTAINER -->
   <main class="max-w-5xl w-full mx-auto p-3 sm:p-6 flex-grow flex flex-col justify-center">
 
-    <!-- SCREEN 0: HUB UTAMA (PILIH GAME & KATEGORI) -->
+    <!-- SCREEN 0: HUB UTAMA -->
     <div id="screen-hub" class="glass-card rounded-3xl border-8 border-white p-6 sm:p-8 shadow-2xl my-auto text-center">
-      <h2 class="text-2xl sm:text-4xl font-extrabold text-indigo-900 mb-2">Mau Main Game Apa Hari Ini? 🚀</h2>
-      <p class="text-base sm:text-lg font-medium text-slate-600 mb-6">Pilih jenis permainan seru di bawah ini:</p>
+      <h2 class="text-2xl sm:text-4xl font-extrabold text-indigo-900 mb-2">Halo Detektif Cilik! 🕵️‍♂️✨</h2>
+      <p class="text-base sm:text-lg font-medium text-slate-600 mb-6">Maupetualangan belajar yang mana hari ini?</p>
 
       <!-- Pilihan Game Grid -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mx-auto mb-8">
@@ -162,7 +162,7 @@
             <p class="text-sm sm:text-lg font-bold text-slate-800">Klik salah satu benda rahasia di peta!</p>
           </div>
         </div>
-        <button onclick="speakInstructionText('Klik salah satu benda berkedip di peta untuk menemukan pertanyaan rahasia!')" class="bg-sky-500 hover:bg-sky-600 text-white font-bold px-3 py-2 rounded-xl border-b-4 border-sky-700 text-xs sm:text-sm active:scale-95 flex items-center gap-2 shadow transition">
+        <button onclick="speakInstructionText('Ayo klik salah satu benda yang berkedip di peta untuk menemukan pertanyaan rahasia!')" class="bg-sky-500 hover:bg-sky-600 text-white font-bold px-3 py-2 rounded-xl border-b-4 border-sky-700 text-xs sm:text-sm active:scale-95 flex items-center gap-2 shadow transition">
           <i class="fa-solid fa-volume-high text-lg"></i> <span class="hidden sm:inline">Dengar Petunjuk</span>
         </button>
       </div>
@@ -190,7 +190,7 @@
       </div>
     </div>
 
-    <!-- SCREEN 2: GAMEPLAY 2 (LAMPU KILAT / QUICK QUIZ) -->
+    <!-- SCREEN 2: GAMEPLAY 2 (LAMPU KILAT) -->
     <div id="screen-game-lampu" class="hidden flex-col gap-4">
       <div class="bg-white/95 border-4 border-emerald-400 rounded-2xl p-4 shadow-lg flex items-center justify-between gap-3">
         <button onclick="returnToHub()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl border-b-4 border-slate-400 text-xs sm:text-sm active:scale-95 transition">
@@ -210,20 +210,17 @@
             <i class="fa-solid fa-volume-high"></i>
           </button>
         </div>
-        <div id="lampu-options" class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-xl mx-auto mt-6">
-          <!-- Opsi di-inject via JS -->
-        </div>
+        <div id="lampu-options" class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-xl mx-auto mt-6"></div>
         <div id="lampu-feedback" class="hidden mt-4 p-3 rounded-2xl font-bold text-sm"></div>
       </div>
     </div>
 
   </main>
 
-  <!-- MODAL SOAL UTAMA (UNTUK GAME DETEKTIF) -->
+  <!-- MODAL SOAL UTAMA -->
   <div id="question-modal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
     <div id="modal-card" class="glass-card max-w-lg w-full rounded-3xl border-8 border-amber-400 p-6 sm:p-8 shadow-2xl text-center relative transform transition-all duration-300 scale-90 opacity-0">
       
-      <!-- Close Button -->
       <button onclick="closeModal()" class="absolute -top-4 -right-4 bg-rose-500 hover:bg-rose-600 text-white border-4 border-white w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center text-xl font-bold shadow-lg active:scale-90 transition">
         <i class="fa-solid fa-xmark"></i>
       </button>
@@ -263,37 +260,37 @@
     // ==========================================
     const dynamicQuestionBank = {
       matematika: [
-        { text: "Berapakah hasil dari 8 + 6 ?", options: ["12", "14", "15", "13"], correct: 1, hint: "Hitung maju 6 angka setelah 8." },
-        { text: "Manakah angka kelipatan 5 di bawah ini?", options: ["12", "18", "25", "22"], correct: 2, hint: "Angka yang berakhiran 0 atau 5." },
-        { text: "Ibu punya 12 apel, diberikan ke Andi 4. Sisa apel ibu?", options: ["7", "8", "9", "6"], correct: 1, hint: "Kurangi 12 dengan 4." },
-        { text: "Berapa jumlah sisi pada sebuah bangun Persegi?", options: ["3", "4", "5", "6"], correct: 1, hint: "Sisinya sama panjang semua." },
-        { text: "Hasil dari 18 dibagi 2 adalah...", options: ["8", "9", "7", "6"], correct: 1, hint: "9 dikali 2 hasilnya 18." }
+        { text: "Berapakah hasil dari 8 ditambah 6 ?", options: ["12", "14", "15", "13"], correct: 1, hint: "Yuk hitung maju 6 angka setelah 8!" },
+        { text: "Manakah angka kelipatan 5 di bawah ini?", options: ["12", "18", "25", "22"], correct: 2, hint: "Cari angka yang berakhiran 0 atau 5 ya." },
+        { text: "Ibu punya 12 apel, diberikan ke Andi 4. Sisa apel ibu berapa?", options: ["7", "8", "9", "6"], correct: 1, hint: "Kurangi 12 dengan 4 ya, pintar!" },
+        { text: "Berapa jumlah sisi pada sebuah bangun datar Persegi?", options: ["3", "4", "5", "6"], correct: 1, hint: "Semua sisinya sama panjang lho." },
+        { text: "Hasil dari 18 dibagi 2 adalah...", options: ["8", "9", "7", "6"], correct: 1, hint: "Coba pikirkan, 9 dikali 2 berapa?" }
       ],
       bahasa_inggris: [
-        { text: "Bahasa Inggris dari 'Kucing' adalah...", options: ["Dog", "Cat", "Fish", "Bird"], correct: 1, hint: "Hewan berbulu yang suka mengeong." },
-        { text: "Warna 'Blue' artinya dalam bahasa Indonesia...", options: ["Merah", "Hijau", "Biru", "Kuning"], correct: 2, hint: "Seperti warna air laut yang luas." },
-        { text: "Apa bahasa Inggris dari angka '10'?", options: ["Eight", "Nine", "Ten", "Eleven"], correct: 2, hint: "T-E-N." },
-        { text: "Hewan yang memiliki belalai panjang adalah...", options: ["Elephant", "Lion", "Monkey", "Duck"], correct: 0, hint: "Gajah dalam bahasa Inggris." },
-        { text: "Ucapan saat berpisah di malam hari adalah...", options: ["Good Morning", "Good Night", "Hello", "Good Afternoon"], correct: 1, hint: "Waktunya tidur." }
+        { text: "Bahasa Inggris dari kata 'Kucing' adalah...", options: ["Dog", "Cat", "Fish", "Bird"], correct: 1, hint: "Hewan berbulu lucu yang suka mengeong!" },
+        { text: "Warna 'Blue' artinya dalam bahasa Indonesia adalah...", options: ["Merah", "Hijau", "Biru", "Kuning"], correct: 2, hint: "Warnanya sama seperti air laut yang luas." },
+        { text: "Apa bahasa Inggris dari angka '10'?", options: ["Eight", "Nine", "Ten", "Eleven"], correct: 2, hint: "Huruf depannya T, bunyinya Ten!" },
+        { text: "Hewan yang memiliki belalai panjang adalah...", options: ["Elephant", "Lion", "Monkey", "Duck"], correct: 0, hint: "Namanya Gajah dalam bahasa Inggris." },
+        { text: "Ucapan saat berpisah di malam hari adalah...", options: ["Good Morning", "Good Night", "Hello", "Good Afternoon"], correct: 1, hint: "Waktunya tidur, ucapkan...?" }
       ],
       komputer: [
-        { text: "Alat untuk mengetik di komputer adalah...", options: ["Mouse", "Keyboard", "Monitor", "Printer"], correct: 1, hint: "Punya tombol huruf dan angka." },
-        { text: "Bagian komputer yang menampilkan gambar disebut...", options: ["CPU", "Speaker", "Monitor", "Mouse"], correct: 2, hint: "Mirip televisi." },
-        { text: "Perangkat keras yang bentuknya seperti hewan tikus adalah...", options: ["Mouse", "Keyboard", "Flashdisk", "Printer"], correct: 0, hint: "Digunakan untuk mengarahkan kursor." },
-        { text: "Otak dari komputer dinamakan...", options: ["RAM", "CPU", "Monitor", "Keyboard"], correct: 1, hint: "Pusat pemrosesan data." },
-        { text: "Program untuk menjelajahi internet disebut...", options: ["Paint", "Browser", "Calculator", "Word"], correct: 1, hint: "Contohnya Google Chrome." }
+        { text: "Alat yang digunakan untuk mengetik di komputer adalah...", options: ["Mouse", "Keyboard", "Monitor", "Printer"], correct: 1, hint: "Punya banyak tombol huruf A sampai Z!" },
+        { text: "Bagian komputer yang menampilkan gambar disebut...", options: ["CPU", "Speaker", "Monitor", "Mouse"], correct: 2, hint: "Bentuknya mirip layar televisi di rumah." },
+        { text: "Perangkat keras yang bentuknya mirip hewan tikus adalah...", options: ["Mouse", "Keyboard", "Flashdisk", "Printer"], correct: 0, hint: "Dipakai untuk menggerakkan kursor di layar." },
+        { text: "Otak dari sebuah komputer dinamakan...", options: ["RAM", "CPU", "Monitor", "Keyboard"], correct: 1, hint: "Pusat pemrosesan data utama." },
+        { text: "Program untuk menjelajahi internet disebut...", options: ["Paint", "Browser", "Calculator", "Word"], correct: 1, hint: "Contohnya seperti Google Chrome." }
       ],
       ipas: [
-        { text: "Bagian tumbuhan yang menyerap air dari tanah adalah...", options: ["Daun", "Akar", "Bunga", "Batang"], correct: 1, hint: "Tumbuh di dalam tanah." },
-        { text: "Hewan yang hidup di air dan bernapas dengan insang...", options: ["Kucing", "Ikan", "Burung", "Kelinci"], correct: 1, hint: "Berenang menggunakan sirip." },
-        { text: "Matahari terbit dari arah...", options: ["Barat", "Selatan", "Timur", "Utara"], correct: 2, hint: "Arah pagi hari." },
-        { text: "Benda berwujud gas di bawah ini adalah...", options: ["Es batu", "Air", "Udara dalam balon", "Besi"], correct: 2, hint: "Tidak terlihat tapi bisa dirasakan." },
-        { text: "Alat indera untuk mengecap rasa makanan adalah...", options: ["Lidah", "Mata", "Telinga", "Hidung"], correct: 0, hint: "Ada di dalam mulut." }
+        { text: "Bagian tumbuhan yang menyerap air dari dalam tanah adalah...", options: ["Daun", "Akar", "Bunga", "Batang"], correct: 1, hint: "Tumbuhnya tersembunyi di dalam tanah." },
+        { text: "Hewan yang hidup di air dan bernapas menggunakan insang adalah...", options: ["Kucing", "Ikan", "Burung", "Kelinci"], correct: 1, hint: "Bisa berenang lincah di dalam air." },
+        { text: "Matahari selalu terbit dari arah...", options: ["Barat", "Selatan", "Timur", "Utara"], correct: 2, hint: "Arah datangnya pagi hari yang cerah." },
+        { text: "Benda berwujud gas di bawah ini adalah...", options: ["Es batu", "Air", "Udara dalam balon", "Besi"], correct: 2, hint: "Tidak terlihat tapi bisa kita tiup ke dalam balon." },
+        { text: "Alat indera manusia untuk mengecap rasa makanan adalah...", options: ["Lidah", "Mata", "Telinga", "Hidung"], correct: 0, hint: "Letaknya ada di dalam mulut kita." }
       ]
     };
 
     // ==========================================
-    // 2. STATE & AUDIO SYNTHESIZER
+    // 2. STATE & AUDIO SYNTHESIZER (RAMAH ANAK)
     // ==========================================
     let currentCategory = 'matematika';
     let activeGameType = 'detektif';
@@ -394,14 +391,15 @@
       }
     }
 
+    // PENGATURAN TTS KHUSUS: Nada Ceria, Hangat & Ramah Anak
     function speakText(text) {
       if (!soundEnabled) return;
       if ('speechSynthesis' in window) {
         window.speechSynthesis.cancel();
         const utterance = new SpeechSynthesisUtterance(text);
         utterance.lang = 'id-ID';
-        utterance.rate = 0.9;
-        utterance.pitch = 1.2;
+        utterance.rate = 0.9;   // Kecepatan sedikit santai dan jelas
+        utterance.pitch = 1.3;  // Nada suara dinaikkan agar terdengar ceria, hangat, dan ramah anak
         window.speechSynthesis.speak(utterance);
       }
     }
@@ -412,7 +410,7 @@
 
     function triggerConfetti() {
       if (typeof confetti === 'function') {
-        confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 } });
+        confetti({ particleCount: 90, spread: 80, origin: { y: 0.6 } });
       }
     }
 
@@ -439,6 +437,7 @@
           btn.className = "category-btn bg-white text-slate-700 font-extrabold py-2 px-3 rounded-xl border-2 border-slate-300 text-xs sm:text-sm transition";
         }
       });
+      speakText(`Asyik, kita pilih topik ${cat.replace('_', ' ')} ya!`);
     }
 
     function startHubGame(gameType) {
@@ -462,7 +461,7 @@
         }
         document.getElementById('screen-game-detektif').classList.remove('hidden');
         document.getElementById('screen-game-detektif').classList.add('flex');
-        speakInstructionText("Cari petunjuk rahasia di dalam peta misteri!");
+        speakInstructionText("Yey! Ayo cari petunjuk rahasia di dalam peta misteri bersama-sama!");
       } else if (gameType === 'lampu') {
         currentLampuIndex = 0;
         document.getElementById('screen-game-lampu').classList.remove('hidden');
@@ -481,6 +480,7 @@
       document.getElementById('screen-game-lampu').classList.add('hidden');
       document.getElementById('screen-game-lampu').classList.remove('flex');
       document.getElementById('screen-hub').classList.remove('hidden');
+      speakText("Kembali ke menu utama ya!");
     }
 
     // ==========================================
@@ -547,9 +547,9 @@
 
         buttonEl.className = "bg-emerald-400 border-4 border-emerald-600 text-white font-extrabold p-4 rounded-2xl shadow-md text-base sm:text-lg flex items-center justify-center animate-bounce";
         feedback.className = "mt-4 p-3 rounded-2xl text-center font-bold text-sm bg-emerald-100 text-emerald-800 border-2 border-emerald-400 block";
-        feedback.innerHTML = "🎉 HEBAT! Jawabanmu Benar +20 Poin!";
+        feedback.innerHTML = "🎉 HORE! Jawabanmu benar, hebat sekali! +20 Poin!";
 
-        speakText("Hebat! Jawaban kamu benar!");
+        speakText("Wah, hebat sekali! Jawaban kamu benar, pintar!");
 
         score += 20;
         stars += 1;
@@ -565,10 +565,10 @@
           closeModal();
           if (completedObjects.size === 5) {
             triggerConfetti();
-            speakText("Selamat! Kamu berhasil menyelesaikan semua misi detektif!");
+            speakText("Yey! Selamat ya! Kamu berhasil menyelesaikan semua misi detektif dengan luar biasa!");
             alert("🏆 LUAR BIASA DETEKTIF! Kamu berhasil menemukan semua petunjuk!");
           }
-        }, 1600);
+        }, 1800);
 
       } else {
         playWrongSound();
@@ -577,9 +577,9 @@
 
         buttonEl.className = "bg-rose-400 border-4 border-rose-600 text-white font-extrabold p-4 rounded-2xl shadow-md text-base sm:text-lg flex items-center justify-center";
         feedback.className = "mt-4 p-3 rounded-2xl text-center font-bold text-sm bg-rose-100 text-rose-800 border-2 border-rose-400 block";
-        feedback.innerHTML = "❌ Coba lagi ya, Detektif!";
+        feedback.innerHTML = "❌ Hampir tepat! Ayo coba sekali lagi ya, Detektif!";
 
-        speakText("Coba lagi ya!");
+        speakText("Hampir tepat! Ayo coba pikirkan sekali lagi, kamu pasti bisa!");
       }
     }
 
@@ -590,7 +590,7 @@
       if (currentLampuIndex >= 5) {
         clearInterval(lampuTimerInterval);
         triggerConfetti();
-        speakText("Luar biasa! Tantangan Lampu Kilat selesai!");
+        speakText("Hore! Tantangan Lampu Kilat berhasil kamu selesaikan dengan sangat baik!");
         alert("🏆 LUAR BIASA! Kamu menaklukkan tantangan Lampu Kilat!");
         returnToHub();
         return;
@@ -623,6 +623,7 @@
         if (timeLeft <= 0) {
           clearInterval(lampuTimerInterval);
           playWrongSound();
+          speakText("Wah, waktunya habis! Coba soal berikutnya ya.");
           currentLampuIndex++;
           loadLampuQuestion();
         }
@@ -644,26 +645,26 @@
 
         buttonEl.className = "bg-emerald-400 border-4 border-emerald-600 text-white font-extrabold p-4 rounded-2xl shadow-md text-lg flex items-center justify-center";
         feedback.className = "mt-4 p-3 rounded-2xl font-bold text-sm bg-emerald-100 text-emerald-800 border-2 border-emerald-400 block";
-        feedback.textContent = "🎉 Benar! +25 Poin";
+        feedback.textContent = "🎉 Benar! Hebat sekali +25 Poin";
 
         score += 25;
         stars += 1;
         document.getElementById('score-count').textContent = score;
         document.getElementById('star-count').textContent = stars;
 
-        speakText("Benar!");
+        speakText("Hebat sekali, jawabanmu tepat!");
         currentLampuIndex++;
-        setTimeout(loadLampuQuestion, 1200);
+        setTimeout(loadLampuQuestion, 1400);
 
       } else {
         playWrongSound();
         buttonEl.className = "bg-rose-400 border-4 border-rose-600 text-white font-extrabold p-4 rounded-2xl shadow-md text-lg flex items-center justify-center";
         feedback.className = "mt-4 p-3 rounded-2xl font-bold text-sm bg-rose-100 text-rose-800 border-2 border-rose-400 block";
-        feedback.textContent = "❌ Kurang tepat!";
+        feedback.textContent = "❌ Kurang tepat, tetap semangat ya!";
 
-        speakText("Kurang tepat!");
+        speakText("Kurang tepat, tapi tetap semangat ya!");
         currentLampuIndex++;
-        setTimeout(loadLampuQuestion, 1200);
+        setTimeout(loadLampuQuestion, 1400);
       }
     }
   </script>
