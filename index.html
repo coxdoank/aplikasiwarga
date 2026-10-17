@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Detektif Kata & Angka - Game Interaktif SD</title>
+    <title>Super Edukasi Hub - Belajar Seru SD</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts (Fredoka) -->
@@ -13,7 +13,7 @@
     <style>
         body {
             font-family: 'Fredoka', cursive, sans-serif;
-            background: linear-gradient(135deg, #a8edf0 0%, #fed6e3 100%);
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
             touch-action: manipulation;
         }
         .animate-bounce-short {
@@ -21,13 +21,13 @@
         }
         @keyframes bounce {
             0% { transform: translateY(0); }
-            100% { transform: translateY(-10px); }
+            100% { transform: translateY(-8px); }
         }
-        .map-item {
+        .game-card {
             transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        .map-item:hover {
-            transform: scale(1.15) rotate(3deg);
+        .game-card:hover {
+            transform: translateY(-8px) scale(1.03);
         }
         .shake {
             animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both;
@@ -43,28 +43,24 @@
 <body class="min-h-screen flex items-center justify-center p-4">
 
     <!-- Container Utama -->
-    <div class="w-full max-w-4xl bg-white/90 backdrop-blur-md rounded-3xl shadow-2xl border-4 border-yellow-300 p-6 relative overflow-hidden">
+    <div class="w-full max-w-4xl bg-white/95 backdrop-blur-md rounded-3xl shadow-2xl border-4 border-pink-300 p-6 relative overflow-hidden">
         
         <!-- HEADER / STATS BAR -->
-        <header class="flex justify-between items-center bg-yellow-100 rounded-2xl p-4 mb-6 border-2 border-yellow-300">
+        <header class="flex justify-between items-center bg-pink-100 rounded-2xl p-4 mb-6 border-2 border-pink-200">
             <div class="flex items-center space-x-2">
-                <span class="text-3xl">🕵️‍♂️</span>
+                <span class="text-3xl">🌟</span>
                 <div>
-                    <h1 class="text-xl font-bold text-amber-800 leading-tight">Detektif Cilik</h1>
-                    <span id="category-badge" class="text-xs font-bold bg-amber-200 text-amber-900 px-2 py-0.5 rounded-full">Pilih Pelajaran</span>
+                    <h1 class="text-xl font-bold text-pink-800 leading-tight">Super Edukasi Hub</h1>
+                    <span id="header-subtitle" class="text-xs font-bold bg-pink-200 text-pink-900 px-2 py-0.5 rounded-full">Pilih Petualanganmu</span>
                 </div>
             </div>
             
-            <div class="flex items-center space-x-4">
-                <div class="bg-white px-3 py-1 rounded-xl shadow-inner border border-amber-200 flex items-center space-x-1">
+            <div class="flex items-center space-x-3">
+                <div class="bg-white px-3 py-1 rounded-xl shadow-inner border border-pink-200 flex items-center space-x-1">
                     <span class="text-xl">⭐</span>
-                    <span id="score-text" class="font-bold text-amber-700 text-lg">0</span>
+                    <span id="score-text" class="font-bold text-pink-700 text-lg">0</span>
                 </div>
-                <div class="bg-white px-3 py-1 rounded-xl shadow-inner border border-amber-200 flex items-center space-x-1">
-                    <span class="text-xl">🎯</span>
-                    <span id="progress-text" class="font-bold text-amber-700 text-lg">0/5</span>
-                </div>
-                <button id="btn-sound" onclick="toggleSound()" class="p-2 bg-yellow-200 hover:bg-yellow-300 rounded-xl text-xl transition">
+                <button id="btn-sound" onclick="toggleSound()" class="p-2 bg-pink-200 hover:bg-pink-300 rounded-xl text-xl transition">
                     🔊
                 </button>
             </div>
@@ -73,295 +69,184 @@
         <!-- MAIN CONTENT AREA -->
         <main id="main-content">
             
-            <!-- SCREEN 1: LOBBY / PILIH KATEGORI -->
-            <div id="lobby-screen" class="text-center py-6">
-                <div class="text-6xl mb-4 animate-bounce-short inline-block">🔎</div>
-                <h2 class="text-3xl font-bold text-slate-800 mb-2">Pilih Pelajaran Detektif!</h2>
-                <p class="text-slate-600 mb-6 max-w-md mx-auto">Selesaikan misi rahasia dengan menjawab pertanyaan interaktif di peta petualangan.</p>
-
-                <!-- Kategori Pelajaran -->
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-2xl mx-auto mb-8">
-                    <button onclick="selectCategory('matematika')" class="bg-blue-500 hover:bg-blue-600 text-white p-4 rounded-2xl border-b-4 border-blue-700 shadow-lg transition active:scale-95 flex flex-col items-center">
-                        <span class="text-4xl mb-2">📐</span>
-                        <span class="font-bold">Matematika</span>
-                    </button>
-                    <button onclick="selectCategory('bahasa_inggris')" class="bg-green-500 hover:bg-green-600 text-white p-4 rounded-2xl border-b-4 border-green-700 shadow-lg transition active:scale-95 flex flex-col items-center">
-                        <span class="text-4xl mb-2">🔤</span>
-                        <span class="font-bold">B. Inggris</span>
-                    </button>
-                    <button onclick="selectCategory('komputer')" class="bg-purple-500 hover:bg-purple-600 text-white p-4 rounded-2xl border-b-4 border-purple-700 shadow-lg transition active:scale-95 flex flex-col items-center">
-                        <span class="text-4xl mb-2">💻</span>
-                        <span class="font-bold">Komputer</span>
-                    </button>
-                    <button onclick="selectCategory('ipas')" class="bg-orange-500 hover:bg-orange-600 text-white p-4 rounded-2xl border-b-4 border-orange-700 shadow-lg transition active:scale-95 flex flex-col items-center">
-                        <span class="text-4xl mb-2">🌱</span>
-                        <span class="font-bold">IPAS</span>
-                    </button>
+            <!-- SCREEN 0: HUB UTAMA (PILIH GAME & KATEGORI) -->
+            <div id="hub-screen" class="py-4">
+                <div class="text-center mb-6">
+                    <h2 class="text-3xl font-bold text-slate-800 mb-2">Mau Main Game Apa Hari Ini?</h2>
+                    <p class="text-slate-600 max-w-md mx-auto">Pilih jenis permainan seru di bawah ini untuk mulai belajar!</p>
                 </div>
-            </div>
 
-            <!-- SCREEN 2: PETA INTERAKTIF (GAMEPLAY) -->
-            <div id="game-screen" class="hidden">
-                <div class="relative bg-emerald-100 rounded-3xl p-6 min-h-[360px] border-4 border-emerald-300 shadow-inner flex flex-col justify-between overflow-hidden">
+                <!-- Daftar Pilihan Game -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-3xl mx-auto mb-8">
                     
-                    <div class="text-center bg-white/80 backdrop-blur rounded-xl p-2 mb-4">
-                        <p class="text-slate-700 font-bold" id="game-instruction">Klik salah satu benda rahasia di bawah untuk menemukan soal!</p>
+                    <!-- Game 1: Detektif Pos -->
+                    <div onclick="startHubGame('detektif')" class="game-card bg-amber-100 hover:bg-amber-200 border-4 border-amber-300 rounded-3xl p-6 cursor-pointer flex flex-col items-center text-center shadow-md">
+                        <span class="text-6xl mb-3 animate-bounce-short">🕵️‍♂️</span>
+                        <h3 class="text-xl font-bold text-amber-900 mb-1">Detektif Pos</h3>
+                        <p class="text-xs text-amber-700 mb-4">Cari harta karun rahasia dan pecahkan misteri soal di tiap pos!</p>
+                        <span class="bg-amber-500 text-white font-bold px-4 py-2 rounded-xl text-sm mt-auto shadow">Mainkan!</span>
                     </div>
 
-                    <!-- Peta Objek Tersembunyi (Interactive Nodes) -->
-                    <div class="grid grid-cols-3 md:grid-cols-5 gap-4 my-auto relative z-10">
-                        <button onclick="openQuestion(0)" id="node-0" class="map-item bg-amber-200 hover:bg-amber-300 p-4 rounded-2xl border-2 border-amber-400 shadow-md flex flex-col items-center">
-                            <span class="text-4xl mb-1">🎁</span>
-                            <span class="text-xs font-bold text-amber-800">Pos 1</span>
-                        </button>
-                        <button onclick="openQuestion(1)" id="node-1" class="map-item bg-amber-200 hover:bg-amber-300 p-4 rounded-2xl border-2 border-amber-400 shadow-md flex flex-col items-center">
-                            <span class="text-4xl mb-1">📚</span>
-                            <span class="text-xs font-bold text-amber-800">Pos 2</span>
-                        </button>
-                        <button onclick="openQuestion(2)" id="node-2" class="map-item bg-amber-200 hover:bg-amber-300 p-4 rounded-2xl border-2 border-amber-400 shadow-md flex flex-col items-center">
-                            <span class="text-4xl mb-1">💎</span>
-                            <span class="text-xs font-bold text-amber-800">Pos 3</span>
-                        </button>
-                        <button onclick="openQuestion(3)" id="node-3" class="map-item bg-amber-200 hover:bg-amber-300 p-4 rounded-2xl border-2 border-amber-400 shadow-md flex flex-col items-center">
-                            <span class="text-4xl mb-1">🌳</span>
-                            <span class="text-xs font-bold text-amber-800">Pos 4</span>
-                        </button>
-                        <button onclick="openQuestion(4)" id="node-4" class="map-item bg-amber-200 hover:bg-amber-300 p-4 rounded-2xl border-2 border-amber-400 shadow-md flex flex-col items-center">
-                            <span class="text-4xl mb-1">🏆</span>
-                            <span class="text-xs font-bold text-amber-800">Pos 5</span>
-                        </button>
+                    <!-- Game 2: Lampu Merah Hijau -->
+                    <div onclick="startHubGame('lampu')" class="game-card bg-emerald-100 hover:bg-emerald-200 border-4 border-emerald-300 rounded-3xl p-6 cursor-pointer flex flex-col items-center text-center shadow-md">
+                        <span class="text-6xl mb-3 animate-bounce-short">🚦</span>
+                        <h3 class="text-xl font-bold text-emerald-900 mb-1">Lampu Kilat</h3>
+                        <p class="text-xs text-emerald-700 mb-4">Uji kecepatan reaksi dan jawab soal sebelum waktu habis!</p>
+                        <span class="bg-emerald-500 text-white font-bold px-4 py-2 rounded-xl text-sm mt-auto shadow">Mainkan!</span>
                     </div>
 
-                    <div class="flex justify-between items-center mt-4">
-                        <button onclick="showLobby()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-4 py-2 rounded-xl text-sm font-bold">
-                            ⬅️ Ganti Pelajaran
-                        </button>
+                    <!-- Game 3: Kategori Cepat (Placeholder / Next Expansion) -->
+                    <div onclick="alert('Game Kereta Kategori sedang dalam tahap perakitan oleh AI & Kamu! 🚀')" class="game-card bg-purple-100 hover:bg-purple-200 border-4 border-purple-300 rounded-3xl p-6 cursor-pointer flex flex-col items-center text-center shadow-md">
+                        <span class="text-6xl mb-3 animate-bounce-short">🚂</span>
+                        <h3 class="text-xl font-bold text-purple-900 mb-1">Kereta Ilmu</h3>
+                        <p class="text-xs text-purple-700 mb-4">Seret dan kelompokkan jawaban ke gerbong yang tepat!</p>
+                        <span class="bg-purple-400 text-white font-bold px-4 py-2 rounded-xl text-sm mt-auto shadow">Segera Hadir</span>
+                    </div>
+
+                </div>
+
+                <!-- Pilih Kategori Pelajaran -->
+                <div class="bg-slate-50 rounded-2xl p-4 max-w-xl mx-auto border-2 border-slate-200 text-center">
+                    <p class="text-sm font-bold text-slate-700 mb-3">Pilih Topik Pelajaran:</p>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
+                        <button onclick="setCategory('matematika')" id="cat-matematika" class="category-btn bg-pink-500 text-white font-bold py-2 px-3 rounded-xl shadow text-sm">📐 Matematika</button>
+                        <button onclick="setCategory('bahasa_inggris')" id="cat-bahasa_inggris" class="category-btn bg-white text-slate-700 font-bold py-2 px-3 rounded-xl border border-slate-300 text-sm">🔤 B. Inggris</button>
+                        <button onclick="setCategory('komputer')" id="cat-komputer" class="category-btn bg-white text-slate-700 font-bold py-2 px-3 rounded-xl border border-slate-300 text-sm">💻 Komputer</button>
+                        <button onclick="setCategory('ipas')" id="cat-ipas" class="category-btn bg-white text-slate-700 font-bold py-2 px-3 rounded-xl border border-slate-300 text-sm">🌱 IPAS</button>
                     </div>
                 </div>
             </div>
 
-            <!-- SCREEN 3: RESULT / HASIL AKHIR -->
-            <div id="result-screen" class="hidden text-center py-8">
-                <div class="text-7xl mb-4">🎉</div>
-                <h2 class="text-3xl font-bold text-slate-800 mb-2">Misi Selesai!</h2>
-                <p class="text-slate-600 mb-6">Hebat sekali! Kamu berhasil menyelesaikan semua tantangan.</p>
-                <div class="bg-yellow-100 rounded-2xl p-6 max-w-sm mx-auto mb-6 border-2 border-yellow-300">
-                    <p class="text-slate-700 text-lg mb-1">Total Skor Kamu:</p>
-                    <p id="final-score" class="text-5xl font-bold text-amber-600">0</p>
+            <!-- SCREEN 1: GAMEPLAY 1 (DETEKTIF POS) -->
+            <div id="game-detektif-screen" class="hidden">
+                <div class="relative bg-amber-50 rounded-3xl p-6 min-h-[340px] border-4 border-amber-300 shadow-inner flex flex-col justify-between">
+                    <div class="text-center bg-white/80 rounded-xl p-2 mb-4">
+                        <p class="text-amber-900 font-bold">Pilih salah satu peti harta karun di bawah!</p>
+                    </div>
+                    <div class="grid grid-cols-3 md:grid-cols-5 gap-4 my-auto">
+                        <button onclick="openDetektifNode(0)" id="d-node-0" class="p-4 bg-amber-200 hover:bg-amber-300 rounded-2xl border-2 border-amber-400 font-bold flex flex-col items-center">🎁 <span class="text-xs mt-1">Pos 1</span></button>
+                        <button onclick="openDetektifNode(1)" id="d-node-1" class="p-4 bg-amber-200 hover:bg-amber-300 rounded-2xl border-2 border-amber-400 font-bold flex flex-col items-center">📚 <span class="text-xs mt-1">Pos 2</span></button>
+                        <button onclick="openDetektifNode(2)" id="d-node-2" class="p-4 bg-amber-200 hover:bg-amber-300 rounded-2xl border-2 border-amber-400 font-bold flex flex-col items-center">💎 <span class="text-xs mt-1">Pos 3</span></button>
+                        <button onclick="openDetektifNode(3)" id="d-node-3" class="p-4 bg-amber-200 hover:bg-amber-300 rounded-2xl border-2 border-amber-400 font-bold flex flex-col items-center">🌳 <span class="text-xs mt-1">Pos 4</span></button>
+                        <button onclick="openDetektifNode(4)" id="d-node-4" class="p-4 bg-amber-200 hover:bg-amber-300 rounded-2xl border-2 border-amber-400 font-bold flex flex-col items-center">🏆 <span class="text-xs mt-1">Pos 5</span></button>
+                    </div>
+                    <button onclick="returnToHub()" class="mt-4 bg-slate-200 hover:bg-slate-300 text-slate-700 px-4 py-2 rounded-xl text-sm font-bold w-max">⬅️ Kembali ke Menu</button>
                 </div>
-                <button onclick="showLobby()" class="bg-amber-500 hover:bg-amber-600 text-white font-bold text-lg px-8 py-3 rounded-2xl border-b-4 border-amber-700 shadow-lg active:scale-95 transition">
-                    Main Lagi 🔄
+            </div>
+
+            <!-- SCREEN 2: GAMEPLAY 2 (LAMPU KILAT / QUICK QUIZ) -->
+            <div id="game-lampu-screen" class="hidden text-center py-4">
+                <div class="bg-emerald-50 rounded-3xl p-6 border-4 border-emerald-300 min-h-[340px] flex flex-col justify-between">
+                    <div class="flex justify-between items-center bg-white/80 p-3 rounded-2xl">
+                        <span id="lampu-timer" class="text-xl font-bold text-emerald-700">⏱️ Waktu: 15s</span>
+                        <span id="lampu-progress" class="text-sm font-bold text-slate-600">Soal 1 / 5</span>
+                    </div>
+                    <div class="my-auto">
+                        <h3 id="lampu-question" class="text-2xl font-bold text-slate-800 mb-6">Memuat soal...</h3>
+                        <div id="lampu-options" class="grid grid-cols-1 md:grid-cols-2 gap-3 max-w-lg mx-auto"></div>
+                    </div>
+                    <button onclick="returnToHub()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-4 py-2 rounded-xl text-sm font-bold w-max">⬅️ Kembali ke Menu</button>
+                </div>
+            </div>
+
+            <!-- SCREEN 3: RESULT SCREEN -->
+            <div id="result-screen" class="hidden text-center py-8">
+                <div class="text-7xl mb-4">🏆</div>
+                <h2 class="text-3xl font-bold text-slate-800 mb-2">Luar Biasa!</h2>
+                <p class="text-slate-600 mb-6">Kamu telah menaklukkan tantangan belajar hari ini.</p>
+                <div class="bg-pink-100 rounded-2xl p-6 max-w-sm mx-auto mb-6 border-2 border-pink-200">
+                    <p class="text-slate-700 text-lg mb-1">Total Poin Kamu:</p>
+                    <p id="final-score" class="text-5xl font-bold text-pink-600">0</p>
+                </div>
+                <button onclick="returnToHub()" class="bg-pink-500 hover:bg-pink-600 text-white font-bold text-lg px-8 py-3 rounded-2xl shadow-lg transition">
+                    Kembali ke Menu Utama 🏠
                 </button>
             </div>
 
         </main>
     </div>
 
-    <!-- MODAL SOAL (POPUP QUESTION) -->
+    <!-- MODAL SOAL UTAMA -->
     <div id="question-modal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-        <div id="modal-box" class="bg-white rounded-3xl max-w-lg w-full p-6 border-4 border-amber-300 shadow-2xl relative animate-bounce-short">
-            
+        <div id="modal-box" class="bg-white rounded-3xl max-w-lg w-full p-6 border-4 border-pink-300 shadow-2xl relative">
             <div class="flex justify-between items-start mb-4">
-                <span id="modal-pos" class="bg-amber-100 text-amber-800 font-bold px-3 py-1 rounded-full text-xs">Pos 1</span>
-                <button onclick="readQuestionTTS()" class="text-amber-600 hover:text-amber-800 font-bold text-sm flex items-center gap-1">
-                    🔊 Baca Soal
-                </button>
+                <span id="modal-badge" class="bg-pink-100 text-pink-800 font-bold px-3 py-1 rounded-full text-xs">Misi Aktif</span>
+                <button onclick="readTTS()" class="text-pink-600 hover:text-pink-800 font-bold text-sm">🔊 Baca Soal</button>
             </div>
-
-            <!-- Teks Soal -->
-            <h3 id="question-text" class="text-xl font-bold text-slate-800 mb-6 text-center">
-                Memuat pertanyaan...
-            </h3>
-
-            <!-- Pilihan Jawaban -->
-            <div id="options-container" class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
-                <!-- Diisi via JavaScript -->
-            </div>
-
-            <!-- Hint / Petunjuk -->
-            <div id="hint-box" class="hidden bg-blue-50 text-blue-800 p-3 rounded-xl text-sm border border-blue-200">
+            <h3 id="modal-question-text" class="text-xl font-bold text-slate-800 mb-6 text-center">Pertanyaan...</h3>
+            <div id="modal-options" class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4"></div>
+            <div id="modal-hint" class="bg-blue-50 text-blue-800 p-3 rounded-xl text-sm border border-blue-200">
                 💡 <strong>Petunjuk:</strong> <span id="hint-text">-</span>
             </div>
         </div>
     </div>
 
-    <!-- JAVASCRIPT LOGIC -->
+    <!-- JAVASCRIPT LOGIC GABUNGAN -->
     <script>
         // ==========================================
-        // 1. BANK SOAL DINAMIS BERDASARKAN KATEGORI
+        // 1. BANK SOAL DINAMIS (Bisa dipisah ke soal.json)
         // ==========================================
-        const questionBank = {
+        const dynamicQuestionBank = {
             matematika: [
-                {
-                    text: "Berapakah hasil dari 7 + 5 ?",
-                    options: ["10", "11", "12", "13"],
-                    correct: 2,
-                    hint: "Hitung maju 5 langkah setelah angka 7."
-                },
-                {
-                    text: "Manakah angka yang paling besar di bawah ini?",
-                    options: ["15", "23", "19", "20"],
-                    correct: 1,
-                    hint: "Lihat puluhannya terlebih dahulu."
-                },
-                {
-                    text: "Jika kamu punya 10 permen dan dimakan 4, sisa berapa?",
-                    options: ["5", "6", "7", "4"],
-                    correct: 1,
-                    hint: "Kurangi 10 dengan 4."
-                },
-                {
-                    text: "Bentuk bangun datar yang memiliki 3 sisi adalah...",
-                    options: ["Persegi", "Lingkaran", "Segitiga", "Trapesium"],
-                    correct: 2,
-                    hint: "Punya 3 sudut lancip."
-                },
-                {
-                    text: "Hasil dari 20 - 8 adalah...",
-                    options: ["11", "12", "13", "14"],
-                    correct: 1,
-                    hint: "Hitung mundur dari 20 sebanyak 8."
-                }
+                { text: "Berapakah hasil dari 8 + 6 ?", options: ["12", "14", "15", "13"], correct: 1, hint: "Hitung maju 6 angka setelah 8." },
+                { text: "Manakah angka kelipatan 5 di bawah ini?", options: ["12", "18", "25", "22"], correct: 2, hint: "Angka yang berakhiran 0 atau 5." },
+                { text: "Ibu punya 12 apel, diberikan ke Andi 4. Sisa apel ibu?", options: ["7", "8", "9", "6"], correct: 1, hint: "Kurangi 12 dengan 4." },
+                { text: "Berapa jumlah sisi pada sebuah bangun Persegi?", options: ["3", "4", "5", "6"], correct: 1, hint: "Sisinya sama panjang semua." },
+                { text: "Hasil dari 18 dibagi 2 adalah...", options: ["8", "9", "7", "6"], correct: 1, hint: "9 dikali 2 hasilnya 18." }
             ],
             bahasa_inggris: [
-                {
-                    text: "Bahasa Inggris dari kata 'Kucing' adalah...",
-                    options: ["Dog", "Cat", "Rabbit", "Bird"],
-                    correct: 1,
-                    hint: "Suaranya 'Meow'!"
-                },
-                {
-                    text: "Warna 'Red' dalam bahasa Indonesia artinya...",
-                    options: ["Biru", "Hijau", "Kuning", "Merah"],
-                    correct: 3,
-                    hint: "Sama seperti warna buah apel matang."
-                },
-                {
-                    text: "Apa bahasa Inggris dari angka '8'?",
-                    options: ["Seven", "Eight", "Nine", "Ten"],
-                    correct: 1,
-                    hint: "E-I-G-H-T."
-                },
-                {
-                    text: "Hewan yang suka makan pisang (Monkey) adalah...",
-                    options: ["Monyet", "Gajah", "Jerapah", "Singa"],
-                    correct: 0,
-                    hint: "Suka melompat di pohon."
-                },
-                {
-                    text: "'Good Morning' artinya...",
-                    options: ["Selamat Siang", "Selamat Malam", "Selamat Pagi", "Selamat Tinggal"],
-                    correct: 2,
-                    hint: "Diucapkan saat matahari baru terbit."
-                }
+                { text: "Bahasa Inggris dari 'Kucing' adalah...", options: ["Dog", "Cat", "Fish", "Bird"], correct: 1, hint: "Hewan berbulu yang suka mengeong." },
+                { text: "Warna 'Blue' artinya dalam bahasa Indonesia...", options: ["Merah", "Hijau", "Biru", "Kuning"], correct: 2, hint: "Seperti warna air laut yang luas." },
+                { text: "Apa bahasa Inggris dari angka '10'?", options: ["Eight", "Nine", "Ten", "Eleven"], correct: 2, hint: "T-E-N." },
+                { text: "Hewan yang memiliki belalai panjang adalah...", options: ["Elephant", "Lion", "Monkey", "Duck"], correct: 0, caption: "Gajah dalam bahasa Inggris." },
+                { text: "Ucapan saat berpisah di malam hari adalah...", options: ["Good Morning", "Good Night", "Hello", "Good Afternoon"], correct: 1, hint: "Waktunya tidur." }
             ],
             komputer: [
-                {
-                    text: "Alat yang digunakan untuk mengetik huruf dan angka adalah...",
-                    options: ["Mouse", "Keyboard", "Monitor", "Printer"],
-                    correct: 1,
-                    hint: "Punya banyak tombol huruf A-Z."
-                },
-                {
-                    text: "Layar yang menampilkan gambar pada komputer disebut...",
-                    options: ["CPU", "Speaker", "Monitor", "Mouse"],
-                    correct: 2,
-                    hint: "Mirip seperti layar TV."
-                },
-                {
-                    text: "Alat untuk menggerakkan kursor panah di layar dinamakan...",
-                    options: ["Mouse", "Keyboard", "Flashdisk", "Headphone"],
-                    correct: 0,
-                    hint: "Namanya sama seperti nama hewan Tikus!"
-                },
-                {
-                    text: "Untuk mendengarkan suara dari komputer, kita menggunakan...",
-                    options: ["Printer", "Speaker", "Scanner", "Webcam"],
-                    correct: 1,
-                    hint: "Mengeluarkan lagu dan suara game."
-                },
-                {
-                    text: "Bagian komputer yang mencetak dokumen ke kertas adalah...",
-                    options: ["Monitor", "Printer", "CPU", "Keyboard"],
-                    correct: 1,
-                    hint: "Mengeluarkan kertas berisi tulisan."
-                }
+                { text: "Alat untuk mengetik di komputer adalah...", options: ["Mouse", "Keyboard", "Monitor", "Printer"], correct: 1, hint: "Punya tombol huruf dan angka." },
+                { text: "Bagian komputer yang menampilkan gambar disebut...", options: ["CPU", "Speaker", "Monitor", "Mouse"], correct: 2, hint: "Mirip televisi." },
+                { text: "Perangkat keras yang bentuknya seperti hewan tikus adalah...", options: ["Mouse", "Keyboard", "Flashdisk", "Printer"], correct: 0, hint: "Digunakan untuk mengarahkan kursor." },
+                { text: "Otak dari komputer dinamakan...", options: ["RAM", "CPU", "Monitor", "Keyboard"], correct: 1, hint: "Pusat pemrosesan data." },
+                { text: "Program untuk menjelajahi internet disebut...", options: ["Paint", "Browser", "Calculator", "Word"], correct: 1, hint: "Contohnya Google Chrome." }
             ],
             ipas: [
-                {
-                    text: "Bagian tumbuhan yang berada di dalam tanah adalah...",
-                    options: ["Daun", "Bunga", "Akar", "Buah"],
-                    correct: 2,
-                    hint: "Menyerap air dari tanah."
-                },
-                {
-                    text: "Hewan di bawah ini yang bernapas dengan insang adalah...",
-                    options: ["Kucing", "Ikan", "Burung", "Kelinci"],
-                    correct: 1,
-                    hint: "Hidup di dalam air."
-                },
-                {
-                    text: "Benda yang bentuknya berubah mengikuti wadahnya adalah benda...",
-                    options: ["Padat", "Cair", "Gas", "Keras"],
-                    correct: 1,
-                    hint: "Contohnya seperti Air dan Minyak."
-                },
-                {
-                    text: "Matahari terbit dari sebelah...",
-                    options: ["Barat", "Selatan", "Timur", "Utara"],
-                    correct: 2,
-                    hint: "Arah awal dimulainya pagi hari."
-                },
-                {
-                    text: "Indera yang kita gunakan untuk mendengar suara adalah...",
-                    options: ["Mata", "Hidung", "Telinga", "Lidah"],
-                    correct: 2,
-                    hint: "Terletak di samping kiri dan kanan kepala."
-                }
+                { text: "Bagian tumbuhan yang menyerap air dari tanah adalah...", options: ["Daun", "Akar", "Bunga", "Batang"], correct: 1, hint: "Tumbuh di dalam tanah." },
+                { text: "Hewan yang hidup di air dan bernapas dengan insang...", options: ["Kucing", "Ikan", "Burung", "Kelinci"], correct: 1, hint: "Berenang menggunakan sirip." },
+                { text: "Matahari terbit dari arah...", options: ["Barat", "Selatan", "Timur", "Utara"], correct: 2, hint: "Arah pagi hari." },
+                { text: "Benda berwujud gas di bawah ini adalah...", options: ["Es batu", "Air", "Udara dalam balon", "Besi"], correct: 2, hint: "Tidak terlihat tapi bisa dirasakan." },
+                { text: "Alat indera untuk mengecap rasa makanan adalah...", options: ["Lidah", "Mata", "Telinga", "Hidung"], correct: 0, hint: "Ada di dalam mulut." }
             ]
         };
 
         // ==========================================
-        // 2. STATE GAME & VARIABEL UTAMA
+        // 2. STATE APLIKASI
         // ==========================================
-        let currentCategory = '';
+        let currentCategory = 'matematika';
+        let activeGameType = 'detektif';
         let activeQuestions = [];
         let score = 0;
         let answeredCount = 0;
-        let activeQuestionIndex = null;
+        let activeNodeIndex = null;
         let soundEnabled = true;
+        let lampuTimerInterval = null;
+        let timeLeft = 15;
 
-        // Web Audio API Synth
+        // Audio Synth sederhana
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-
         function playSound(type) {
             if (!soundEnabled) return;
             const osc = audioCtx.createOscillator();
             const gain = audioCtx.createGain();
             osc.connect(gain);
             gain.connect(audioCtx.destination);
-
             if (type === 'correct') {
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
-                osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1); // E5
-                gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
-                osc.start();
-                osc.stop(audioCtx.currentTime + 0.3);
-            } else if (type === 'wrong') {
-                osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(220, audioCtx.currentTime); // A3
-                osc.frequency.setValueAtTime(164.81, audioCtx.currentTime + 0.15); // E3
-                gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
-                osc.start();
-                osc.stop(audioCtx.currentTime + 0.3);
-            } else if (type === 'click') {
-                osc.type = 'triangle';
-                osc.frequency.setValueAtTime(440, audioCtx.currentTime);
-                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-                osc.start();
-                osc.stop(audioCtx.currentTime + 0.05);
+                osc.frequency.setValueAtTime(523.25, audioCtx.currentTime);
+                osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1);
+            } else {
+                osc.frequency.setValueAtTime(220, audioCtx.currentTime);
             }
+            gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.25);
         }
 
         function toggleSound() {
@@ -369,112 +254,147 @@
             document.getElementById('btn-sound').innerText = soundEnabled ? '🔊' : '🔇';
         }
 
-        // ==========================================
-        // 3. LOGIKA ALUR PERMAINAN
-        // ==========================================
-        
-        function showLobby() {
-            document.getElementById('lobby-screen').classList.remove('hidden');
-            document.getElementById('game-screen').classList.add('hidden');
-            document.getElementById('result-screen').classList.add('hidden');
-            document.getElementById('category-badge').innerText = 'Pilih Pelajaran';
+        function setCategory(cat) {
+            currentCategory = cat;
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                btn.className = "category-btn bg-white text-slate-700 font-bold py-2 px-3 rounded-xl border border-slate-300 text-sm";
+            });
+            document.getElementById(`cat-${cat}`).className = "category-btn bg-pink-500 text-white font-bold py-2 px-3 rounded-xl shadow text-sm";
         }
 
-        function selectCategory(category) {
-            playSound('click');
-            currentCategory = category;
-            
-            // Format Nama Badge
-            const names = {
-                matematika: '📐 Matematika',
-                bahasa_inggris: '🔤 B. Inggris',
-                komputer: '💻 Komputer',
-                ipas: '🌱 IPAS'
-            };
-            document.getElementById('category-badge').innerText = names[category];
-
-            // Acak Soal (Shuffle)
-            activeQuestions = shuffleArray([...questionBank[category]]);
-            
-            // Reset Progress
+        function startHubGame(gameType) {
+            activeGameType = gameType;
+            activeQuestions = shuffleArray([...dynamicQuestionBank[currentCategory]]);
             score = 0;
             answeredCount = 0;
-            updateStats();
+            updateScore();
 
-            // Reset Tampilan Pos Peta
-            for (let i = 0; i < 5; i++) {
-                const btn = document.getElementById(`node-${i}`);
-                btn.disabled = false;
-                btn.classList.remove('opacity-50', 'bg-emerald-200');
-                btn.classList.add('bg-amber-200');
+            document.getElementById('hub-screen').classList.add('hidden');
+            
+            if (gameType === 'detektif') {
+                // Reset node detektif
+                for(let i=0; i<5; i++) {
+                    const btn = document.getElementById(`d-node-${i}`);
+                    btn.disabled = false;
+                    btn.classList.remove('opacity-50', 'bg-emerald-200');
+                    btn.classList.add('bg-amber-200');
+                }
+                document.getElementById('game-detektif-screen').classList.remove('hidden');
+            } else if (gameType === 'lampu') {
+                document.getElementById('game-lampu-screen').classList.remove('hidden');
+                loadLampuQuestion();
             }
-
-            // Tampilkan Layar Game
-            document.getElementById('lobby-screen').classList.add('hidden');
-            document.getElementById('game-screen').classList.remove('hidden');
         }
 
-        function openQuestion(index) {
-            playSound('click');
-            activeQuestionIndex = index;
-            const qData = activeQuestions[index];
+        function returnToHub() {
+            clearInterval(lampuTimerInterval);
+            document.getElementById('game-detektif-screen').classList.add('hidden');
+            document.getElementById('game-lampu-screen').classList.add('hidden');
+            document.getElementById('result-screen').classList.add('hidden');
+            document.getElementById('hub-screen').classList.remove('hidden');
+        }
 
-            document.getElementById('modal-pos').innerText = `Pos ${index + 1}`;
-            document.getElementById('question-text').innerText = qData.text;
+        function updateScore() {
+            document.getElementById('score-text').innerText = score;
+        }
 
-            // Render Pilihan Jawaban
-            const container = document.getElementById('options-container');
+        // ==========================================
+        // 3. LOGIKA GAME 1 (DETEKTIF)
+        // ==========================================
+        function openDetektifNode(index) {
+            activeNodeIndex = index;
+            const q = activeQuestions[index];
+            
+            document.getElementById('modal-badge').innerText = `Posisi ${index + 1} (${currentCategory.toUpperCase()})`;
+            document.getElementById('modal-question-text').innerText = q.text;
+            document.getElementById('hint-text').innerText = q.hint;
+
+            const container = document.getElementById('modal-options');
             container.innerHTML = '';
-
-            qData.options.forEach((opt, optIdx) => {
+            q.options.forEach((opt, idx) => {
                 const btn = document.createElement('button');
-                btn.className = "p-3 rounded-2xl bg-amber-100 hover:bg-amber-200 text-amber-900 font-bold border-2 border-amber-300 transition active:scale-95 text-left text-base";
-                btn.innerText = `${String.fromCharCode(65 + optIdx)}. ${opt}`;
-                btn.onclick = () => checkAnswer(optIdx);
+                btn.className = "p-3 rounded-2xl bg-pink-50 hover:bg-pink-100 text-pink-900 font-bold border-2 border-pink-200 text-left";
+                btn.innerText = `${String.fromCharCode(65 + idx)}. ${opt}`;
+                btn.onclick = () => checkDetektifAnswer(idx);
                 container.appendChild(btn);
             });
 
-            // Tampilkan Hint
-            document.getElementById('hint-text').innerText = qData.hint;
-            document.getElementById('hint-box').classList.remove('hidden');
-
-            // Buka Modal
             document.getElementById('question-modal').classList.remove('hidden');
-
-            // Baca Otomatis dengan Text-to-Speech
-            readQuestionTTS();
+            readTTS();
         }
 
-        function checkAnswer(selectedIdx) {
-            const qData = activeQuestions[activeQuestionIndex];
-            const modalBox = document.getElementById('modal-box');
-
-            if (selectedIdx === qData.correct) {
-                // Jawaban Benar
+        function checkDetektifAnswer(idx) {
+            const q = activeQuestions[activeNodeIndex];
+            if (idx === q.correct) {
                 playSound('correct');
                 score += 20;
                 answeredCount++;
-                updateStats();
+                updateScore();
+                confetti({ particleCount: 40, spread: 50, origin: { y: 0.6 } });
 
-                confetti({ particleCount: 50, spread: 60, origin: { y: 0.7 } });
-
-                // Nonaktifkan Pos yang Sudah Dijawab
-                const posBtn = document.getElementById(`node-${activeQuestionIndex}`);
-                posBtn.disabled = true;
-                posBtn.classList.add('opacity-50', 'bg-emerald-200');
+                const btn = document.getElementById(`d-node-${activeNodeIndex}`);
+                btn.disabled = true;
+                btn.classList.add('opacity-50', 'bg-emerald-200');
 
                 closeModal();
-
-                // Cek Apakah Semua Pos Selesai
-                if (answeredCount >= 5) {
-                    setTimeout(showResult, 800);
-                }
+                if (answeredCount >= 5) showResult();
             } else {
-                // Jawaban Salah
                 playSound('wrong');
-                modalBox.classList.add('shake');
-                setTimeout(() => modalBox.classList.remove('shake'), 400);
+                document.getElementById('modal-box').classList.add('shake');
+                setTimeout(() => document.getElementById('modal-box').classList.remove('shake'), 400);
             }
+        }
+
+        // ==========================================
+        // 4. LOGIKA GAME 2 (LAMPU KILAT)
+        // ==========================================
+        let currentLampuIndex = 0;
+        function loadLampuQuestion() {
+            if (currentLampuIndex >= 5) {
+                showResult();
+                return;
+            }
+            const q = activeQuestions[currentLampuIndex];
+            document.getElementById('lampu-progress').innerText = `Soal ${currentLampuIndex + 1} / 5`;
+            document.getElementById('lampu-question').innerText = q.text;
+
+            const container = document.getElementById('lampu-options');
+            container.innerHTML = '';
+            q.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "p-3 rounded-2xl bg-white hover:bg-emerald-100 text-emerald-900 font-bold border-2 border-emerald-300 shadow-sm text-left";
+                btn.innerText = `${String.fromCharCode(65 + idx)}. ${opt}`;
+                btn.onclick = () => checkLampuAnswer(idx);
+                container.appendChild(btn);
+            });
+
+            // Timer mundur
+            clearInterval(lampuTimerInterval);
+            timeLeft = 15;
+            document.getElementById('lampu-timer').innerText = `⏱️ Waktu: ${timeLeft}s`;
+            lampuTimerInterval = setInterval(() => {
+                timeLeft--;
+                document.getElementById('lampu-timer').innerText = `⏱️ Waktu: ${timeLeft}s`;
+                if (timeLeft <= 0) {
+                    clearInterval(lampuTimerInterval);
+                    currentLampuIndex++;
+                    loadLampuQuestion();
+                }
+            }, 1000);
+        }
+
+        function checkLampuAnswer(idx) {
+            clearInterval(lampuTimerInterval);
+            const q = activeQuestions[currentLampuIndex];
+            if (idx === q.correct) {
+                playSound('correct');
+                score += 25;
+                updateScore();
+            } else {
+                playSound('wrong');
+            }
+            currentLampuIndex++;
+            setTimeout(loadLampuQuestion, 500);
         }
 
         function closeModal() {
@@ -482,41 +402,31 @@
             window.speechSynthesis.cancel();
         }
 
-        function updateStats() {
-            document.getElementById('score-text').innerText = score;
-            document.getElementById('progress-text').innerText = `${answeredCount}/5`;
-        }
-
         function showResult() {
-            document.getElementById('game-screen').classList.add('hidden');
+            document.getElementById('game-detektif-screen').classList.add('hidden');
+            document.getElementById('game-lampu-screen').classList.add('hidden');
             document.getElementById('result-screen').classList.remove('hidden');
             document.getElementById('final-score').innerText = score;
-            confetti({ particleCount: 150, spread: 100, origin: { y: 0.5 } });
+            confetti({ particleCount: 150, spread: 90, origin: { y: 0.5 } });
         }
 
-        // ==========================================
-        // 4. UTILITY FUNCTIONS (TTS & SHUFFLE)
-        // ==========================================
-        
-        function readQuestionTTS() {
+        function readTTS() {
             if ('speechSynthesis' in window) {
                 window.speechSynthesis.cancel();
-                const text = document.getElementById('question-text').innerText;
-                const utterance = new SpeechSynthesisUtterance(text);
-                utterance.lang = 'id-ID';
-                utterance.rate = 0.9;
-                window.speechSynthesis.speak(utterance);
+                const text = document.getElementById('modal-question-text').innerText;
+                const u = new SpeechSynthesisUtterance(text);
+                u.lang = 'id-ID';
+                window.speechSynthesis.speak(u);
             }
         }
 
-        function shuffleArray(array) {
-            for (let i = array.length - 1; i > 0; i--) {
+        function shuffleArray(arr) {
+            for (let i = arr.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
+                [arr[i], arr[j]] = [arr[j], arr[i]];
             }
-            return array;
+            return arr;
         }
     </script>
 </body>
 </html>
-
