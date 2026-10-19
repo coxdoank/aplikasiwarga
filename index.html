@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PWA Absensi Face Recognition - Prototipe</title>
+  <title>PWA Absensi Face Recognition - Perbaikan</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- MediaPipe Face Mesh & Camera Utils -->
@@ -28,12 +28,12 @@
       
       <!-- Overlay Panduan Wajah -->
       <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-        <div class="w-48 h-64 border-2 border-dashed border-cyan-400/70 rounded-[50%] animate-pulse"></div>
+        <div id="guide-box" class="w-48 h-64 border-2 border-dashed border-yellow-400 rounded-[50%] transition-colors duration-300"></div>
       </div>
 
       <!-- Status Indicator -->
       <div id="status-badge" class="absolute top-3 left-3 bg-black/60 backdrop-blur-md text-white text-xs px-3 py-1.5 rounded-full flex items-center gap-2">
-        <span class="w-2 h-2 rounded-full bg-yellow-400 animate-ping"></span>
+        <span id="status-dot" class="w-2 h-2 rounded-full bg-yellow-400 animate-ping"></span>
         <span id="status-text">Memuat Model AI...</span>
       </div>
     </div>
@@ -46,10 +46,11 @@
         <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider">Registrasi Siswa Baru</label>
         <div class="flex gap-2">
           <input type="text" id="input-nama" placeholder="Masukkan nama siswa..." class="flex-1 px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-          <button id="btn-daftar" disabled class="bg-blue-600 hover:bg-blue-700 disabled:bg-slate-300 text-white text-sm px-4 py-2 rounded-lg font-medium transition">
+          <button id="btn-daftar" class="bg-blue-600 hover:bg-blue-700 text-white text-sm px-4 py-2 rounded-lg font-medium transition cursor-pointer">
             Daftar
           </button>
         </div>
+        <p id="helper-text" class="text-[11px] text-amber-600">Pastikan wajah berada di dalam lingkaran dan menghadap kamera.</p>
       </div>
 
       <!-- Log Absensi Berhasil -->
@@ -63,23 +64,25 @@
     </div>
   </main>
 
-  <!-- Script Logika Prototipe -->
+  <!-- Script Logika Perbaikan -->
   <script>
     const videoElement = document.getElementById('webcam');
     const canvasElement = document.getElementById('output_canvas');
     const canvasCtx = canvasElement.getContext('2d');
     const statusText = document.getElementById('status-text');
+    const statusDot = document.getElementById('status-dot');
     const statusBadge = document.getElementById('status-badge');
     const btnDaftar = document.getElementById('btn-daftar');
     const inputNama = document.getElementById('input-nama');
     const logList = document.getElementById('log-list');
+    const guideBox = document.getElementById('guide-box');
+    const helperText = document.getElementById('helper-text');
 
-    // Database Sederhana di Memori Browser (Lokal)
-    let registeredFaces = []; // Array berisi { nama: string, landmarks: Array }
+    let registeredFaces = []; 
     let currentLandmarks = null;
     let isProcessingMatch = false;
 
-    // 1. Inisialisasi MediaPipe Face Mesh
+    // 1. Inisialisasi MediaPipe Face Mesh dengan konfigurasi stabil
     const faceMesh = new FaceMesh({
       locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`
     });
@@ -87,8 +90,8 @@
     faceMesh.setOptions({
       maxNumFaces: 1,
       refineLandmarks: true,
-      minDetectionConfidence: 0.6,
-      minTrackingConfidence: 0.6
+      minDetectionConfidence: 0.5,
+      minTrackingConfidence: 0.5
     });
 
     faceMesh.onResults(onResults);
@@ -103,12 +106,14 @@
     });
 
     camera.start().then(() => {
-      statusText.innerText = "Arahkan wajah ke kamera";
+      statusText.innerText = "Posisikan Wajah";
+    }).catch(err => {
+      statusText.innerText = "Kamera Gagal Diakses";
+      alert("Pastikan memberikan izin akses kamera (Permission)");
     });
 
     // 3. Callback saat Wajah Terdeteksi
     function onResults(results) {
-      // Adjust canvas size
       canvasElement.width = videoElement.videoWidth;
       canvasElement.height = videoElement.videoHeight;
       canvasCtx.save();
@@ -116,9 +121,17 @@
 
       if (results.multiFaceLandmarks && results.multiFaceLandmarks.length > 0) {
         currentLandmarks = results.multiFaceLandmarks[0];
-        btnDaftar.disabled = false;
+        
+        // Ubah indikator panduan jadi hijau tanda siap
+        guideBox.classList.remove('border-yellow-400', 'animate-pulse');
+        guideBox.classList.add('border-green-500');
+        if (statusText.innerText.includes("Posisikan") || statusText.innerText.includes("Memuat")) {
+          statusText.innerText = "Wajah Terdeteksi (Siap)";
+          statusDot.classList.remove('bg-yellow-400');
+          statusDot.classList.add('bg-green-400');
+        }
 
-        // Visualisasi Titik Wajah Sederhana
+        // Gambar titik wajah (landmarks)
         canvasCtx.fillStyle = '#22c55e';
         for (const point of currentLandmarks) {
           canvasCtx.beginPath();
@@ -126,46 +139,51 @@
           canvasCtx.fill();
         }
 
-        // Proses Auto-Absen jika ada wajah terdaftar
+        // Jalankan pencocokan absen otomatis jika sudah ada data
         if (registeredFaces.length > 0 && !isProcessingMatch) {
           checkAttendance(currentLandmarks);
         }
       } else {
         currentLandmarks = null;
-        btnDaftar.disabled = true;
+        guideBox.classList.remove('border-green-500');
+        guideBox.classList.add('border-yellow-400', 'animate-pulse');
+        statusText.innerText = "Wajah Tidak Terlihat";
+        statusDot.classList.remove('bg-green-400');
+        statusDot.classList.add('bg-yellow-400');
       }
       canvasCtx.restore();
     }
 
-    // 4. Mendaftarkan Wajah Siswa
+    // 4. Tombol Pendaftaran (Diperbaiki agar tidak disable permanen)
     btnDaftar.addEventListener('click', () => {
       const nama = inputNama.value.trim();
       if (!nama) {
         alert("Silakan masukkan nama siswa terlebih dahulu!");
+        inputNama.focus();
         return;
       }
       if (!currentLandmarks) {
-        alert("Wajah tidak terdeteksi!");
+        alert("Wajah belum terdeteksi oleh kamera! Harap posisikan wajah di dalam kotak panduan.");
         return;
       }
 
-      // Simpan koordinat landmarks sebagai representasi unik wajah
+      // Simpan data wajah
       registeredFaces.push({
         nama: nama,
-        landmarks: currentLandmarks,
+        landmarks: JSON.parse(JSON.stringify(currentLandmarks)), // Clone data array
         lastAbsen: 0
       });
 
+      helperText.innerText = `Berhasil! Total terdaftar: ${registeredFaces.length} siswa.`;
+      helperText.className = "text-[11px] text-green-600 font-semibold";
       alert(`Berhasil mendaftarkan wajah untuk: ${nama}`);
       inputNama.value = '';
-      statusText.innerText = `Terdaftar: ${registeredFaces.length} siswa`;
     });
 
-    // 5. Fungsi Mengukur Jarak Matematis antar Landmark (Euclidean Distance sederhana)
+    // 5. Perhitungan Jarak (Euclidean Distance)
     function calculateDistance(landmarksA, landmarksB) {
       let sum = 0;
-      // Gunakan sampel beberapa titik kunci di wajah (mata, hidung, mulut)
-      const keyPoints = [33, 263, 1, 61, 291, 199]; 
+      const keyPoints = [33, 263, 1, 61, 291, 199, 10, 152]; // Titik kunci lebih banyak agar akurat
       for (let idx of keyPoints) {
         const dx = landmarksA[idx].x - landmarksB[idx].x;
         const dy = landmarksA[idx].y - landmarksB[idx].y;
@@ -174,14 +192,13 @@
       return sum / keyPoints.length;
     }
 
-    // 6. Logika Match & Absensi Otomatis
+    // 6. Logika Cek Absensi
     function checkAttendance(detectedLandmarks) {
       const now = Date.now();
-      const THRESHOLD = 0.08; // Toleransi kemiripan wajah (semakin kecil semakin ketat)
+      const THRESHOLD = 0.09; // Toleransi jarak (bisa disesuaikan jika terlalu ketat/longgar)
 
       for (let student of registeredFaces) {
-        // Jeda 10 detik agar tidak terjadi re-absen terus menerus
-        if (now - student.lastAbsen < 10000) continue;
+        if (now - student.lastAbsen < 12000) continue; // Jeda 12 detik per orang
 
         const distance = calculateDistance(detectedLandmarks, student.landmarks);
         
@@ -193,30 +210,26 @@
       }
     }
 
-    // 7. Tampilan Absen Berhasil
+    // 7. Notifikasi Berhasil
     function triggerAbsenSuccess(nama) {
       isProcessingMatch = true;
       
-      // Update UI Status
-      statusText.innerText = `Absen Berhasil: ${nama}`;
+      statusText.innerText = `Hadir: ${nama}`;
       statusBadge.classList.remove('bg-black/60');
       statusBadge.classList.add('bg-green-600');
 
-      // Tambahkan ke Log List
       const timeStr = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
       const li = document.createElement('li');
-      li.className = 'flex justify-between items-center p-2 bg-green-50 border border-green-200 rounded-lg text-green-800 font-medium';
-      li.innerHTML = `<span>Hadir: <b>${nama}</b></span><span class="text-xs text-green-600">${timeStr} WIB</span>`;
+      li.className = 'flex justify-between items-center p-2 bg-green-50 border border-green-200 rounded-lg text-green-800 font-medium animate-bounce';
+      li.innerHTML = `<span><b>${nama}</b></span><span class="text-xs text-green-600">${timeStr} WIB</span>`;
       
-      // Hapus pesan kosong jika ada
       if (logList.children[0]?.classList.contains('italic')) {
         logList.innerHTML = '';
       }
       logList.prepend(li);
 
-      // Reset status setelah 3 detik
       setTimeout(() => {
-        statusText.innerText = "Arahkan wajah ke kamera";
+        statusText.innerText = "Wajah Terdeteksi (Siap)";
         statusBadge.classList.remove('bg-green-600');
         statusBadge.classList.add('bg-black/60');
         isProcessingMatch = false;
