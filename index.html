@@ -1141,7 +1141,7 @@
             fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) })
             .then(res => res.json())
             .then(data => {
-                alert('Laporan berhasil dikirim ke Pengurus RT!');
+                alert('Laporan berhasil dikirim ke Pengurus!');
                 document.getElementById('form-pengaduan')?.reset();
                 loadLiveData();
             })
