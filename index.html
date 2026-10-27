@@ -1,11 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <!-- PWA Manifest & Meta Tags -->
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#059669">
-<link rel="apple-touch-icon" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/svgs/solid/house-chimney.svg">
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Portal Warga - Mutiara Intan Permai</title>
@@ -29,20 +24,37 @@
                 }
             }
         }
-
-    // Registrasi Service Worker untuk PWA
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('/sw.js')
-                .then(reg => console.log('Service Worker terdaftar!', reg))
-                .catch(err => console.log('Gagal mendaftarkan Service Worker:', err));
-        });
-    }
     </script>
-
     <!-- FontAwesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <meta name="theme-color" content="#059669">
+
+    <!-- PWA Manifest & Meta Tags (Dinamis via Data URI) -->
+    <link rel="apple-touch-icon" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/svgs/solid/house-chimney.svg">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <script>
+        // Membuat manifest PWA secara otomatis dalam 1 file
+        const manifestData = {
+            name: "Portal Warga Mutiara Intan Permai",
+            short_name: "Portal Warga",
+            start_url: window.location.href,
+            display: "standalone",
+            background_color: "#f0fdf4",
+            theme_color: "#059669",
+            icons: [
+                {
+                    src: "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/svgs/solid/house-chimney.svg",
+                    sizes: "512x512",
+                    type: "image/svg+xml"
+                }
+            ]
+        };
+        const stringManifest = JSON.stringify(manifestData);
+        const blob = new Blob([stringManifest], {type: 'application/json'});
+        const manifestURL = URL.createObjectURL(blob);
+        document.write('<link rel="manifest" href="' + manifestURL + '">');
+    </script>
 
     <!-- Print Specific CSS Styling -->
     <style>
@@ -52,7 +64,6 @@
                 color: #000000 !important;
                 padding-bottom: 0 !important;
             }
-            /* Sembunyikan Navigasi, Topbar, Filter, Footer, dan Tombol saat Cetak */
             .bg-portal-dark, nav, #loading-state, #error-state, .no-print, footer, button, select, input {
                 display: none !important;
             }
@@ -61,15 +72,12 @@
                 margin: 0 !important;
                 padding: 0 !important;
             }
-            /* Tampilkan Kop Surat Khusus Cetak */
             #print-header {
                 display: block !important;
             }
-            /* Tampilkan Tanda Tangan Cetak */
             #print-footer-signatures {
                 display: flex !important;
             }
-            /* Pastikan Kartu & Tabel Tampil Bersih */
             .bg-white {
                 box-shadow: none !important;
                 border: none !important;
@@ -406,7 +414,7 @@
             </div>
         </div>
 
-        <!-- ================= PAGE 5: CASHFLOW (TERMASUK TOMBOL PRINT/PDF) ================= -->
+        <!-- ================= PAGE 5: CASHFLOW ================= -->
         <div id="page-cashflow" class="hidden space-y-6">
             <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
@@ -419,7 +427,6 @@
                             <option value="">Semua Kategori</option>
                         </select>
                         <input type="text" id="search-cashflow" onkeyup="filterCashflow()" placeholder="Cari transaksi..." class="bg-gray-50 border border-gray-300 rounded-xl px-4 py-2 text-xs focus:outline-none focus:border-portal-600 w-full sm:w-44">
-                        <!-- Tombol Export PDF / Cetak Cashflow -->
                         <button onclick="printReport('cashflow')" class="bg-gray-800 hover:bg-gray-900 text-white px-3 py-2 rounded-xl text-xs font-semibold transition flex items-center gap-1.5 shadow-sm">
                             <i class="fa-solid fa-print"></i> <span>Cetak / PDF</span>
                         </button>
@@ -443,7 +450,7 @@
             </div>
         </div>
 
-        <!-- ================= PAGE 6: DETAIL IURAN (TERMASUK TOMBOL PRINT/PDF) ================= -->
+        <!-- ================= PAGE 6: DETAIL IURAN ================= -->
         <div id="page-iuran" class="hidden space-y-6">
             <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
                 <div class="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4 mb-6">
@@ -479,7 +486,6 @@
                             <option value="">Semua Tahun</option>
                         </select>
                         <input type="text" id="search-iuran" onkeyup="filterIuran()" placeholder="Cari nama..." class="bg-gray-50 border border-gray-300 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-portal-600 w-full sm:w-36">
-                        <!-- Tombol Export PDF / Cetak Detail Iuran -->
                         <button onclick="printReport('iuran')" class="bg-gray-800 hover:bg-gray-900 text-white px-3 py-2 rounded-xl text-xs font-semibold transition flex items-center gap-1.5 shadow-sm">
                             <i class="fa-solid fa-print"></i> <span>Cetak / PDF</span>
                         </button>
@@ -507,15 +513,15 @@
         <div id="print-footer-signatures" class="mt-12 justify-between text-xs text-center font-semibold px-8">
             <div>
                 <p>Mengetahui,</p>
-                <p class="font-bold">Ketua Perumahan</p>
+                <p class="font-bold">Ketua RT Perumahan</p>
                 <div class="h-16"></div>
                 <p class="border-b border-gray-800 inline-block px-8">( ........................................ )</p>
             </div>
             <div>
                 <p>Pekanbaru, <span id="print-sign-date"></span></p>
-                <p class="font-bold">Bendahara</p>
+                <p class="font-bold">Bendahara Perumahan</p>
                 <div class="h-16"></div>
-                <p class="border-b border-gray-800 inline-block px-8">( ........................................ )</p>
+                <p class="border-b border-gray-800 inline-block px-8">Harry Handoko</p>
             </div>
         </div>
 
@@ -614,7 +620,7 @@
         let globalPengaduanData = [];
 
         let isAdminLoggedIn = false;
-        let adminPasscode = localStorage.getItem('rt_admin_passcode') || '112223333';
+        let adminPasscode = localStorage.getItem('rt_admin_passcode') || '1234';
 
         function formatRupiah(angka) {
             if (!angka) return "Rp 0";
@@ -780,7 +786,6 @@
                 });
         }
 
-        // ================= FUNGSIONALITAS CETAK LAPORAN / PDF =================
         function printReport(type) {
             const today = new Date().toLocaleDateString('id-ID', {
                 day: 'numeric',
@@ -1005,6 +1010,7 @@
                 blockCard.innerHTML = headerHtml;
 
                 const gridDiv = document.createElement('div');
+                // Menggunakan grid responsif untuk HP (4 kolom) dan komputer (7 kolom)
                 gridDiv.className = 'grid grid-cols-4 sm:grid-cols-7 gap-2 pb-2';
 
                 if (hurufBlok === 'D') {
@@ -1061,7 +1067,7 @@
             }
 
             const box = document.createElement('div');
-            box.className = `${bgClass} p-2.5 rounded-xl shadow-xs border cursor-pointer hover:scale-105 transition transform flex flex-col justify-between h-24 text-center`;
+            box.className = `${bgClass} p-2.5 rounded-xl shadow-xs border cursor-pointer hover:scale-105 transition transform flex flex-col justify-between h-28 text-center`;
             
             if(warga) {
                 box.onclick = () => showModalRumah(warga);
