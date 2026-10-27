@@ -3,670 +3,1318 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Super Edukasi Hub - Belajar Seru SD</title>
-
-    <!-- Tailwind CSS -->
+    <title>Portal Warga - Mutiara Intan Permai</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-
-    <!-- Google Fonts: Fredoka & Poppins -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-
-    <!-- FontAwesome Icons -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        portal: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            200: '#bbf7d0',
+                            500: '#10b981',
+                            600: '#059669',
+                            700: '#047857',
+                            dark: '#064e3b'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta name="theme-color" content="#059669">
 
-    <!-- Canvas Confetti untuk efek selebrasi -->
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-
+    <!-- Print Specific CSS Styling -->
     <style>
-        body {
-            font-family: 'Fredoka', 'Poppins', sans-serif;
-            user-select: none;
-            -webkit-user-select: none;
+        @media print {
+            body {
+                background-color: #ffffff !important;
+                color: #000000 !important;
+                padding-bottom: 0 !important;
+            }
+            /* Sembunyikan Navigasi, Topbar, Filter, Footer, dan Tombol saat Cetak */
+            .bg-portal-dark, nav, #loading-state, #error-state, .no-print, footer, button, select, input {
+                display: none !important;
+            }
+            .container {
+                max-width: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+            /* Tampilkan Kop Surat Khusus Cetak */
+            #print-header {
+                display: block !important;
+            }
+            /* Tampilkan Tanda Tangan Cetak */
+            #print-footer-signatures {
+                display: flex !important;
+            }
+            /* Pastikan Kartu & Tabel Tampil Bersih */
+            .bg-white {
+                box-shadow: none !important;
+                border: none !important;
+                padding: 0 !important;
+            }
+            table {
+                width: 100% !important;
+                border-collapse: collapse !important;
+                font-size: 11px !important;
+            }
+            th, td {
+                border: 1px solid #cbd5e1 !important;
+                padding: 6px 8px !important;
+                color: #000000 !important;
+            }
+            th {
+                background-color: #f1f5f9 !important;
+                font-weight: bold !important;
+            }
+            tr {
+                page-break-inside: avoid;
+            }
         }
-
-        @keyframes pulse-gentle {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.08); }
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-        }
-
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            20%, 60% { transform: translateX(-8px); }
-            40%, 80% { transform: translateX(8px); }
-        }
-
-        .animate-float {
-            animation: float 3s ease-in-out infinite;
-        }
-
-        .animate-pulse-gentle {
-            animation: pulse-gentle 2s infinite ease-in-out;
-        }
-
-        .shake-animation {
-            animation: shake 0.4s ease-in-out;
-        }
-
-        .glass-card {
-            background: rgba(255, 255, 255, 0.94);
-            backdrop-filter: blur(10px);
-        }
-
-        .map-object {
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        .map-object:hover {
-            transform: scale(1.2) rotate(5deg);
-            filter: drop-shadow(0 10px 15px rgba(255, 215, 0, 0.8));
-        }
-
-        .game-card {
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        .game-card:hover {
-            transform: translateY(-6px) scale(1.02);
+        #print-header, #print-footer-signatures {
+            display: none;
         }
     </style>
 </head>
-<body class="bg-gradient-to-b from-sky-300 via-indigo-200 to-purple-300 min-h-screen flex flex-col justify-between overflow-x-hidden text-slate-800">
+<body class="bg-gray-50 font-sans leading-normal tracking-normal pb-16">
 
-  <!-- HEADER / NAVBAR TOP -->
-  <header class="w-full bg-amber-400 border-b-8 border-amber-500 p-3 sm:p-4 shadow-lg sticky top-0 z-30">
-    <div class="max-w-5xl mx-auto flex flex-wrap justify-between items-center gap-2">
-      <!-- Title & Logo -->
-      <div class="flex items-center gap-3">
-        <div class="bg-amber-100 p-2 sm:p-3 rounded-2xl border-4 border-amber-600 shadow-inner animate-float">
-          <i class="fa-solid fa-graduation-cap text-amber-600 text-2xl sm:text-3xl"></i>
+    <!-- Kop Surat Khusus Mode Cetak (PDF / Print) -->
+    <div id="print-header" class="mb-6 border-b-2 border-gray-800 pb-4 text-center">
+        <h1 class="text-xl font-black uppercase tracking-wide">Pengurus Perumahan Mutiara Intan Permai</h1>
+        <p class="text-xs text-gray-600">Kota Pekanbaru, Provinsi Riau • Sistem Informasi & Akuntabilitas Kas Warga</p>
+        <div class="mt-2 text-xs font-bold border-t border-gray-300 pt-2 flex justify-between">
+            <span id="print-doc-title">Laporan Keuangan Warga</span>
+            <span id="print-doc-date">Dicetak pada: -</span>
         </div>
-        <div>
-          <h1 class="text-xl sm:text-3xl font-extrabold text-amber-900 tracking-wide">SUPER EDUKASI HUB</h1>
-          <p class="text-xs sm:text-sm font-semibold text-amber-800">Tempat Belajar Seru & Asyik!</p>
-        </div>
-      </div>
-
-      <!-- Score, Stars & Audio Control -->
-      <div class="flex items-center gap-2 sm:gap-4">
-        <div class="bg-white/90 border-4 border-amber-500 px-3 py-1.5 sm:px-4 sm:py-2 rounded-2xl shadow-md flex items-center gap-2">
-          <i class="fa-solid fa-star text-yellow-400 text-xl sm:text-2xl drop-shadow"></i>
-          <span id="star-count" class="text-xl sm:text-2xl font-black text-amber-900">0</span>
-        </div>
-
-        <div class="bg-white/90 border-4 border-indigo-400 px-3 py-1.5 sm:px-4 sm:py-2 rounded-2xl shadow-md flex items-center gap-2">
-          <i class="fa-solid fa-trophy text-amber-500 text-xl sm:text-2xl"></i>
-          <span id="score-count" class="text-xl sm:text-2xl font-black text-indigo-900">0</span>
-        </div>
-
-        <!-- Mute Sound Toggle Button -->
-        <button id="btn-sound" onclick="toggleSound()" class="bg-indigo-500 hover:bg-indigo-600 active:scale-95 text-white border-4 border-indigo-700 w-10 h-10 sm:w-12 sm:h-12 rounded-2xl flex items-center justify-center text-lg sm:text-xl shadow-md transition">
-          <i id="sound-icon" class="fa-solid fa-volume-high"></i>
-        </button>
-      </div>
-    </div>
-  </header>
-
-  <!-- MAIN CONTAINER -->
-  <main class="max-w-5xl w-full mx-auto p-3 sm:p-6 flex-grow flex flex-col justify-center">
-
-    <!-- SCREEN 0: HUB UTAMA -->
-    <div id="screen-hub" class="glass-card rounded-3xl border-8 border-white p-6 sm:p-8 shadow-2xl my-auto text-center">
-      <h2 class="text-2xl sm:text-4xl font-extrabold text-indigo-900 mb-2">Halo Detektif Cilik! 🕵️‍♂️✨</h2>
-      <p class="text-base sm:text-lg font-medium text-slate-600 mb-6">Maupetualangan belajar yang mana hari ini?</p>
-
-      <!-- Pilihan Game Grid -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mx-auto mb-8">
-        <!-- Game 1: Detektif Pos -->
-        <div onclick="startHubGame('detektif')" class="game-card bg-gradient-to-b from-amber-400 to-orange-500 hover:from-amber-300 hover:to-orange-400 active:scale-95 text-white p-6 rounded-3xl border-b-8 border-orange-700 shadow-xl cursor-pointer flex flex-col items-center text-center">
-          <i class="fa-solid fa-magnifying-glass-chart text-5xl mb-3 text-yellow-200"></i>
-          <h3 class="text-2xl font-extrabold mb-1">Detektif Pos</h3>
-          <p class="text-xs sm:text-sm text-amber-100 font-medium mb-4">Cari harta karun rahasia dan pecahkan misteri soal di tiap pos!</p>
-          <span class="bg-white text-orange-800 font-bold px-4 py-2 rounded-xl text-sm shadow-md mt-auto">Mainkan Misi <i class="fa-solid fa-arrow-right"></i></span>
-        </div>
-
-        <!-- Game 2: Lampu Kilat -->
-        <div onclick="startHubGame('lampu')" class="game-card bg-gradient-to-b from-emerald-400 to-teal-500 hover:from-emerald-300 hover:to-teal-400 active:scale-95 text-white p-6 rounded-3xl border-b-8 border-teal-700 shadow-xl cursor-pointer flex flex-col items-center text-center">
-          <i class="fa-solid fa-stopwatch text-5xl mb-3 text-yellow-200"></i>
-          <h3 class="text-2xl font-extrabold mb-1">Lampu Kilat</h3>
-          <p class="text-xs sm:text-sm text-emerald-100 font-medium mb-4">Uji kecepatan reaksi dan jawab soal sebelum waktu habis!</p>
-          <span class="bg-white text-teal-800 font-bold px-4 py-2 rounded-xl text-sm shadow-md mt-auto">Mainkan Tantangan <i class="fa-solid fa-arrow-right"></i></span>
-        </div>
-      </div>
-
-      <!-- Pilih Kategori Pelajaran -->
-      <div class="bg-white/80 rounded-2xl p-4 max-w-xl mx-auto border-4 border-indigo-200">
-        <p class="text-sm sm:text-base font-extrabold text-indigo-900 mb-3"><i class="fa-solid fa-book-open text-indigo-600"></i> Pilih Topik Pelajaran:</p>
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
-          <button onclick="setCategory('matematika')" id="cat-matematika" class="category-btn bg-indigo-600 text-white font-extrabold py-2 px-3 rounded-xl shadow-md text-xs sm:text-sm transition">📐 Matematika</button>
-          <button onclick="setCategory('bahasa_inggris')" id="cat-bahasa_inggris" class="category-btn bg-white text-slate-700 font-extrabold py-2 px-3 rounded-xl border-2 border-slate-300 text-xs sm:text-sm transition">🔤 B. Inggris</button>
-          <button onclick="setCategory('komputer')" id="cat-komputer" class="category-btn bg-white text-slate-700 font-extrabold py-2 px-3 rounded-xl border-2 border-slate-300 text-xs sm:text-sm transition">💻 Komputer</button>
-          <button onclick="setCategory('ipas')" id="cat-ipas" class="category-btn bg-white text-slate-700 font-extrabold py-2 px-3 rounded-xl border-2 border-slate-300 text-xs sm:text-sm transition">🌱 IPAS</button>
-        </div>
-      </div>
     </div>
 
-    <!-- SCREEN 1: GAMEPLAY 1 (DETEKTIF POS) -->
-    <div id="screen-game-detektif" class="hidden flex-col gap-4">
-      <div class="bg-white/95 border-4 border-amber-400 rounded-2xl p-4 shadow-lg flex flex-wrap items-center justify-between gap-3">
-        <div class="flex items-center gap-3">
-          <button onclick="returnToHub()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl border-b-4 border-slate-400 text-xs sm:text-sm active:scale-95 transition">
-            <i class="fa-solid fa-house"></i> Menu Utama
-          </button>
-          <div>
-            <span id="detektif-badge" class="bg-amber-100 text-amber-800 text-xs font-bold px-2.5 py-0.5 rounded-full uppercase">Kategori</span>
-            <p class="text-sm sm:text-lg font-bold text-slate-800">Klik salah satu benda rahasia di peta!</p>
-          </div>
+    <!-- Top Utility Bar -->
+    <div class="bg-portal-dark text-white text-xs py-1.5 px-4 hidden sm:block">
+        <div class="container mx-auto flex justify-between items-center">
+            <span><i class="fa-solid fa-shield-halved mr-1 text-portal-500"></i> Portal Resmi Informasi Warga Perumahan Mutiara Intan Permai</span>
+            <div class="flex items-center gap-4">
+                <span id="admin-status-badge" class="bg-rose-500 text-white px-2 py-0.5 rounded text-[10px] font-bold"><i class="fa-solid fa-lock mr-1"></i> Mode Publik</span>
+                <span><i class="fa-solid fa-calendar-days mr-1 text-portal-500"></i> <span id="top-bar-bulan-tahun">Memuat...</span></span>
+                <span><i class="fa-solid fa-location-dot mr-1 text-portal-500"></i> Pekanbaru, Riau</span>
+            </div>
         </div>
-        <button onclick="speakInstructionText('Ayo klik salah satu benda yang berkedip di peta untuk menemukan pertanyaan rahasia!')" class="bg-sky-500 hover:bg-sky-600 text-white font-bold px-3 py-2 rounded-xl border-b-4 border-sky-700 text-xs sm:text-sm active:scale-95 flex items-center gap-2 shadow transition">
-          <i class="fa-solid fa-volume-high text-lg"></i> <span class="hidden sm:inline">Dengar Petunjuk</span>
-        </button>
-      </div>
-
-      <!-- MAP AREA -->
-      <div class="relative w-full h-[400px] sm:h-[480px] bg-cover bg-center rounded-3xl border-8 border-amber-500 shadow-2xl overflow-hidden" 
-           style="background-image: url('https://images.unsplash.com/photo-1579783902614-a3fb3927b675?q=80&w=1200&auto=format&fit=crop');">
-        <div class="absolute inset-0 bg-indigo-950/20"></div>
-
-        <button id="d-node-0" onclick="openDetektifNode(0)" class="map-object absolute top-[22%] left-[15%] bg-amber-400 hover:bg-amber-300 text-amber-900 border-4 border-amber-600 p-3 sm:p-4 rounded-3xl shadow-2xl cursor-pointer animate-pulse-gentle">
-          <i class="fa-solid fa-chest-filled text-3xl sm:text-4xl text-amber-900"></i>
-        </button>
-        <button id="d-node-1" onclick="openDetektifNode(1)" class="map-object absolute top-[18%] right-[18%] bg-blue-400 hover:bg-blue-300 text-blue-900 border-4 border-blue-600 p-3 sm:p-4 rounded-3xl shadow-2xl cursor-pointer animate-pulse-gentle">
-          <i class="fa-solid fa-book text-3xl sm:text-4xl text-blue-900"></i>
-        </button>
-        <button id="d-node-2" onclick="openDetektifNode(2)" class="map-object absolute bottom-[22%] left-[25%] bg-emerald-400 hover:bg-emerald-300 text-emerald-900 border-4 border-emerald-600 p-3 sm:p-4 rounded-3xl shadow-2xl cursor-pointer animate-pulse-gentle">
-          <i class="fa-solid fa-gem text-3xl sm:text-4xl text-emerald-900"></i>
-        </button>
-        <button id="d-node-3" onclick="openDetektifNode(3)" class="map-object absolute bottom-[25%] right-[20%] bg-rose-400 hover:bg-rose-300 text-rose-900 border-4 border-rose-600 p-3 sm:p-4 rounded-3xl shadow-2xl cursor-pointer animate-pulse-gentle">
-          <i class="fa-solid fa-tree text-3xl sm:text-4xl text-rose-900"></i>
-        </button>
-        <button id="d-node-4" onclick="openDetektifNode(4)" class="map-object absolute top-[52%] left-[50%] -translate-x-1/2 bg-purple-400 hover:bg-purple-300 text-purple-900 border-4 border-purple-600 p-3 sm:p-4 rounded-3xl shadow-2xl cursor-pointer animate-pulse-gentle">
-          <i class="fa-solid fa-trophy text-3xl sm:text-4xl text-purple-900"></i>
-        </button>
-      </div>
     </div>
 
-    <!-- SCREEN 2: GAMEPLAY 2 (LAMPU KILAT) -->
-    <div id="screen-game-lampu" class="hidden flex-col gap-4">
-      <div class="bg-white/95 border-4 border-emerald-400 rounded-2xl p-4 shadow-lg flex items-center justify-between gap-3">
-        <button onclick="returnToHub()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl border-b-4 border-slate-400 text-xs sm:text-sm active:scale-95 transition">
-          <i class="fa-solid fa-house"></i> Menu Utama
-        </button>
-        <div class="flex items-center gap-4">
-          <span id="lampu-timer" class="bg-emerald-100 text-emerald-800 px-3 py-1 rounded-xl font-black text-sm sm:text-base border-2 border-emerald-400">⏱️ 15s</span>
-          <span id="lampu-progress" class="text-sm sm:text-base font-extrabold text-slate-700">Soal 1 / 5</span>
-        </div>
-      </div>
+    <!-- Main Header / Navbar -->
+    <nav class="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
+        <div class="container mx-auto px-4 py-3 flex items-center justify-between gap-4">
+            <!-- Brand Logo -->
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="switchTab('dashboard')">
+                <div class="bg-portal-600 text-white p-2.5 rounded-xl shadow-md">
+                    <i class="fa-solid fa-house-chimney text-xl"></i>
+                </div>
+                <div>
+                    <span class="font-black text-lg text-gray-800 tracking-tight">Portal <span class="text-portal-600">Warga</span></span>
+                    <span class="block text-[10px] text-gray-500 font-medium uppercase tracking-wider">Mutiara Intan Permai</span>
+                </div>
+            </div>
 
-      <!-- Kotak Soal Lampu Kilat -->
-      <div class="glass-card rounded-3xl border-8 border-emerald-400 p-6 sm:p-10 shadow-2xl text-center">
-        <div class="flex items-center justify-center gap-2 mb-4">
-          <h3 id="lampu-question" class="text-xl sm:text-3xl font-black text-slate-800">Pertanyaan...</h3>
-          <button onclick="speakLampuQuestion()" class="text-sky-500 hover:text-sky-600 text-2xl p-1" title="Dengarkan Soal">
-            <i class="fa-solid fa-volume-high"></i>
-          </button>
+            <!-- Navigation Tabs (Desktop) -->
+            <div class="hidden xl:flex items-center space-x-1 bg-gray-100 p-1 rounded-xl text-xs font-semibold">
+                <button onclick="switchTab('dashboard')" id="nav-dashboard" class="px-3 py-2 rounded-lg bg-portal-600 text-white transition shadow-sm">Dashboard</button>
+                <button onclick="switchTab('peta')" id="nav-peta" class="px-3 py-2 rounded-lg text-gray-600 hover:text-portal-600 transition">Peta Blok</button>
+                <button onclick="switchTab('cekstatus')" id="nav-cekstatus" class="px-3 py-2 rounded-lg text-gray-600 hover:text-portal-600 transition">Cek Iuran & WA</button>
+                <button onclick="switchTab('pengaduan')" id="nav-pengaduan" class="px-3 py-2 rounded-lg text-gray-600 hover:text-portal-600 transition">Pengaduan Fasum</button>
+                <button onclick="switchTab('cashflow')" id="nav-cashflow" class="px-3 py-2 rounded-lg text-gray-600 hover:text-portal-600 transition">Cashflow</button>
+                <button onclick="switchTab('iuran')" id="nav-iuran" class="px-3 py-2 rounded-lg text-gray-600 hover:text-portal-600 transition">Detail Iuran</button>
+            </div>
+
+            <!-- Right Actions -->
+            <div class="flex items-center gap-2">
+                <button onclick="openAdminModal()" id="btn-admin-toggle" class="bg-gray-800 hover:bg-gray-900 text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition flex items-center gap-1.5 shadow-sm">
+                    <i class="fa-solid fa-lock" id="admin-icon"></i> <span id="admin-btn-text">Admin Login</span>
+                </button>
+                <button onclick="loadLiveData()" class="bg-portal-600 hover:bg-portal-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition flex items-center gap-1.5 shadow-sm">
+                    <i class="fa-solid fa-rotate" id="refresh-icon"></i> <span>Sinkron</span>
+                </button>
+            </div>
         </div>
-        <div id="lampu-options" class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-xl mx-auto mt-6"></div>
-        <div id="lampu-feedback" class="hidden mt-4 p-3 rounded-2xl font-bold text-sm"></div>
-      </div>
+        <!-- Mobile Sub-Navigation -->
+        <div class="flex xl:hidden bg-gray-100 border-t border-gray-200 px-2 py-2 justify-around text-[10px] sm:text-xs font-semibold overflow-x-auto gap-1">
+            <button onclick="switchTab('dashboard')" id="mob-dashboard" class="text-portal-600 font-bold whitespace-nowrap px-2"><i class="fa-solid fa-chart-pie mr-1"></i> Dash</button>
+            <button onclick="switchTab('peta')" id="mob-peta" class="text-gray-600 whitespace-nowrap px-2"><i class="fa-solid fa-map mr-1"></i> Peta</button>
+            <button onclick="switchTab('cekstatus')" id="mob-cekstatus" class="text-gray-600 whitespace-nowrap px-2"><i class="fa-solid fa-magnifying-glass mr-1"></i> Warga</button>
+            <button onclick="switchTab('pengaduan')" id="mob-pengaduan" class="text-gray-600 whitespace-nowrap px-2"><i class="fa-solid fa-bullhorn mr-1"></i> Aduan</button>
+            <button onclick="switchTab('cashflow')" id="mob-cashflow" class="text-gray-600 whitespace-nowrap px-2"><i class="fa-solid fa-wallet mr-1"></i> Kas</button>
+            <button onclick="switchTab('iuran')" id="mob-iuran" class="text-gray-600 whitespace-nowrap px-2"><i class="fa-solid fa-file-invoice mr-1"></i> Iuran</button>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="container mx-auto px-4 mt-6">
+        
+        <!-- Loading Indicator -->
+        <div id="loading-state" class="text-center py-16 text-gray-500 bg-white rounded-2xl shadow-sm border border-gray-100 mb-6">
+            <i class="fa-solid fa-circle-notch fa-spin text-3xl mb-3 text-portal-600"></i>
+            <p class="text-sm font-medium">Menghubungkan ke Google Sheets...</p>
+        </div>
+
+        <!-- ================= PAGE 1: DASHBOARD ================= -->
+        <div id="page-dashboard" class="space-y-6">
+            <div class="bg-gradient-to-r from-portal-600 to-portal-700 rounded-2xl p-6 text-white shadow-md relative overflow-hidden flex flex-col md:flex-row justify-between items-center gap-4">
+                <div>
+                    <span class="bg-white/20 text-white text-[11px] px-2.5 py-0.5 rounded-full font-semibold uppercase tracking-wider">Sistem Informasi Warga</span>
+                    <h1 class="text-xl md:text-2xl font-bold mt-2">Dashboard Rekapitulasi & Keuangan Warga</h1>
+                    <p class="text-portal-50 text-xs md:text-sm mt-1 max-w-xl">Transparansi iuran bulanan, kas operasional, dan statistik hunian perumahan secara real-time.</p>
+                </div>
+                <div class="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-3 text-center md:w-36">
+                    <span class="text-[10px] text-portal-50 block uppercase">Status Kas</span>
+                    <span class="text-xs md:text-sm font-bold text-white">Aktif & Transparan</span>
+                </div>
+            </div>
+
+            <!-- Summary Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-200">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="bg-portal-50 p-3 rounded-xl text-portal-600"><i class="fa-solid fa-wallet text-lg"></i></div>
+                        <span class="text-[10px] bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded font-medium">Pemasukan</span>
+                    </div>
+                    <p class="text-xs text-gray-500 font-medium">Total Iuran Terkumpul</p>
+                    <h2 id="val-iuran" class="text-lg font-bold text-gray-800 mt-1">-</h2>
+                    <span id="txt-bulan-iuran" class="text-[11px] text-gray-400 mt-1 block">Bulan Berjalan</span>
+                </div>
+
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-200">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="bg-rose-50 p-3 rounded-xl text-rose-600"><i class="fa-solid fa-file-invoice-dollar text-lg"></i></div>
+                        <span class="text-[10px] bg-rose-50 text-rose-700 px-2 py-0.5 rounded font-medium">Pengeluaran</span>
+                    </div>
+                    <p class="text-xs text-gray-500 font-medium">CashFlow Keluar</p>
+                    <h2 id="val-keluar" class="text-lg font-bold text-gray-800 mt-1">-</h2>
+                    <span class="text-[11px] text-gray-400 mt-1 block">Pengeluaran Operasional</span>
+                </div>
+
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-200">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="bg-blue-50 p-3 rounded-xl text-blue-600"><i class="fa-solid fa-piggy-bank text-lg"></i></div>
+                        <span class="text-[10px] bg-blue-50 text-blue-700 px-2 py-0.5 rounded font-medium">Saldo Netto</span>
+                    </div>
+                    <p class="text-xs text-gray-500 font-medium">Sisa Saldo Kas</p>
+                    <h2 id="val-saldo" class="text-lg font-bold text-gray-800 mt-1">-</h2>
+                    <span class="text-[11px] text-gray-400 mt-1 block">Saldo Kas Akhir</span>
+                </div>
+
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-200">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="bg-indigo-50 p-3 rounded-xl text-indigo-600"><i class="fa-solid fa-building text-lg"></i></div>
+                        <span class="text-[10px] bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded font-medium">Hunian</span>
+                    </div>
+                    <p class="text-xs text-gray-500 font-medium">Total Rumah</p>
+                    <h2 id="val-total-rumah" class="text-lg font-bold text-gray-800 mt-1">- Unit</h2>
+                    <span id="txt-detail-rumah" class="text-[11px] text-gray-400 mt-1 block">-</span>
+                </div>
+            </div>
+
+            <!-- Analytics Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+                    <h3 class="font-bold text-gray-800 text-sm mb-4 flex items-center gap-2"><i class="fa-solid fa-chart-pie text-portal-600"></i> Rincian Status Hunian Rumah</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <div class="flex justify-between text-xs mb-1.5"><span class="text-gray-600 font-medium">Rumah Ditempati</span><span id="stat-ditempati" class="font-bold text-gray-800">-</span></div>
+                            <div class="w-full bg-gray-100 rounded-full h-2 overflow-hidden"><div class="bg-portal-600 h-2 rounded-full" style="width: 70%"></div></div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-xs mb-1.5"><span class="text-gray-600 font-medium">Rumah Disewakan</span><span id="stat-disewakan" class="font-bold text-gray-800">-</span></div>
+                            <div class="w-full bg-gray-100 rounded-full h-2 overflow-hidden"><div class="bg-indigo-500 h-2 rounded-full" style="width: 20%"></div></div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-xs mb-1.5"><span class="text-gray-600 font-medium">Rumah Kosong</span><span id="stat-kosong" class="font-bold text-gray-800">-</span></div>
+                            <div class="w-full bg-gray-100 rounded-full h-2 overflow-hidden"><div class="bg-amber-500 h-2 rounded-full" style="width: 10%"></div></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+                    <h3 class="font-bold text-gray-800 text-sm mb-4 flex items-center gap-2"><i class="fa-solid fa-trash-can text-portal-600"></i> Rekapitulasi Layanan Sampah (LPS)</h3>
+                    <div class="grid grid-cols-2 gap-3 text-center">
+                        <div class="bg-gray-50 p-4 rounded-xl border border-gray-100">
+                            <span class="text-[11px] text-gray-500 block">Warga Ikut LPS</span>
+                            <h4 id="lps-ikut" class="text-base font-bold text-gray-800 mt-1">-</h4>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded-xl border border-gray-100">
+                            <span class="text-[11px] text-gray-500 block">Setor Sampah Ke LPS</span>
+                            <h4 id="lps-biaya" class="text-base font-bold text-rose-600 mt-1">-</h4>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded-xl border border-gray-100">
+                            <span class="text-[11px] text-gray-500 block">LPS Terkumpul Bulan Ini</span>
+                            <h4 id="lps-terkumpul" class="text-base font-bold text-portal-600 mt-1">-</h4>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded-xl border border-gray-100">
+                            <span class="text-[11px] text-gray-500 block">Belum Bayar LPS</span>
+                            <h4 id="lps-belum" class="text-base font-bold text-amber-600 mt-1">-</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= PAGE 2: PETA BLOK ================= -->
+        <div id="page-peta" class="hidden space-y-6">
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+                    <div>
+                        <h2 class="text-lg font-bold text-gray-800"><i class="fa-solid fa-map-location-dot text-portal-600 mr-2"></i> Peta Blok Hunian Perumahan</h2>
+                        <p class="text-xs text-gray-500 mt-0.5">Tata letak blok sesuai denah (Atas: 1-7, Bawah: 14-8 berhadap-hadapan).</p>
+                    </div>
+                    <div class="flex items-center gap-3 text-[11px] font-medium">
+                        <span class="flex items-center gap-1.5"><span class="w-3 h-3 bg-portal-600 rounded"></span> Ditempati</span>
+                        <span class="flex items-center gap-1.5"><span class="w-3 h-3 bg-indigo-500 rounded"></span> Disewakan</span>
+                        <span class="flex items-center gap-1.5"><span class="w-3 h-3 bg-amber-500 rounded"></span> Kosong</span>
+                    </div>
+                </div>
+
+                <div class="flex flex-wrap gap-2 mb-6 border-b border-gray-100 pb-4">
+                    <button onclick="renderDenahBlok('ALL')" id="btn-denah-ALL" class="px-4 py-1.5 rounded-xl text-xs font-bold bg-portal-600 text-white transition shadow-sm">Semua Blok</button>
+                    <button onclick="renderDenahBlok('A')" id="btn-denah-A" class="px-4 py-1.5 rounded-xl text-xs font-semibold bg-gray-100 text-gray-600 hover:bg-gray-200 transition">Blok A</button>
+                    <button onclick="renderDenahBlok('B')" id="btn-denah-B" class="px-4 py-1.5 rounded-xl text-xs font-semibold bg-gray-100 text-gray-600 hover:bg-gray-200 transition">Blok B</button>
+                    <button onclick="renderDenahBlok('C')" id="btn-denah-C" class="px-4 py-1.5 rounded-xl text-xs font-semibold bg-gray-100 text-gray-600 hover:bg-gray-200 transition">Blok C</button>
+                    <button onclick="renderDenahBlok('D')" id="btn-denah-D" class="px-4 py-1.5 rounded-xl text-xs font-semibold bg-gray-100 text-gray-600 hover:bg-gray-200 transition">Blok D + Fasum</button>
+                    <button onclick="renderDenahBlok('E')" id="btn-denah-E" class="px-4 py-1.5 rounded-xl text-xs font-semibold bg-gray-100 text-gray-600 hover:bg-gray-200 transition">Blok E</button>
+                    <button onclick="renderDenahBlok('F')" id="btn-denah-F" class="px-4 py-1.5 rounded-xl text-xs font-semibold bg-gray-100 text-gray-600 hover:bg-gray-200 transition">Blok F</button>
+                    <button onclick="renderDenahBlok('G')" id="btn-denah-G" class="px-4 py-1.5 rounded-xl text-xs font-semibold bg-gray-100 text-gray-600 hover:bg-gray-200 transition">Blok G</button>
+                </div>
+
+                <div id="denah-container" class="space-y-6"></div>
+            </div>
+        </div>
+
+        <!-- ================= PAGE 3: CEK STATUS IURAN & WA ================= -->
+        <div id="page-cekstatus" class="hidden space-y-6">
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+                <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-6">
+                    <div>
+                        <h2 class="text-lg font-bold text-gray-800"><i class="fa-solid fa-magnifying-glass text-portal-600 mr-2"></i> Cek Status Iuran Warga & WhatsApp Reminder</h2>
+                        <p class="text-xs text-gray-500 mt-0.5">Filter status iuran warga dan kirim pengingat tagihan via WhatsApp (Khusus Admin).</p>
+                    </div>
+                    <div class="flex flex-wrap gap-2 w-full lg:w-auto">
+                        <select id="filter-iuran-sampah" onchange="filterWargaTable()" class="bg-gray-50 border border-gray-300 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-portal-600">
+                            <option value="">Filter Sampah (Semua)</option>
+                            <option value="Tidak Ikut LPS">Tidak Ikut LPS</option>
+                            <option value="Belum Bayar">Belum Bayar (Sampah)</option>
+                            <option value="Sudah Bayar">Sudah Bayar (Sampah)</option>
+                        </select>
+                        <select id="filter-iuran-perum" onchange="filterWargaTable()" class="bg-gray-50 border border-gray-300 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-portal-600">
+                            <option value="">Filter Perumahan (Semua)</option>
+                            <option value="Belum Bayar">Belum Bayar (Perum)</option>
+                            <option value="Sudah Bayar">Sudah Bayar (Perum)</option>
+                        </select>
+                        <input type="text" id="search-warga" onkeyup="filterWargaTable()" placeholder="Cari No Rumah / Nama..." class="bg-gray-50 border border-gray-300 rounded-xl px-4 py-2 text-xs focus:outline-none focus:border-portal-600 w-full sm:w-56">
+                    </div>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse text-xs">
+                        <thead>
+                            <tr class="bg-gray-100 text-gray-600 uppercase text-[10px]">
+                                <th class="p-3">No Rumah</th>
+                                <th class="p-3">Nama Warga</th>
+                                <th class="p-3">Status Rumah</th>
+                                <th class="p-3">Iuran Sampah</th>
+                                <th class="p-3">Iuran Perumahan</th>
+                                <th class="p-3 text-center">Aksi WhatsApp (Admin)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table-warga-body" class="divide-y divide-gray-100"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= PAGE 4: PENGADUAN FASUM ================= -->
+        <div id="page-pengaduan" class="hidden space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 lg:col-span-1">
+                    <h2 class="text-base font-bold text-gray-800 mb-1"><i class="fa-solid fa-bullhorn text-portal-600 mr-2"></i> Sampaikan Aduan Fasum</h2>
+                    <p class="text-xs text-gray-500 mb-4">Laporkan kerusakan fasilitas umum atau keluhan lingkungan kepada pengurus RT.</p>
+                    
+                    <form id="form-pengaduan" onsubmit="submitPengaduan(event)" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-700 mb-1">Nomor Rumah</label>
+                            <input type="text" id="adu-rumah" required placeholder="Contoh: C12" class="w-full bg-gray-50 border border-gray-300 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-portal-600">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-700 mb-1">Nama Pelapor</label>
+                            <input type="text" id="adu-nama" required placeholder="Nama lengkap warga" class="w-full bg-gray-50 border border-gray-300 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-portal-600">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-700 mb-1">Kategori Keluhan</label>
+                            <select id="adu-kategori" class="w-full bg-gray-50 border border-gray-300 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-portal-600">
+                                <option value="Lampu Jalan / Penerangan">Lampu Jalan / Penerangan</option>
+                                <option value="Saluran Air / Parit Tersumbat">Saluran Air / Parit Tersumbat</option>
+                                <option value="Kebersihan & Sampah">Kebersihan & Sampah</option>
+                                <option value="Keamanan & Ketertiban">Keamanan & Ketertiban</option>
+                                <option value="Lainnya">Lainnya</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-700 mb-1">Isi Laporan / Keterangan</label>
+                            <textarea id="adu-pesan" required rows="3" placeholder="Jelaskan detail lokasi dan masalahnya..." class="w-full bg-gray-50 border border-gray-300 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-portal-600"></textarea>
+                        </div>
+                        <button type="submit" id="btn-submit-adu" class="w-full bg-portal-600 hover:bg-portal-700 text-white font-semibold py-2.5 rounded-xl text-xs transition shadow-sm flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-paper-plane"></i> Kirim Laporan
+                        </button>
+                    </form>
+                </div>
+
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 lg:col-span-2">
+                    <h2 class="text-base font-bold text-gray-800 mb-1"><i class="fa-solid fa-list-check text-portal-600 mr-2"></i> Daftar Pengaduan & Aspirasi Warga</h2>
+                    <p class="text-xs text-gray-500 mb-4">Pantau status penanganan keluhan fasilitas umum yang telah dilaporkan.</p>
+                    
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse text-xs">
+                            <thead>
+                                <tr class="bg-gray-100 text-gray-600 uppercase text-[10px]">
+                                    <th class="p-3">Tanggal</th>
+                                    <th class="p-3">Rumah & Pelapor</th>
+                                    <th class="p-3">Kategori</th>
+                                    <th class="p-3">Isi Laporan</th>
+                                    <th class="p-3">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="table-pengaduan-body" class="divide-y divide-gray-100"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= PAGE 5: CASHFLOW (TERMASUK TOMBOL PRINT/PDF) ================= -->
+        <div id="page-cashflow" class="hidden space-y-6">
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+                    <div>
+                        <h2 class="text-lg font-bold text-gray-800"><i class="fa-solid fa-wallet text-portal-600 mr-2"></i> Riwayat CashFlow Kas Warga</h2>
+                        <p class="text-xs text-gray-500 mt-0.5">Filter transaksi berdasarkan kategori dan pencarian kata kunci.</p>
+                    </div>
+                    <div class="flex flex-wrap gap-2 w-full sm:w-auto items-center no-print">
+                        <select id="filter-kategori" onchange="filterCashflow()" class="bg-gray-50 border border-gray-300 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-portal-600">
+                            <option value="">Semua Kategori</option>
+                        </select>
+                        <input type="text" id="search-cashflow" onkeyup="filterCashflow()" placeholder="Cari transaksi..." class="bg-gray-50 border border-gray-300 rounded-xl px-4 py-2 text-xs focus:outline-none focus:border-portal-600 w-full sm:w-44">
+                        <!-- Tombol Export PDF / Cetak Cashflow -->
+                        <button onclick="printReport('cashflow')" class="bg-gray-800 hover:bg-gray-900 text-white px-3 py-2 rounded-xl text-xs font-semibold transition flex items-center gap-1.5 shadow-sm">
+                            <i class="fa-solid fa-print"></i> <span>Cetak / PDF</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse text-xs">
+                        <thead>
+                            <tr class="bg-gray-100 text-gray-600 uppercase text-[10px]">
+                                <th class="p-3">Tanggal <i class="fa-solid fa-arrow-down-short-wide ml-1 text-portal-600 no-print"></i></th>
+                                <th class="p-3">Kategori</th>
+                                <th class="p-3">Transaksi</th>
+                                <th class="p-3">Status</th>
+                                <th class="p-3">Nominal</th>
+                                <th class="p-3">Keterangan</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table-cashflow-body" class="divide-y divide-gray-100"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= PAGE 6: DETAIL IURAN (TERMASUK TOMBOL PRINT/PDF) ================= -->
+        <div id="page-iuran" class="hidden space-y-6">
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+                <div class="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4 mb-6">
+                    <div>
+                        <h2 class="text-lg font-bold text-gray-800"><i class="fa-solid fa-file-invoice text-portal-600 mr-2"></i> Rincian Detail Iuran Warga</h2>
+                        <p class="text-xs text-gray-500 mt-0.5">Filter berdasarkan No Rumah, Kategori, Bulan, Tahun, dan kata kunci.</p>
+                    </div>
+                    <div class="flex flex-wrap gap-2 w-full xl:w-auto items-center no-print">
+                        <select id="filter-iuran-norumah" onchange="filterIuran()" class="bg-gray-50 border border-gray-300 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-portal-600">
+                            <option value="">Semua No Rumah</option>
+                        </select>
+                        <select id="filter-iuran-kat" onchange="filterIuran()" class="bg-gray-50 border border-gray-300 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-portal-600">
+                            <option value="">Semua Kategori</option>
+                            <option value="Iuran Sampah">Iuran Sampah</option>
+                            <option value="Iuran Perumahan">Iuran Perumahan</option>
+                        </select>
+                        <select id="filter-iuran-bulan" onchange="filterIuran()" class="bg-gray-50 border border-gray-300 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-portal-600">
+                            <option value="">Semua Bulan</option>
+                            <option value="Januari">Januari</option>
+                            <option value="Februari">Februari</option>
+                            <option value="Maret">Maret</option>
+                            <option value="April">April</option>
+                            <option value="Mei">Mei</option>
+                            <option value="Juni">Juni</option>
+                            <option value="Juli">Juli</option>
+                            <option value="Agustus">Agustus</option>
+                            <option value="September">September</option>
+                            <option value="Oktober">Oktober</option>
+                            <option value="November">November</option>
+                            <option value="Desember">Desember</option>
+                        </select>
+                        <select id="filter-iuran-tahun" onchange="filterIuran()" class="bg-gray-50 border border-gray-300 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-portal-600">
+                            <option value="">Semua Tahun</option>
+                        </select>
+                        <input type="text" id="search-iuran" onkeyup="filterIuran()" placeholder="Cari nama..." class="bg-gray-50 border border-gray-300 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-portal-600 w-full sm:w-36">
+                        <!-- Tombol Export PDF / Cetak Detail Iuran -->
+                        <button onclick="printReport('iuran')" class="bg-gray-800 hover:bg-gray-900 text-white px-3 py-2 rounded-xl text-xs font-semibold transition flex items-center gap-1.5 shadow-sm">
+                            <i class="fa-solid fa-print"></i> <span>Cetak / PDF</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse text-xs">
+                        <thead>
+                            <tr class="bg-gray-100 text-gray-600 uppercase text-[10px]">
+                                <th class="p-3">Tanggal <i class="fa-solid fa-arrow-down-short-wide ml-1 text-portal-600 no-print"></i></th>
+                                <th class="p-3">No Rumah</th>
+                                <th class="p-3">Kategori</th>
+                                <th class="p-3">Nama Warga</th>
+                                <th class="p-3">Bulan / Tahun</th>
+                                <th class="p-3">Nominal</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table-iuran-body" class="divide-y divide-gray-100"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Kolom Tanda Tangan Khusus Dokumen Cetak/PDF -->
+        <div id="print-footer-signatures" class="mt-12 justify-between text-xs text-center font-semibold px-8">
+            <div>
+                <p>Mengetahui,</p>
+                <p class="font-bold">Ketua Perumahan</p>
+                <div class="h-16"></div>
+                <p class="border-b border-gray-800 inline-block px-8">( ........................................ )</p>
+            </div>
+            <div>
+                <p>Pekanbaru, <span id="print-sign-date"></span></p>
+                <p class="font-bold">Bendahara</p>
+                <div class="h-16"></div>
+                <p class="border-b border-gray-800 inline-block px-8">( ........................................ )</p>
+            </div>
+        </div>
+
+        <!-- Error State -->
+        <div id="error-state" class="hidden bg-rose-50 border border-rose-200 text-rose-700 p-6 rounded-2xl text-center mb-6">
+            <i class="fa-solid fa-triangle-exclamation text-2xl mb-2"></i>
+            <p id="error-message" class="text-sm font-medium">Gagal memuat data live dari Google Sheets.</p>
+        </div>
     </div>
 
-  </main>
-
-  <!-- MODAL SOAL UTAMA -->
-  <div id="question-modal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div id="modal-card" class="glass-card max-w-lg w-full rounded-3xl border-8 border-amber-400 p-6 sm:p-8 shadow-2xl text-center relative transform transition-all duration-300 scale-90 opacity-0">
-      
-      <button onclick="closeModal()" class="absolute -top-4 -right-4 bg-rose-500 hover:bg-rose-600 text-white border-4 border-white w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center text-xl font-bold shadow-lg active:scale-90 transition">
-        <i class="fa-solid fa-xmark"></i>
-      </button>
-
-      <div class="inline-block bg-amber-100 text-amber-800 border-2 border-amber-400 px-4 py-1 rounded-full text-xs sm:text-sm font-extrabold uppercase tracking-wide mb-3" id="modal-badge">
-        🔍 Pos Rahasia
-      </div>
-
-      <div class="flex items-center justify-center gap-2 mb-4">
-        <h3 id="modal-question-text" class="text-xl sm:text-2xl font-black text-slate-800">Pertanyaan...</h3>
-        <button onclick="speakModalQuestion()" class="text-sky-500 hover:text-sky-600 text-xl p-1" title="Dengarkan Soal">
-          <i class="fa-solid fa-volume-high"></i>
-        </button>
-      </div>
-
-      <!-- Hint Box -->
-      <div class="my-3 p-3 bg-sky-50 rounded-2xl border-2 border-sky-200 text-xs sm:text-sm font-semibold text-sky-900">
-        💡 <span id="modal-hint-text">Petunjuk muncul di sini</span>
-      </div>
-
-      <!-- Options Container -->
-      <div id="modal-options" class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4"></div>
-
-      <div id="modal-feedback" class="hidden mt-4 p-3 rounded-2xl text-center font-bold text-sm"></div>
+    <!-- Modal Detail Rumah -->
+    <div id="modal-rumah" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl relative animate-in fade-in zoom-in duration-200">
+            <button onclick="closeModalRumah()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-lg"><i class="fa-solid fa-xmark"></i></button>
+            <div class="flex items-center space-x-3 mb-4">
+                <div id="modal-icon-bg" class="bg-portal-100 text-portal-700 p-3 rounded-xl"><i class="fa-solid fa-house text-xl"></i></div>
+                <div>
+                    <h3 id="modal-no-rumah" class="font-black text-lg text-gray-800">Rumah -</h3>
+                    <span id="modal-status-badge" class="text-[10px] px-2 py-0.5 rounded font-semibold">-</span>
+                </div>
+            </div>
+            <div class="space-y-3 text-xs border-t border-gray-100 pt-4">
+                <div>
+                    <span class="text-gray-400 block text-[10px] uppercase font-semibold">Nama Warga / Penghuni</span>
+                    <span id="modal-nama-warga" class="font-bold text-gray-800 text-sm">-</span>
+                </div>
+                <div>
+                    <span class="text-gray-400 block text-[10px] uppercase font-semibold">Status Iuran Sampah</span>
+                    <span id="modal-iuran-sampah" class="font-semibold text-gray-700">-</span>
+                </div>
+                <div>
+                    <span class="text-gray-400 block text-[10px] uppercase font-semibold">Status Iuran Perumahan</span>
+                    <span id="modal-iuran-perumahan" class="font-semibold text-gray-700">-</span>
+                </div>
+            </div>
+            <div class="mt-6 pt-4 border-t border-gray-100 flex justify-end">
+                <button onclick="closeModalRumah()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-xl font-semibold text-xs transition">Tutup</button>
+            </div>
+        </div>
     </div>
-  </div>
 
-  <!-- FOOTER -->
-  <footer class="w-full text-center p-3 text-slate-600 text-xs sm:text-sm font-semibold">
-    <p>💡 Super Edukasi Hub • Game Interaktif SD Kelas 1-6</p>
-  </footer>
+    <!-- Modal Login Admin -->
+    <div id="modal-admin" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-xl relative animate-in fade-in zoom-in duration-200">
+            <button onclick="closeAdminModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-lg"><i class="fa-solid fa-xmark"></i></button>
+            
+            <div id="view-login-form">
+                <div class="text-center mb-4">
+                    <div class="bg-portal-100 text-portal-700 w-12 h-12 rounded-2xl flex items-center justify-center mx-auto mb-2 text-lg shadow-sm"><i class="fa-solid fa-shield-halved"></i></div>
+                    <h3 class="font-bold text-base text-gray-800">Login Administrator</h3>
+                    <p class="text-xs text-gray-500">Masukkan passcode angka untuk membuka akses kirim WhatsApp.</p>
+                </div>
+                <form onsubmit="handleAdminLogin(event)" class="space-y-3">
+                    <input type="password" id="admin-passcode-input" inputmode="numeric" pattern="[0-9]*" required placeholder="Masukkan Passcode Angka" class="w-full text-center tracking-widest bg-gray-50 border border-gray-300 rounded-xl px-3 py-2 text-sm font-bold focus:outline-none focus:border-portal-600">
+                    <button type="submit" class="w-full bg-portal-600 hover:bg-portal-700 text-white font-semibold py-2.5 rounded-xl text-xs transition shadow-sm">Masuk</button>
+                </form>
+                <div class="mt-4 text-center">
+                    <button onclick="triggerForgotPassword()" class="text-[11px] text-portal-600 hover:underline font-medium">Lupa Password? (Kirim ke coxdoank@gmail.com)</button>
+                </div>
+            </div>
 
-  <!-- SCRIPT LOGIKA UTAMA -->
-  <script>
-    // ==========================================
-    // 1. BANK SOAL DINAMIS BERDASARKAN KATEGORI
-    // ==========================================
-    const dynamicQuestionBank = {
-      matematika: [
-        { text: "Berapakah hasil dari 8 ditambah 6 ?", options: ["12", "14", "15", "13"], correct: 1, hint: "Yuk hitung maju 6 angka setelah 8!" },
-        { text: "Manakah angka kelipatan 5 di bawah ini?", options: ["12", "18", "25", "22"], correct: 2, hint: "Cari angka yang berakhiran 0 atau 5 ya." },
-        { text: "Ibu punya 12 apel, diberikan ke Andi 4. Sisa apel ibu berapa?", options: ["7", "8", "9", "6"], correct: 1, hint: "Kurangi 12 dengan 4 ya, pintar!" },
-        { text: "Berapa jumlah sisi pada sebuah bangun datar Persegi?", options: ["3", "4", "5", "6"], correct: 1, hint: "Semua sisinya sama panjang lho." },
-        { text: "Hasil dari 18 dibagi 2 adalah...", options: ["8", "9", "7", "6"], correct: 1, hint: "Coba pikirkan, 9 dikali 2 berapa?" }
-      ],
-      bahasa_inggris: [
-        { text: "Bahasa Inggris dari kata 'Kucing' adalah...", options: ["Dog", "Cat", "Fish", "Bird"], correct: 1, hint: "Hewan berbulu lucu yang suka mengeong!" },
-        { text: "Warna 'Blue' artinya dalam bahasa Indonesia adalah...", options: ["Merah", "Hijau", "Biru", "Kuning"], correct: 2, hint: "Warnanya sama seperti air laut yang luas." },
-        { text: "Apa bahasa Inggris dari angka '10'?", options: ["Eight", "Nine", "Ten", "Eleven"], correct: 2, hint: "Huruf depannya T, bunyinya Ten!" },
-        { text: "Hewan yang memiliki belalai panjang adalah...", options: ["Elephant", "Lion", "Monkey", "Duck"], correct: 0, hint: "Namanya Gajah dalam bahasa Inggris." },
-        { text: "Ucapan saat berpisah di malam hari adalah...", options: ["Good Morning", "Good Night", "Hello", "Good Afternoon"], correct: 1, hint: "Waktunya tidur, ucapkan...?" }
-      ],
-      komputer: [
-        { text: "Alat yang digunakan untuk mengetik di komputer adalah...", options: ["Mouse", "Keyboard", "Monitor", "Printer"], correct: 1, hint: "Punya banyak tombol huruf A sampai Z!" },
-        { text: "Bagian komputer yang menampilkan gambar disebut...", options: ["CPU", "Speaker", "Monitor", "Mouse"], correct: 2, hint: "Bentuknya mirip layar televisi di rumah." },
-        { text: "Perangkat keras yang bentuknya mirip hewan tikus adalah...", options: ["Mouse", "Keyboard", "Flashdisk", "Printer"], correct: 0, hint: "Dipakai untuk menggerakkan kursor di layar." },
-        { text: "Otak dari sebuah komputer dinamakan...", options: ["RAM", "CPU", "Monitor", "Keyboard"], correct: 1, hint: "Pusat pemrosesan data utama." },
-        { text: "Program untuk menjelajahi internet disebut...", options: ["Paint", "Browser", "Calculator", "Word"], correct: 1, hint: "Contohnya seperti Google Chrome." }
-      ],
-      ipas: [
-        { text: "Bagian tumbuhan yang menyerap air dari dalam tanah adalah...", options: ["Daun", "Akar", "Bunga", "Batang"], correct: 1, hint: "Tumbuhnya tersembunyi di dalam tanah." },
-        { text: "Hewan yang hidup di air dan bernapas menggunakan insang adalah...", options: ["Kucing", "Ikan", "Burung", "Kelinci"], correct: 1, hint: "Bisa berenang lincah di dalam air." },
-        { text: "Matahari selalu terbit dari arah...", options: ["Barat", "Selatan", "Timur", "Utara"], correct: 2, hint: "Arah datangnya pagi hari yang cerah." },
-        { text: "Benda berwujud gas di bawah ini adalah...", options: ["Es batu", "Air", "Udara dalam balon", "Besi"], correct: 2, hint: "Tidak terlihat tapi bisa kita tiup ke dalam balon." },
-        { text: "Alat indera manusia untuk mengecap rasa makanan adalah...", options: ["Lidah", "Mata", "Telinga", "Hidung"], correct: 0, hint: "Letaknya ada di dalam mulut kita." }
-      ]
-    };
+            <div id="view-admin-panel" class="hidden space-y-4">
+                <div class="text-center mb-2">
+                    <div class="bg-emerald-100 text-emerald-700 w-12 h-12 rounded-2xl flex items-center justify-center mx-auto mb-2 text-lg shadow-sm"><i class="fa-solid fa-user-shield"></i></div>
+                    <h3 class="font-bold text-base text-gray-800">Panel Admin Aktif</h3>
+                    <p class="text-xs text-emerald-600 font-medium">Akses tombol WhatsApp terbuka.</p>
+                </div>
+                
+                <div class="border-t border-gray-100 pt-3 space-y-3">
+                    <h4 class="text-xs font-bold text-gray-700">Ubah Passcode Master</h4>
+                    <form onsubmit="handleChangePassword(event)" class="space-y-2">
+                        <input type="password" id="new-passcode-input" inputmode="numeric" pattern="[0-9]*" required placeholder="Passcode Baru (Angka)" class="w-full bg-gray-50 border border-gray-300 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-portal-600">
+                        <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 rounded-xl text-xs transition">Simpan Password Baru</button>
+                    </form>
+                </div>
 
-    // ==========================================
-    // 2. STATE & AUDIO SYNTHESIZER (RAMAH ANAK)
-    // ==========================================
-    let currentCategory = 'matematika';
-    let activeGameType = 'detektif';
-    let activeQuestions = [];
-    let score = 0;
-    let stars = 0;
-    let soundEnabled = true;
-    let completedObjects = new Set();
-    let activeNodeIndex = null;
+                <div class="pt-2">
+                    <button onclick="handleAdminLogout()" class="w-full bg-rose-50 hover:bg-rose-100 text-rose-700 font-semibold py-2 rounded-xl text-xs transition">Logout Admin</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    let lampuTimerInterval = null;
-    let timeLeft = 15;
-    let currentLampuIndex = 0;
+    <!-- Footer -->
+    <footer class="text-center text-xs text-gray-400 mt-12 border-t border-gray-200 pt-6">
+        &copy; 2026 Portal Warga Mutiara Intan Permai • Live Google Sheets Data
+    </footer>
 
-    const AudioContext = window.AudioContext || window.webkitAudioContext;
-    let audioCtx = null;
+    <!-- JavaScript Logic -->
+    <script>
+        const API_URL = "https://script.google.com/macros/s/AKfycbwN3ps6UsE-nDMFo0KGLTrtd3BUf5kjQNLgIfpiPTo65lVsPG3hQZ2vKqVG2kL0ZXpS/exec";
 
-    function initAudio() {
-      if (!audioCtx) audioCtx = new AudioContext();
-    }
+        let globalCashflowData = [];
+        let globalIuranData = [];
+        let globalWargaData = [];
+        let globalPengaduanData = [];
 
-    function playSuccessSound() {
-      if (!soundEnabled) return;
-      initAudio();
-      const now = audioCtx.currentTime;
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
+        let isAdminLoggedIn = false;
+        let adminPasscode = localStorage.getItem('rt_admin_passcode') || '1234';
 
-      osc.type = 'triangle';
-      osc.frequency.setValueAtTime(523.25, now);
-      osc.frequency.setValueAtTime(659.25, now + 0.1);
-      osc.frequency.setValueAtTime(783.99, now + 0.2);
-      osc.frequency.setValueAtTime(1046.50, now + 0.3);
-
-      gain.gain.setValueAtTime(0.3, now);
-      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.6);
-
-      osc.connect(gain);
-      gain.connect(audioCtx.destination);
-      osc.start(now);
-      osc.stop(now + 0.6);
-    }
-
-    function playWrongSound() {
-      if (!soundEnabled) return;
-      initAudio();
-      const now = audioCtx.currentTime;
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-
-      osc.type = 'sawtooth';
-      osc.frequency.setValueAtTime(220, now);
-      osc.frequency.setValueAtTime(180, now + 0.15);
-
-      gain.gain.setValueAtTime(0.3, now);
-      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
-
-      osc.connect(gain);
-      gain.connect(audioCtx.destination);
-      osc.start(now);
-      osc.stop(now + 0.4);
-    }
-
-    function playClickSound() {
-      if (!soundEnabled) return;
-      initAudio();
-      const now = audioCtx.currentTime;
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(400, now);
-      osc.frequency.exponentialRampToValueAtTime(800, now + 0.08);
-
-      gain.gain.setValueAtTime(0.2, now);
-      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
-
-      osc.connect(gain);
-      gain.connect(audioCtx.destination);
-      osc.start(now);
-      osc.stop(now + 0.08);
-    }
-
-    function toggleSound() {
-      soundEnabled = !soundEnabled;
-      const icon = document.getElementById('sound-icon');
-      const btn = document.getElementById('btn-sound');
-      if (soundEnabled) {
-        icon.className = "fa-solid fa-volume-high";
-        btn.classList.remove('bg-gray-500', 'border-gray-700');
-        btn.classList.add('bg-indigo-500', 'border-indigo-700');
-        playClickSound();
-      } else {
-        icon.className = "fa-solid fa-volume-xmark";
-        btn.classList.remove('bg-indigo-500', 'border-indigo-700');
-        btn.classList.add('bg-gray-500', 'border-gray-700');
-        if ('speechSynthesis' in window) window.speechSynthesis.cancel();
-      }
-    }
-
-    // PENGATURAN TTS KHUSUS: Nada Ceria, Hangat & Ramah Anak
-    function speakText(text) {
-      if (!soundEnabled) return;
-      if ('speechSynthesis' in window) {
-        window.speechSynthesis.cancel();
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = 'id-ID';
-        utterance.rate = 0.9;   // Kecepatan sedikit santai dan jelas
-        utterance.pitch = 1.3;  // Nada suara dinaikkan agar terdengar ceria, hangat, dan ramah anak
-        window.speechSynthesis.speak(utterance);
-      }
-    }
-
-    function speakInstructionText(txt) {
-      speakText(txt);
-    }
-
-    function triggerConfetti() {
-      if (typeof confetti === 'function') {
-        confetti({ particleCount: 90, spread: 80, origin: { y: 0.6 } });
-      }
-    }
-
-    function shuffleArray(arr) {
-      for (let i = arr.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [arr[i], arr[j]] = [arr[j], arr[i]];
-      }
-      return arr;
-    }
-
-    // ==========================================
-    // 3. NAVIGASI HUB & KATEGORI
-    // ==========================================
-    function setCategory(cat) {
-      playClickSound();
-      currentCategory = cat;
-      const categories = ['matematika', 'bahasa_inggris', 'komputer', 'ipas'];
-      categories.forEach(c => {
-        const btn = document.getElementById(`cat-${c}`);
-        if (c === cat) {
-          btn.className = "category-btn bg-indigo-600 text-white font-extrabold py-2 px-3 rounded-xl shadow-md text-xs sm:text-sm transition";
-        } else {
-          btn.className = "category-btn bg-white text-slate-700 font-extrabold py-2 px-3 rounded-xl border-2 border-slate-300 text-xs sm:text-sm transition";
+        function formatRupiah(angka) {
+            if (!angka) return "Rp 0";
+            return "Rp " + Number(angka).toLocaleString('id-ID');
         }
-      });
-      speakText(`Asyik, kita pilih topik ${cat.replace('_', ' ')} ya!`);
-    }
 
-    function startHubGame(gameType) {
-      playClickSound();
-      activeGameType = gameType;
-      activeQuestions = shuffleArray([...dynamicQuestionBank[currentCategory]]);
-      completedObjects.clear();
-      score = 0;
-      stars = 0;
-      document.getElementById('score-count').textContent = score;
-      document.getElementById('star-count').textContent = stars;
+        function parseDateCustom(dateStr) {
+            if (!dateStr) return 0;
+            let s = String(dateStr).trim();
 
-      document.getElementById('screen-hub').classList.add('hidden');
+            let timestampMs = Date.parse(s);
+            if (!isNaN(timestampMs)) {
+                return timestampMs;
+            }
 
-      if (gameType === 'detektif') {
-        document.getElementById('detektif-badge').textContent = `Misi Detektif: ${currentCategory.toUpperCase()}`;
-        for (let i = 0; i < 5; i++) {
-          const obj = document.getElementById(`d-node-${i}`);
-          obj.classList.remove('opacity-40', 'pointer-events-none', 'bg-slate-300');
-          obj.classList.add('animate-pulse-gentle');
+            const bulanMap = {
+                'januari': 0, 'jan': 0,
+                'februari': 1, 'feb': 1,
+                'maret': 2, 'mar': 2,
+                'april': 3, 'apr': 3,
+                'mei': 4,
+                'juni': 5, 'jun': 5,
+                'juli': 6, 'jul': 6,
+                'agustus': 7, 'ags': 7, 'agt': 7, 'aug': 7,
+                'september': 8, 'sep': 8, 'sept': 8,
+                'oktober': 9, 'okt': 9, 'oct': 9,
+                'november': 10, 'nov': 10,
+                'desember': 11, 'des': 11, 'dec': 11
+            };
+
+            let partsText = s.toLowerCase().replace(/,/g, '').split(/\s+/);
+            if (partsText.length >= 3) {
+                let day = parseInt(partsText[0], 10);
+                let monthStr = partsText[1];
+                let year = parseInt(partsText[2], 10);
+                if (bulanMap[monthStr] !== undefined && !isNaN(day) && !isNaN(year)) {
+                    if (year < 100) year += 2000;
+                    return new Date(year, bulanMap[monthStr], day).getTime();
+                }
+            }
+
+            let parts = s.split(/[\/\-]/);
+            if (parts.length >= 3) {
+                let day = parseInt(parts[0], 10);
+                let month = parseInt(parts[1], 10) - 1;
+                let year = parseInt(parts[2], 10);
+                if (year < 100) year += 2000;
+                if (!isNaN(day) && !isNaN(month) && !isNaN(year)) {
+                    return new Date(year, month, day).getTime();
+                }
+            }
+
+            return 0;
         }
-        document.getElementById('screen-game-detektif').classList.remove('hidden');
-        document.getElementById('screen-game-detektif').classList.add('flex');
-        speakInstructionText("Yey! Ayo cari petunjuk rahasia di dalam peta misteri bersama-sama!");
-      } else if (gameType === 'lampu') {
-        currentLampuIndex = 0;
-        document.getElementById('screen-game-lampu').classList.remove('hidden');
-        document.getElementById('screen-game-lampu').classList.add('flex');
-        loadLampuQuestion();
-      }
-    }
 
-    function returnToHub() {
-      playClickSound();
-      clearInterval(lampuTimerInterval);
-      if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+        function switchTab(tab) {
+            ['dashboard', 'peta', 'cekstatus', 'pengaduan', 'cashflow', 'iuran'].forEach(t => {
+                const pageEl = document.getElementById(`page-${t}`);
+                if(pageEl) pageEl.classList.add('hidden');
+                
+                const nav = document.getElementById(`nav-${t}`);
+                if(nav) {
+                    nav.classList.remove('bg-portal-600', 'text-white', 'shadow-sm');
+                    nav.classList.add('text-gray-600');
+                }
+                const mob = document.getElementById(`mob-${t}`);
+                if(mob) {
+                    mob.classList.remove('text-portal-600', 'font-bold');
+                    mob.classList.add('text-gray-600');
+                }
+            });
 
-      document.getElementById('screen-game-detektif').classList.add('hidden');
-      document.getElementById('screen-game-detektif').classList.remove('flex');
-      document.getElementById('screen-game-lampu').classList.add('hidden');
-      document.getElementById('screen-game-lampu').classList.remove('flex');
-      document.getElementById('screen-hub').classList.remove('hidden');
-      speakText("Kembali ke menu utama ya!");
-    }
+            const targetPage = document.getElementById(`page-${tab}`);
+            if(targetPage) targetPage.classList.remove('hidden');
 
-    // ==========================================
-    // 4. GAME 1: DETEKTIF POS
-    // ==========================================
-    function openDetektifNode(index) {
-      if (completedObjects.has(index)) return;
-      playClickSound();
-      activeNodeIndex = index;
-      const q = activeQuestions[index];
+            const activeNav = document.getElementById(`nav-${tab}`);
+            if(activeNav) {
+                activeNav.classList.add('bg-portal-600', 'text-white', 'shadow-sm');
+                activeNav.classList.remove('text-gray-600');
+            }
+            const activeMob = document.getElementById(`mob-${tab}`);
+            if(activeMob) {
+                activeMob.classList.add('text-portal-600', 'font-bold');
+                activeMob.classList.remove('text-gray-600');
+            }
 
-      document.getElementById('modal-badge').textContent = `Pos ${index + 1} (${currentCategory.toUpperCase()})`;
-      document.getElementById('modal-question-text').textContent = q.text;
-      document.getElementById('modal-hint-text').textContent = q.hint;
-
-      const container = document.getElementById('modal-options');
-      container.innerHTML = '';
-      q.options.forEach((opt, idx) => {
-        const btn = document.createElement('button');
-        btn.className = "bg-white hover:bg-amber-100 active:scale-95 text-slate-800 font-extrabold p-4 rounded-2xl border-4 border-amber-300 shadow-md transition text-base sm:text-lg flex items-center justify-center";
-        btn.innerHTML = `<span>${opt}</span>`;
-        btn.onclick = () => checkDetektifAnswer(idx, q.correct, btn);
-        container.appendChild(btn);
-      });
-
-      const feedback = document.getElementById('modal-feedback');
-      feedback.className = "hidden mt-4 p-3 rounded-2xl text-center font-bold text-sm";
-
-      const modal = document.getElementById('question-modal');
-      const modalCard = document.getElementById('modal-card');
-      modal.classList.remove('hidden');
-      setTimeout(() => {
-        modalCard.classList.remove('scale-90', 'opacity-0');
-        modalCard.classList.add('scale-100', 'opacity-100');
-      }, 10);
-
-      speakText(q.text);
-    }
-
-    function speakModalQuestion() {
-      const q = activeQuestions[activeNodeIndex];
-      if (q) speakText(q.text);
-    }
-
-    function closeModal() {
-      playClickSound();
-      const modal = document.getElementById('question-modal');
-      const modalCard = document.getElementById('modal-card');
-      modalCard.classList.remove('scale-100', 'opacity-100');
-      modalCard.classList.add('scale-90', 'opacity-0');
-      setTimeout(() => {
-        modal.classList.add('hidden');
-      }, 200);
-      if ('speechSynthesis' in window) window.speechSynthesis.cancel();
-    }
-
-    function checkDetektifAnswer(selectedIndex, correctIndex, buttonEl) {
-      const feedback = document.getElementById('modal-feedback');
-      const modalCard = document.getElementById('modal-card');
-
-      if (selectedIndex === correctIndex) {
-        playSuccessSound();
-        triggerConfetti();
-
-        buttonEl.className = "bg-emerald-400 border-4 border-emerald-600 text-white font-extrabold p-4 rounded-2xl shadow-md text-base sm:text-lg flex items-center justify-center animate-bounce";
-        feedback.className = "mt-4 p-3 rounded-2xl text-center font-bold text-sm bg-emerald-100 text-emerald-800 border-2 border-emerald-400 block";
-        feedback.innerHTML = "🎉 HORE! Jawabanmu benar, hebat sekali! +20 Poin!";
-
-        speakText("Wah, hebat sekali! Jawaban kamu benar, pintar!");
-
-        score += 20;
-        stars += 1;
-        document.getElementById('score-count').textContent = score;
-        document.getElementById('star-count').textContent = stars;
-
-        completedObjects.add(activeNodeIndex);
-        const mapObj = document.getElementById(`d-node-${activeNodeIndex}`);
-        mapObj.classList.remove('animate-pulse-gentle');
-        mapObj.classList.add('opacity-40', 'pointer-events-none', 'bg-slate-300');
-
-        setTimeout(() => {
-          closeModal();
-          if (completedObjects.size === 5) {
-            triggerConfetti();
-            speakText("Yey! Selamat ya! Kamu berhasil menyelesaikan semua misi detektif dengan luar biasa!");
-            alert("🏆 LUAR BIASA DETEKTIF! Kamu berhasil menemukan semua petunjuk!");
-          }
-        }, 1800);
-
-      } else {
-        playWrongSound();
-        modalCard.classList.add('shake-animation');
-        setTimeout(() => modalCard.classList.remove('shake-animation'), 400);
-
-        buttonEl.className = "bg-rose-400 border-4 border-rose-600 text-white font-extrabold p-4 rounded-2xl shadow-md text-base sm:text-lg flex items-center justify-center";
-        feedback.className = "mt-4 p-3 rounded-2xl text-center font-bold text-sm bg-rose-100 text-rose-800 border-2 border-rose-400 block";
-        feedback.innerHTML = "❌ Hampir tepat! Ayo coba sekali lagi ya, Detektif!";
-
-        speakText("Hampir tepat! Ayo coba pikirkan sekali lagi, kamu pasti bisa!");
-      }
-    }
-
-    // ==========================================
-    // 5. GAME 2: LAMPU KILAT (QUICK QUIZ)
-    // ==========================================
-    function loadLampuQuestion() {
-      if (currentLampuIndex >= 5) {
-        clearInterval(lampuTimerInterval);
-        triggerConfetti();
-        speakText("Hore! Tantangan Lampu Kilat berhasil kamu selesaikan dengan sangat baik!");
-        alert("🏆 LUAR BIASA! Kamu menaklukkan tantangan Lampu Kilat!");
-        returnToHub();
-        return;
-      }
-
-      const q = activeQuestions[currentLampuIndex];
-      document.getElementById('lampu-progress').textContent = `Soal ${currentLampuIndex + 1} / 5`;
-      document.getElementById('lampu-question').textContent = q.text;
-      document.getElementById('lampu-feedback').classList.add('hidden');
-
-      const container = document.getElementById('lampu-options');
-      container.innerHTML = '';
-      q.options.forEach((opt, idx) => {
-        const btn = document.createElement('button');
-        btn.className = "bg-white hover:bg-emerald-100 active:scale-95 text-slate-800 font-extrabold p-4 rounded-2xl border-4 border-emerald-300 shadow-md transition text-lg flex items-center justify-center";
-        btn.innerHTML = `<span>${opt}</span>`;
-        btn.onclick = () => checkLampuAnswer(idx, q.correct, btn);
-        container.appendChild(btn);
-      });
-
-      speakText(q.text);
-
-      // Timer 15s
-      clearInterval(lampuTimerInterval);
-      timeLeft = 15;
-      document.getElementById('lampu-timer').textContent = `⏱️ ${timeLeft}s`;
-      lampuTimerInterval = setInterval(() => {
-        timeLeft--;
-        document.getElementById('lampu-timer').textContent = `⏱️ ${timeLeft}s`;
-        if (timeLeft <= 0) {
-          clearInterval(lampuTimerInterval);
-          playWrongSound();
-          speakText("Wah, waktunya habis! Coba soal berikutnya ya.");
-          currentLampuIndex++;
-          loadLampuQuestion();
+            if(tab === 'peta') {
+                renderDenahBlok('ALL');
+            }
         }
-      }, 1000);
-    }
 
-    function speakLampuQuestion() {
-      const q = activeQuestions[currentLampuIndex];
-      if (q) speakText(q.text);
-    }
+        function safeSetText(id, text) {
+            const el = document.getElementById(id);
+            if(el) el.innerText = text;
+        }
 
-    function checkLampuAnswer(selectedIndex, correctIndex, buttonEl) {
-      clearInterval(lampuTimerInterval);
-      const feedback = document.getElementById('lampu-feedback');
+        function loadLiveData() {
+            const loading = document.getElementById('loading-state');
+            const dashboard = document.getElementById('page-dashboard');
+            const errorState = document.getElementById('error-state');
+            const refreshIcon = document.getElementById('refresh-icon');
 
-      if (selectedIndex === correctIndex) {
-        playSuccessSound();
-        triggerConfetti();
+            if(loading) loading.classList.remove('hidden');
+            if(dashboard) dashboard.classList.add('hidden');
+            if(errorState) errorState.classList.add('hidden');
+            if(refreshIcon) refreshIcon.classList.add('fa-spin');
 
-        buttonEl.className = "bg-emerald-400 border-4 border-emerald-600 text-white font-extrabold p-4 rounded-2xl shadow-md text-lg flex items-center justify-center";
-        feedback.className = "mt-4 p-3 rounded-2xl font-bold text-sm bg-emerald-100 text-emerald-800 border-2 border-emerald-400 block";
-        feedback.textContent = "🎉 Benar! Hebat sekali +25 Poin";
+            fetch(API_URL)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === "success") {
+                        const s = data.summary || {};
+                        const bulanIni = s["Bulan Ini"] || '';
+                        const tahunIni = s["Tahun"] || '';
+                        
+                        safeSetText('txt-periode', `${bulanIni} ${tahunIni}`);
+                        safeSetText('top-bar-bulan-tahun', `${bulanIni} ${tahunIni}`);
+                        safeSetText('txt-bulan-iuran', `Bulan ${bulanIni || 'Ini'}`);
+                        safeSetText('val-iuran', formatRupiah(s["Total Iuran Terkumpul"]));
+                        safeSetText('val-keluar', formatRupiah(s["CashFlow Keluar"]));
+                        safeSetText('val-saldo', formatRupiah(s["Sisa Saldo"]));
+                        safeSetText('val-total-rumah', `${s["Total Rumah"] || 0} Unit`);
+                        safeSetText('txt-detail-rumah', `${s["Jumlah Rumah Ditempati"] || 0} Ditempati | ${s["Jumlah Rumah Disewakan"] || 0} Sewa`);
 
-        score += 25;
-        stars += 1;
-        document.getElementById('score-count').textContent = score;
-        document.getElementById('star-count').textContent = stars;
+                        safeSetText('stat-ditempati', `${s["Jumlah Rumah Ditempati"] || 0} unit`);
+                        safeSetText('stat-disewakan', `${s["Jumlah Rumah Disewakan"] || 0} unit`);
+                        safeSetText('stat-kosong', `${s["Jumlah Rumah Kosong"] || 0} unit`);
 
-        speakText("Hebat sekali, jawabanmu tepat!");
-        currentLampuIndex++;
-        setTimeout(loadLampuQuestion, 1400);
+                        safeSetText('lps-ikut', `${s["Total Warga Ikut LPS"] || 0} Warga`);
+                        safeSetText('lps-biaya', formatRupiah(s["Iuran Sampah Ke LPS"]));
+                        safeSetText('lps-terkumpul', formatRupiah(s["Iuran LPS Terkumpul Bulan Ini"]));
+                        safeSetText('lps-belum', `${s["Warga Belum Bayar LPS Bulan Ini"] || 0} Warga`);
 
-      } else {
-        playWrongSound();
-        buttonEl.className = "bg-rose-400 border-4 border-rose-600 text-white font-extrabold p-4 rounded-2xl shadow-md text-lg flex items-center justify-center";
-        feedback.className = "mt-4 p-3 rounded-2xl font-bold text-sm bg-rose-100 text-rose-800 border-2 border-rose-400 block";
-        feedback.textContent = "❌ Kurang tepat, tetap semangat ya!";
+                        globalWargaData = data.data_warga || [];
+                        filterWargaTable();
 
-        speakText("Kurang tepat, tapi tetap semangat ya!");
-        currentLampuIndex++;
-        setTimeout(loadLampuQuestion, 1400);
-      }
-    }
-  </script>
+                        globalPengaduanData = data.pengaduan || [];
+                        renderPengaduanTable(globalPengaduanData);
+
+                        globalCashflowData = data.cashflow || [];
+                        populateKategoriDropdown(globalCashflowData);
+                        filterCashflow();
+
+                        globalIuranData = data.detail_iuran || [];
+                        populateTahunIuranDropdown(globalIuranData);
+                        populateNoRumahDropdown(globalIuranData, globalWargaData);
+                        filterIuran();
+
+                        if(loading) loading.classList.add('hidden');
+                        if(dashboard) dashboard.classList.remove('hidden');
+                    } else {
+                        throw new Error("Format data tidak valid");
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    if(loading) loading.classList.add('hidden');
+                    if(errorState) errorState.classList.remove('hidden');
+                    safeSetText('error-message', "Gagal terhubung ke Google Sheets. Pastikan URL Web App benar dan akses diset ke 'Anyone'.");
+                })
+                .finally(() => {
+                    if(refreshIcon) refreshIcon.classList.remove('fa-spin');
+                });
+        }
+
+        // ================= FUNGSIONALITAS CETAK LAPORAN / PDF =================
+        function printReport(type) {
+            const today = new Date().toLocaleDateString('id-ID', {
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric'
+            });
+
+            safeSetText('print-sign-date', today);
+            safeSetText('print-doc-date', `Dicetak pada: ${today}`);
+
+            if (type === 'cashflow') {
+                safeSetText('print-doc-title', 'LAPORAN REKAPITULASI CASHFLOW KAS WARGA');
+            } else if (type === 'iuran') {
+                safeSetText('print-doc-title', 'LAPORAN DETAIL PEMBAYARAN IURAN WARGA');
+            }
+
+            window.print();
+        }
+
+        // ================= AUTH ADMIN =================
+        function openAdminModal() {
+            document.getElementById('modal-admin').classList.remove('hidden');
+            if (isAdminLoggedIn) {
+                document.getElementById('view-login-form').classList.add('hidden');
+                document.getElementById('view-admin-panel').classList.remove('hidden');
+            } else {
+                document.getElementById('view-login-form').classList.remove('hidden');
+                document.getElementById('view-admin-panel').classList.add('hidden');
+                document.getElementById('admin-passcode-input').value = '';
+            }
+        }
+
+        function closeAdminModal() {
+            document.getElementById('modal-admin').classList.add('hidden');
+        }
+
+        function handleAdminLogin(e) {
+            e.preventDefault();
+            const inputVal = document.getElementById('admin-passcode-input').value.trim();
+            if (inputVal === adminPasscode) {
+                isAdminLoggedIn = true;
+                alert('Berhasil Login sebagai Admin!');
+                closeAdminModal();
+                updateAdminUIState();
+                filterWargaTable();
+            } else {
+                alert('Passcode salah! Silakan coba lagi.');
+            }
+        }
+
+        function handleAdminLogout() {
+            isAdminLoggedIn = false;
+            alert('Logout berhasil.');
+            closeAdminModal();
+            updateAdminUIState();
+            filterWargaTable();
+        }
+
+        function handleChangePassword(e) {
+            e.preventDefault();
+            const newPass = document.getElementById('new-passcode-input').value.trim();
+            if (newPass.length < 3) {
+                alert('Passcode minimal 3 digit angka.');
+                return;
+            }
+            adminPasscode = newPass;
+            localStorage.setItem('rt_admin_passcode', adminPasscode);
+            alert('Passcode master berhasil diubah!');
+            document.getElementById('new-passcode-input').value = '';
+            closeAdminModal();
+        }
+
+        function triggerForgotPassword() {
+            const confirmed = confirm('Kirim instruksi reset passcode master ke email admin utama: coxdoank@gmail.com?');
+            if (confirmed) {
+                alert('Permintaan reset password telah dikirim ke coxdoank@gmail.com. Silakan periksa email Anda.');
+                closeAdminModal();
+            }
+        }
+
+        function updateAdminUIState() {
+            const badge = document.getElementById('admin-status-badge');
+            const btnText = document.getElementById('admin-btn-text');
+            const adminIcon = document.getElementById('admin-icon');
+
+            if (isAdminLoggedIn) {
+                if(badge) {
+                    badge.className = "bg-emerald-500 text-white px-2 py-0.5 rounded text-[10px] font-bold";
+                    badge.innerHTML = '<i class="fa-solid fa-shield-check mr-1"></i> Admin Aktif';
+                }
+                if(btnText) btnText.innerText = "Panel Admin";
+                if(adminIcon) adminIcon.className = "fa-solid fa-user-shield";
+            } else {
+                if(badge) {
+                    badge.className = "bg-rose-500 text-white px-2 py-0.5 rounded text-[10px] font-bold";
+                    badge.innerHTML = '<i class="fa-solid fa-lock mr-1"></i> Mode Publik';
+                }
+                if(btnText) btnText.innerText = "Admin Login";
+                if(adminIcon) adminIcon.className = "fa-solid fa-lock";
+            }
+        }
+
+        // ================= TABEL WARGA =================
+        function renderWargaTable(rows) {
+            const tbody = document.getElementById('table-warga-body');
+            if(!tbody) return;
+            tbody.innerHTML = '';
+            
+            if(!rows || rows.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="p-4 text-center text-gray-400">Tidak ada data warga yang sesuai dengan filter.</td></tr>';
+                return;
+            }
+
+            rows.forEach(row => {
+                const noRumah = row['No Rumah'] || row['No_Rumah'] || '-';
+                const namaWarga = row['Nama Warga'] || row['Nama'] || '-';
+                const statusRumah = row['Status Rumah'] || 'Ditempati';
+                
+                let iuranSampah = row['Iuran Sampah Bulan Ini'] || 'Belum / Data Kosong';
+                if (!iuranSampah || iuranSampah.toString().trim() === "" || iuranSampah.toLowerCase().includes("belum / data kosong")) {
+                    iuranSampah = "Tidak Ikut LPS";
+                }
+
+                const iuranPerumahan = row['Iuran Perumahan Bulan Ini'] || 'Belum Bayar';
+                const urlWhatsapp = row['Url WhatsApp'] || '';
+
+                let waButton = '<span class="text-gray-400 italic text-[11px]"><i class="fa-solid fa-lock mr-1"></i> Khusus Admin</span>';
+                const isTidakIkut = iuranSampah === "Tidak Ikut LPS";
+
+                if (isAdminLoggedIn && !isTidakIkut && urlWhatsapp) {
+                    waButton = `<a href="${urlWhatsapp}" target="_blank" class="bg-emerald-600 hover:bg-emerald-700 text-white px-2.5 py-1 rounded-lg text-[11px] font-semibold transition inline-flex items-center gap-1 shadow-sm"><i class="fa-brands fa-whatsapp"></i> Ingatkan WA</a>`;
+                }
+
+                let badgeSampahClass = 'bg-amber-100 text-amber-700';
+                if (iuranSampah.includes('Sudah')) {
+                    badgeSampahClass = 'bg-emerald-100 text-emerald-700';
+                } else if (iuranSampah === "Tidak Ikut LPS") {
+                    badgeSampahClass = 'bg-gray-100 text-gray-600';
+                }
+
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-gray-50';
+                tr.innerHTML = `
+                    <td class="p-3 font-bold text-portal-700">${noRumah}</td>
+                    <td class="p-3 font-medium text-gray-800">${namaWarga}</td>
+                    <td class="p-3"><span class="bg-blue-50 text-blue-700 px-2 py-0.5 rounded text-[10px]">${statusRumah}</span></td>
+                    <td class="p-3"><span class="px-2 py-0.5 rounded text-[10px] font-semibold ${badgeSampahClass}">${iuranSampah}</span></td>
+                    <td class="p-3"><span class="px-2 py-0.5 rounded text-[10px] font-semibold ${iuranPerumahan.includes('Sudah') ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'}">${iuranPerumahan}</span></td>
+                    <td class="p-3 text-center">${waButton}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function filterWargaTable() {
+            const keyword = document.getElementById('search-warga')?.value.toLowerCase() || '';
+            const filterSampah = document.getElementById('filter-iuran-sampah')?.value || '';
+            const filterPerum = document.getElementById('filter-iuran-perum')?.value || '';
+
+            const filtered = globalWargaData.filter(item => {
+                const noRumah = String(item['No Rumah'] || item['No_Rumah'] || '').toLowerCase();
+                const nama = String(item['Nama Warga'] || item['Nama'] || '').toLowerCase();
+                const matchKeyword = noRumah.includes(keyword) || nama.includes(keyword);
+
+                let rawSampah = String(item['Iuran Sampah Bulan Ini'] || 'Tidak Ikut LPS');
+                if (!rawSampah || rawSampah.trim() === "" || rawSampah.toLowerCase().includes("belum / data kosong")) {
+                    rawSampah = "Tidak Ikut LPS";
+                }
+
+                let matchSampah = true;
+                if (filterSampah === "Tidak Ikut LPS") {
+                    matchSampah = rawSampah === "Tidak Ikut LPS";
+                } else if (filterSampah === "Belum Bayar") {
+                    matchSampah = !rawSampah.includes('Sudah') && rawSampah !== "Tidak Ikut LPS";
+                } else if (filterSampah === "Sudah Bayar") {
+                    matchSampah = rawSampah.includes('Sudah');
+                }
+
+                let rawPerum = String(item['Iuran Perumahan Bulan Ini'] || 'Belum Bayar');
+                let matchPerum = true;
+                if (filterPerum === "Belum Bayar") {
+                    matchPerum = !rawPerum.includes('Sudah');
+                } else if (filterPerum === "Sudah Bayar") {
+                    matchPerum = rawPerum.includes('Sudah');
+                }
+
+                return matchKeyword && matchSampah && matchPerum;
+            });
+
+            renderWargaTable(filtered);
+        }
+
+        // ================= PETA BLOK =================
+        function renderDenahBlok(selectedBlok) {
+            ['ALL', 'A', 'B', 'C', 'D', 'E', 'F', 'G'].forEach(b => {
+                const btn = document.getElementById(`btn-denah-${b}`);
+                if(btn) {
+                    if(b === selectedBlok) {
+                        btn.className = "px-4 py-1.5 rounded-xl text-xs font-bold bg-portal-600 text-white transition shadow-sm";
+                    } else {
+                        btn.className = "px-4 py-1.5 rounded-xl text-xs font-semibold bg-gray-100 text-gray-600 hover:bg-gray-200 transition";
+                    }
+                }
+            });
+
+            const container = document.getElementById('denah-container');
+            if(!container) return;
+            container.innerHTML = '';
+
+            const listBlok = selectedBlok === 'ALL' ? ['A', 'B', 'C', 'D', 'E', 'F', 'G'] : [selectedBlok];
+
+            listBlok.forEach(hurufBlok => {
+                const blockCard = document.createElement('div');
+                blockCard.className = 'bg-gray-50 border border-gray-200 rounded-2xl p-4 shadow-sm';
+                
+                let headerHtml = `<div class="flex justify-between items-center mb-3">
+                    <h3 class="font-bold text-portal-dark text-sm uppercase tracking-wide">
+                        <i class="fa-solid fa-signs-post mr-2"></i> Blok ${hurufBlok}
+                    </h3>
+                    <span class="text-[10px] text-gray-400 font-medium">Layout Berhadapan Atas & Bawah</span>
+                </div>`;
+                blockCard.innerHTML = headerHtml;
+
+                const gridDiv = document.createElement('div');
+                gridDiv.className = 'grid grid-cols-7 gap-2 overflow-x-auto pb-2';
+
+                if (hurufBlok === 'D') {
+                    for (let i = 1; i <= 4; i++) {
+                        gridDiv.appendChild(createHouseBox('D', i));
+                    }
+                    const fasumBox = document.createElement('div');
+                    fasumBox.className = 'col-span-3 row-span-2 bg-white border-2 border-dashed border-gray-300 rounded-xl p-4 flex flex-col items-center justify-center text-gray-400 font-bold text-xs uppercase tracking-widest min-h-[12rem]';
+                    fasumBox.innerHTML = '<i class="fa-solid fa-tree-city text-2xl text-portal-500 mb-2"></i><span>FASUM</span>';
+                    gridDiv.appendChild(fasumBox);
+                    for (let i = 5; i <= 8; i++) {
+                        gridDiv.appendChild(createHouseBox('D', i));
+                    }
+                } else {
+                    for (let i = 1; i <= 7; i++) {
+                        gridDiv.appendChild(createHouseBox(hurufBlok, i));
+                    }
+                    for (let i = 14; i >= 8; i--) {
+                        gridDiv.appendChild(createHouseBox(hurufBlok, i));
+                    }
+                }
+
+                blockCard.appendChild(gridDiv);
+                container.appendChild(blockCard);
+            });
+        }
+
+        function createHouseBox(hurufBlok, num) {
+            const searchKey1 = `${hurufBlok}-${num < 10 ? '0' + num : num}`;
+            const searchKey2 = `${hurufBlok}${num}`;
+            const searchKey3 = `${hurufBlok}-${num}`;
+
+            const warga = globalWargaData.find(w => {
+                const nr = String(w['No Rumah'] || w['No_Rumah'] || '').trim().toUpperCase();
+                return nr === searchKey1 || nr === searchKey2 || nr === searchKey3;
+            });
+
+            const noRumahDisplay = `${hurufBlok}-${num}`;
+            const namaWarga = warga ? (warga['Nama Warga'] || warga['Nama'] || 'Belum Terdaftar') : 'Kosong';
+            const statusRumah = warga ? (warga['Status Rumah'] || 'Ditempati').trim() : 'Kosong';
+
+            let bgClass = 'bg-portal-600 text-white border-portal-700';
+            let statusText = 'Ditempati';
+            let iconClass = 'fa-house';
+
+            if(!warga || statusRumah.toLowerCase().includes('kosong')) {
+                bgClass = 'bg-amber-500 text-white border-amber-600';
+                statusText = 'Kosong';
+                iconClass = 'fa-house-circle-xmark';
+            } else if(statusRumah.toLowerCase().includes('sewa')) {
+                bgClass = 'bg-indigo-500 text-white border-indigo-600';
+                statusText = 'Disewakan';
+                iconClass = 'fa-house-chimney-user';
+            }
+
+            const box = document.createElement('div');
+            box.className = `${bgClass} p-2.5 rounded-xl shadow-xs border cursor-pointer hover:scale-105 transition transform flex flex-col justify-between h-24 text-center`;
+            
+            if(warga) {
+                box.onclick = () => showModalRumah(warga);
+            }
+
+            box.innerHTML = `
+                <div class="flex justify-between items-center text-[10px] opacity-90">
+                    <span class="font-black">${noRumahDisplay}</span>
+                    <i class="fa-solid ${iconClass} text-[10px]"></i>
+                </div>
+                <div class="my-auto">
+                    <p class="text-[10px] font-bold leading-tight truncate px-0.5">${warga ? namaWarga : '-'}</p>
+                </div>
+                <div>
+                    <span class="text-[8px] uppercase tracking-wider bg-black/25 px-1.5 py-0.5 rounded-full inline-block">${statusText}</span>
+                </div>
+            `;
+            return box;
+        }
+
+        function showModalRumah(data) {
+            const noRumah = data['No Rumah'] || data['No_Rumah'] || '-';
+            const namaWarga = data['Nama Warga'] || data['Nama'] || '-';
+            const statusRumah = data['Status Rumah'] || 'Ditempati';
+            
+            let iuranSampah = data['Iuran Sampah Bulan Ini'] || 'Belum / Data Kosong';
+            if (!iuranSampah || iuranSampah.toString().trim() === "" || iuranSampah.toLowerCase().includes("belum / data kosong")) {
+                iuranSampah = "Tidak Ikut LPS";
+            }
+
+            const iuranPerumahan = data['Iuran Perumahan Bulan Ini'] || 'Belum Bayar';
+
+            safeSetText('modal-no-rumah', `Rumah ${noRumah}`);
+            safeSetText('modal-nama-warga', namaWarga);
+            safeSetText('modal-iuran-sampah', iuranSampah);
+            safeSetText('modal-iuran-perumahan', iuranPerumahan);
+
+            const badge = document.getElementById('modal-status-badge');
+            if(badge) {
+                badge.innerText = statusRumah;
+                badge.className = statusRumah.toLowerCase().includes('sewa') 
+                    ? 'text-[10px] px-2 py-0.5 rounded font-semibold bg-indigo-100 text-indigo-700' 
+                    : (statusRumah.toLowerCase().includes('kosong') ? 'text-[10px] px-2 py-0.5 rounded font-semibold bg-amber-100 text-amber-700' : 'text-[10px] px-2 py-0.5 rounded font-semibold bg-emerald-100 text-emerald-700');
+            }
+
+            const modal = document.getElementById('modal-rumah');
+            if(modal) modal.classList.remove('hidden');
+        }
+
+        function closeModalRumah() {
+            const modal = document.getElementById('modal-rumah');
+            if(modal) modal.classList.add('hidden');
+        }
+
+        // ================= PENGADUAN =================
+        function submitPengaduan(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btn-submit-adu');
+            if(btn) {
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Mengirim...';
+            }
+
+            const payload = {
+                no_rumah: document.getElementById('adu-rumah')?.value.trim() || '',
+                nama: document.getElementById('adu-nama')?.value.trim() || '',
+                kategori: document.getElementById('adu-kategori')?.value || '',
+                pesan: document.getElementById('adu-pesan')?.value.trim() || ''
+            };
+
+            fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) })
+            .then(res => res.json())
+            .then(data => {
+                alert('Laporan berhasil dikirim ke Pengurus RT!');
+                document.getElementById('form-pengaduan')?.reset();
+                loadLiveData();
+            })
+            .catch(err => {
+                console.error(err);
+                alert('Gagal mengirim laporan. Pastikan URL Web App mendukung method POST.');
+            })
+            .finally(() => {
+                if(btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Kirim Laporan';
+                }
+            });
+        }
+
+        function renderPengaduanTable(rows) {
+            const tbody = document.getElementById('table-pengaduan-body');
+            if(!tbody) return;
+            tbody.innerHTML = '';
+            if(!rows || rows.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-gray-400">Belum ada pengaduan atau aspirasi warga.</td></tr>';
+                return;
+            }
+            rows.slice().reverse().forEach(row => {
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-gray-50';
+                tr.innerHTML = `
+                    <td class="p-3 text-gray-500 whitespace-nowrap">${row['Tanggal'] || '-'}</td>
+                    <td class="p-3"><span class="font-bold text-portal-700">${row['No Rumah'] || ''}</span><br><span class="text-gray-800 font-medium">${row['Nama Pelapor'] || ''}</span></td>
+                    <td class="p-3 font-semibold text-gray-700">${row['Kategori'] || ''}</td>
+                    <td class="p-3 text-gray-600 max-w-xs truncate">${row['Isi Laporan'] || ''}</td>
+                    <td class="p-3"><span class="bg-amber-100 text-amber-700 px-2 py-0.5 rounded text-[10px] font-semibold">${row['Status'] || 'Menunggu'}</span></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // ================= CASHFLOW =================
+        function populateKategoriDropdown(rows) {
+            const select = document.getElementById('filter-kategori');
+            if(!select) return;
+            const categories = [...new Set(rows.map(r => r['Kategori']).filter(Boolean))];
+            select.innerHTML = '<option value="">Semua Kategori</option>';
+            categories.forEach(cat => {
+                const opt = document.createElement('option');
+                opt.value = cat;
+                opt.innerText = cat;
+                select.appendChild(opt);
+            });
+        }
+
+        function renderCashflowTable(rows) {
+            const tbody = document.getElementById('table-cashflow-body');
+            if(!tbody) return;
+            tbody.innerHTML = '';
+            
+            if(!rows || rows.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="p-4 text-center text-gray-400">Tidak ada data cashflow yang sesuai.</td></tr>';
+                return;
+            }
+
+            rows.forEach(row => {
+                const statusBadge = row['Status'] === 'Uang Masuk' 
+                    ? '<span class="bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded font-medium">Uang Masuk</span>'
+                    : '<span class="bg-rose-100 text-rose-700 px-2 py-0.5 rounded font-medium">Uang Keluar</span>';
+
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-gray-50';
+                tr.innerHTML = `
+                    <td class="p-3 text-gray-500 whitespace-nowrap">${row['Tanggal'] || ''}</td>
+                    <td class="p-3 font-semibold text-gray-700">${row['Kategori'] || ''}</td>
+                    <td class="p-3 text-gray-800">${row['Transaksi'] || ''}</td>
+                    <td class="p-3">${statusBadge}</td>
+                    <td class="p-3 font-bold text-gray-900">${formatRupiah(row['Nominal'])}</td>
+                    <td class="p-3 text-gray-500">${row['Keterangan'] || ''}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function filterCashflow() {
+            const keyword = document.getElementById('search-cashflow')?.value.toLowerCase() || '';
+            const selectedCat = document.getElementById('filter-kategori')?.value || '';
+
+            let filtered = globalCashflowData.filter(item => {
+                const matchKeyword = Object.values(item).some(val => String(val).toLowerCase().includes(keyword));
+                const matchCat = selectedCat === "" || item['Kategori'] === selectedCat;
+                return matchKeyword && matchCat;
+            });
+
+            filtered.sort((a, b) => {
+                let dateA = parseDateCustom(a['Insert Date'] || a['Insert_Date'] || a['Timestamp'] || a['Tanggal']);
+                let dateB = parseDateCustom(b['Insert Date'] || b['Insert_Date'] || b['Timestamp'] || b['Tanggal']);
+                return dateB - dateA;
+            });
+
+            renderCashflowTable(filtered);
+        }
+
+        // ================= DETAIL IURAN =================
+        function populateTahunIuranDropdown(rows) {
+            const select = document.getElementById('filter-iuran-tahun');
+            if(!select) return;
+            const tahunList = [...new Set(rows.map(r => r['Tahun']).filter(Boolean))].sort((a,b) => b - a);
+            select.innerHTML = '<option value="">Semua Tahun</option>';
+            tahunList.forEach(thn => {
+                const opt = document.createElement('option');
+                opt.value = thn;
+                opt.innerText = thn;
+                select.appendChild(opt);
+            });
+        }
+
+        function populateNoRumahDropdown(iuranRows, wargaRows) {
+            const select = document.getElementById('filter-iuran-norumah');
+            if(!select) return;
+            
+            let rumahSet = new Set();
+            iuranRows.forEach(r => {
+                let nr = r['No Rumah'] || r['No_Rumah'];
+                if(nr) rumahSet.add(String(nr).trim());
+            });
+            wargaRows.forEach(w => {
+                let nr = w['No Rumah'] || w['No_Rumah'];
+                if(nr) rumahSet.add(String(nr).trim());
+            });
+
+            let listRumah = Array.from(rumahSet).sort((a, b) => a.localeCompare(b, undefined, {numeric: true, sensitivity: 'base'}));
+            
+            select.innerHTML = '<option value="">Semua No Rumah</option>';
+            listRumah.forEach(nr => {
+                const opt = document.createElement('option');
+                opt.value = nr;
+                opt.innerText = nr;
+                select.appendChild(opt);
+            });
+        }
+
+        function renderIuranTable(rows) {
+            const tbody = document.getElementById('table-iuran-body');
+            if(!tbody) return;
+            tbody.innerHTML = '';
+            
+            if(!rows || rows.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="p-4 text-center text-gray-400">Tidak ada data rincian iuran yang sesuai.</td></tr>';
+                return;
+            }
+
+            rows.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-gray-50';
+                tr.innerHTML = `
+                    <td class="p-3 text-gray-500 whitespace-nowrap">${row['Tanggal'] || ''}</td>
+                    <td class="p-3 font-bold text-portal-700">${row['No Rumah'] || row['No_Rumah'] || ''}</td>
+                    <td class="p-3 text-gray-700">${row['Kategori'] || ''}</td>
+                    <td class="p-3 font-medium text-gray-800">${row['Nama Warga'] || row['Nama'] || ''}</td>
+                    <td class="p-3 text-gray-500">${row['Bulan'] || ''} ${row['Tahun'] || ''}</td>
+                    <td class="p-3 font-bold text-gray-900">${formatRupiah(row['Nominal'])}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function filterIuran() {
+            const keyword = document.getElementById('search-iuran')?.value.toLowerCase() || '';
+            const filterNoRumah = document.getElementById('filter-iuran-norumah')?.value || '';
+            const filterKat = document.getElementById('filter-iuran-kat')?.value || '';
+            const filterBulan = document.getElementById('filter-iuran-bulan')?.value || '';
+            const filterTahun = document.getElementById('filter-iuran-tahun')?.value || '';
+
+            let filtered = globalIuranData.filter(item => {
+                const matchKeyword = Object.values(item).some(val => String(val).toLowerCase().includes(keyword));
+                const nrItem = String(item['No Rumah'] || item['No_Rumah'] || '').trim();
+                const matchNoRumah = filterNoRumah === "" || nrItem.toLowerCase() === filterNoRumah.toLowerCase();
+                const matchKat = filterKat === "" || String(item['Kategori'] || '').trim().toLowerCase() === filterKat.toLowerCase();
+                const matchBulan = filterBulan === "" || String(item['Bulan'] || '').trim().toLowerCase() === filterBulan.toLowerCase();
+                const matchTahun = filterTahun === "" || String(item['Tahun'] || '').trim() === String(filterTahun);
+
+                return matchKeyword && matchNoRumah && matchKat && matchBulan && matchTahun;
+            });
+
+            filtered.sort((a, b) => {
+                let dateA = parseDateCustom(a['Tanggal']);
+                let dateB = parseDateCustom(b['Tanggal']);
+                return dateB - dateA;
+            });
+
+            renderIuranTable(filtered);
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            updateAdminUIState();
+            loadLiveData();
+        });
+    </script>
 </body>
 </html>
