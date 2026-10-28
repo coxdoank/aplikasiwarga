@@ -119,13 +119,15 @@
     </div>
 
     <!-- Top Utility Bar -->
-    <div class="bg-portal-dark text-white text-xs py-1.5 px-4 hidden sm:block">
-        <div class="container mx-auto flex justify-between items-center">
-            <span><i class="fa-solid fa-shield-halved mr-1 text-portal-500"></i> Portal Resmi Informasi Warga Perumahan Mutiara Intan Permai</span>
-            <div class="flex items-center gap-4">
+    <div class="bg-portal-dark text-white text-[11px] sm:text-xs py-1.5 px-3 sm:px-4">
+        <div class="container mx-auto flex flex-col sm:flex-row justify-between items-center gap-1 sm:gap-0">
+            <span class="text-center sm:text-left"><i class="fa-solid fa-shield-halved mr-1 text-portal-500"></i> Portal Resmi Warga Mutiara Intan Permai</span>
+            
+            <div class="flex flex-wrap justify-center items-center gap-3">
                 <span id="admin-status-badge" class="bg-rose-500 text-white px-2 py-0.5 rounded text-[10px] font-bold"><i class="fa-solid fa-lock mr-1"></i> Mode Publik</span>
                 <span><i class="fa-solid fa-calendar-days mr-1 text-portal-500"></i> <span id="top-bar-bulan-tahun">Memuat...</span></span>
-                <span><i class="fa-solid fa-location-dot mr-1 text-portal-500"></i> Pekanbaru, Riau</span>
+                <span><i class="fa-solid fa-eye mr-1 text-portal-500"></i> <span id="top-bar-visitor">0</span> Kunjungan</span>
+                <!-- <span><i class="fa-solid fa-location-dot mr-1 text-portal-500"></i> Pekanbaru, Riau</span> -->
             </div>
         </div>
     </div>
@@ -186,7 +188,7 @@
 
         <!-- ================= PAGE 1: DASHBOARD ================= -->
         <div id="page-dashboard" class="space-y-6">
-            <div class="bg-gradient-to-r from-portal-600 to-portal-700 rounded-2xl p-6 text-white shadow-md relative overflow-hidden flex flex-col md:flex-row justify-between items-center gap-4">
+            <!-- <div class="bg-gradient-to-r from-portal-600 to-portal-700 rounded-2xl p-6 text-white shadow-md relative overflow-hidden flex flex-col md:flex-row justify-between items-center gap-4">
                 <div>
                     <span class="bg-white/20 text-white text-[11px] px-2.5 py-0.5 rounded-full font-semibold uppercase tracking-wider">Sistem Informasi Warga</span>
                     <h1 class="text-xl md:text-2xl font-bold mt-2">Dashboard Rekapitulasi & Keuangan Warga</h1>
@@ -196,8 +198,30 @@
                     <span class="text-[10px] text-portal-50 block uppercase">Status Kas</span>
                     <span class="text-xs md:text-sm font-bold text-white">Aktif & Transparan</span>
                 </div>
-            </div>
+            </div> -->
 
+            <!-- ================= CAROUSEL BANNER OTOMATIS ================= -->
+            <div class="relative w-full overflow-hidden rounded-2xl shadow-md bg-gradient-to-r from-portal-600 to-portal-700 text-white mb-6 group">
+                
+                <!-- Track Slide (Isi digeser otomatis via JavaScript) -->
+                <div id="carousel-track" class="flex transition-transform duration-500 ease-out">
+                    <div class="min-w-full p-6 md:p-8 flex items-center justify-center text-portal-100 text-xs">
+                        <i class="fa-solid fa-circle-notch fa-spin mr-2"></i> Memuat Banner...
+                    </div>
+                </div>
+
+                <!-- Tombol Navigasi Manual (Muncul saat kursor diarahkan) -->
+                <button onclick="prevSlide()" class="absolute left-2 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white w-8 h-8 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition text-xs">
+                    <i class="fa-solid fa-chevron-left"></i>
+                </button>
+                <button onclick="nextSlide()" class="absolute right-2 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white w-8 h-8 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition text-xs">
+                    <i class="fa-solid fa-chevron-right"></i>
+                </button>
+
+                <!-- Indikator Titik (Dots) di Bawah -->
+                <div id="carousel-dots" class="absolute bottom-3 right-6 flex space-x-1.5"></div>
+            </div>
+            
             <!-- Summary Cards -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-200">
@@ -361,7 +385,7 @@
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 lg:col-span-1">
                     <h2 class="text-base font-bold text-gray-800 mb-1"><i class="fa-solid fa-bullhorn text-portal-600 mr-2"></i> Sampaikan Aduan Fasum</h2>
-                    <p class="text-xs text-gray-500 mb-4">Laporkan kerusakan fasilitas umum atau keluhan lingkungan kepada pengurus RT.</p>
+                    <p class="text-xs text-gray-500 mb-4">Laporkan kerusakan fasilitas umum atau keluhan lingkungan kepada Pengurus.</p>
                     
                     <form id="form-pengaduan" onsubmit="submitPengaduan(event)" class="space-y-4">
                         <div>
@@ -754,11 +778,20 @@
                         safeSetText('lps-terkumpul', formatRupiah(s["Iuran LPS Terkumpul Bulan Ini"]));
                         safeSetText('lps-belum', `${s["Warga Belum Bayar LPS Bulan Ini"] || 0} Warga`);
 
+                        // ==================== VISITOR COUNTER ====================
+                        // Diletakkan di dalam .then() agar variabel `s` dibaca dari respons server
+                        if (s["Total Pengunjung"] !== undefined) {
+                            const formattedVisitor = Number(s["Total Pengunjung"]).toLocaleString('id-ID');
+                            safeSetText('top-bar-visitor', formattedVisitor);
+                        }
+
                         globalWargaData = data.data_warga || [];
                         filterWargaTable();
 
                         globalPengaduanData = data.pengaduan || [];
                         renderPengaduanTable(globalPengaduanData);
+
+                        renderCarousel(data.banner || []);
 
                         globalCashflowData = data.cashflow || [];
                         populateKategoriDropdown(globalCashflowData);
@@ -1123,6 +1156,8 @@
         }
 
         // ================= PENGADUAN =================
+
+        // 1. Fungsi Mengirim Pengaduan Baru oleh Warga
         function submitPengaduan(e) {
             e.preventDefault();
             const btn = document.getElementById('btn-submit-adu');
@@ -1143,7 +1178,7 @@
             .then(data => {
                 alert('Laporan berhasil dikirim ke Pengurus!');
                 document.getElementById('form-pengaduan')?.reset();
-                loadLiveData();
+                loadLiveData(); // Refresh data live dari Google Sheets
             })
             .catch(err => {
                 console.error(err);
@@ -1157,25 +1192,84 @@
             });
         }
 
+        // 2. Fungsi Merender Tabel Daftar Pengaduan
         function renderPengaduanTable(rows) {
             const tbody = document.getElementById('table-pengaduan-body');
             if(!tbody) return;
             tbody.innerHTML = '';
+            
             if(!rows || rows.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-gray-400">Belum ada pengaduan atau aspirasi warga.</td></tr>';
                 return;
             }
-            rows.slice().reverse().forEach(row => {
+
+            rows.slice().reverse().forEach((row) => {
                 const tr = document.createElement('tr');
                 tr.className = 'hover:bg-gray-50';
+
+                const statusAktif = row['Status'] || 'Menunggu Ditinjau';
+                const tgl = row['Tanggal'] || '-';
+                const noRumah = row['No Rumah'] || row['No_Rumah'] || '';
+                const namaPelapor = row['Nama Pelapor'] || row['Nama'] || '';
+
+                // Pastikan pengecekan isAdminLoggedIn ini ada di kode Anda:
+                let statusHtml = '';
+                if (isAdminLoggedIn) {
+                    statusHtml = `
+                        <select onchange="updateStatusPengaduan('${tgl}', '${noRumah}', '${namaPelapor}', this.value)" 
+                                class="bg-gray-50 border border-gray-300 rounded-lg px-2 py-1 text-[11px] font-semibold focus:outline-none focus:border-portal-600">
+                            <option value="Menunggu Ditinjau" ${statusAktif === 'Menunggu Ditinjau' ? 'selected' : ''}>⏳ Menunggu Ditinjau</option>
+                            <option value="Diproses" ${statusAktif === 'Diproses' ? 'selected' : ''}>🛠️ Diproses</option>
+                            <option value="Selesai" ${statusAktif === 'Selesai' ? 'selected' : ''}>✅ Selesai</option>
+                            <option value="Ditolak" ${statusAktif === 'Ditolak' ? 'selected' : ''}>❌ Ditolak</option>
+                        </select>
+                    `;
+                } else {
+                    let badgeClass = 'bg-amber-100 text-amber-700';
+                    if (statusAktif === 'Diproses') badgeClass = 'bg-blue-100 text-blue-700';
+                    if (statusAktif === 'Selesai') badgeClass = 'bg-emerald-100 text-emerald-700';
+                    if (statusAktif === 'Ditolak') badgeClass = 'bg-rose-100 text-rose-700';
+
+                    statusHtml = `<span class="${badgeClass} px-2 py-0.5 rounded text-[10px] font-semibold">${statusAktif}</span>`;
+                }
+
                 tr.innerHTML = `
-                    <td class="p-3 text-gray-500 whitespace-nowrap">${row['Tanggal'] || '-'}</td>
-                    <td class="p-3"><span class="font-bold text-portal-700">${row['No Rumah'] || ''}</span><br><span class="text-gray-800 font-medium">${row['Nama Pelapor'] || ''}</span></td>
+                    <td class="p-3 text-gray-500 whitespace-nowrap">${tgl}</td>
+                    <td class="p-3"><span class="font-bold text-portal-700">${noRumah}</span><br><span class="text-gray-800 font-medium">${namaPelapor}</span></td>
                     <td class="p-3 font-semibold text-gray-700">${row['Kategori'] || ''}</td>
-                    <td class="p-3 text-gray-600 max-w-xs truncate">${row['Isi Laporan'] || ''}</td>
-                    <td class="p-3"><span class="bg-amber-100 text-amber-700 px-2 py-0.5 rounded text-[10px] font-semibold">${row['Status'] || 'Menunggu'}</span></td>
+                    <td class="p-3 text-gray-600 max-w-xs truncate">${row['Isi Laporan'] || row['Pesan'] || ''}</td>
+                    <td class="p-3">${statusHtml}</td>
                 `;
                 tbody.appendChild(tr);
+            });
+        }
+
+        // 3. Fungsi Mengirim Perubahan Status Pengaduan Langsung ke Google Sheets (Khusus Admin)
+        function updateStatusPengaduan(tanggal, noRumah, nama, statusBaru) {
+            const payload = {
+                action: "update_status_pengaduan",
+                tanggal: tanggal,
+                no_rumah: noRumah,
+                nama: nama,
+                status_baru: statusBaru
+            };
+
+            fetch(API_URL, {
+                method: 'POST',
+                body: JSON.stringify(payload)
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === "success") {
+                    alert(`Status pengaduan rumah ${noRumah} berhasil diubah menjadi "${statusBaru}"!`);
+                    loadLiveData(); // Refresh data agar sinkron dengan Google Sheets
+                } else {
+                    alert('Gagal memperbarui status: ' + data.message);
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                alert('Terjadi kesalahan jaringan saat memperbarui status pengaduan.');
             });
         }
 
@@ -1336,6 +1430,117 @@
             updateAdminUIState();
             loadLiveData();
         });
+
+        // Skrip JavaScript Pengontrol Slide
+        let slideIndex = 0;
+        let totalSlides = 0;
+        let slideInterval;
+
+        function renderCarousel(bannerList) {
+            const track = document.getElementById('carousel-track');
+            const dotsContainer = document.getElementById('carousel-dots');
+            if (!track || !dotsContainer) return;
+
+            // Filter hanya banner yang berstatus "Aktif"
+            const activeBanners = bannerList.filter(b => String(b['Status'] || '').toLowerCase() === 'aktif');
+            
+            // Fallback jika sheet banner kosong
+            if (activeBanners.length === 0) {
+                activeBanners.push({
+                    Judul: "Portal Warga Mutiara Intan Permai",
+                    Subjudul: "Transparansi iuran bulanan dan kas operasional secara real-time.",
+                    Kategori: "SISTEM INFORMASI WARGA"
+                });
+            }
+
+            totalSlides = activeBanners.length;
+            track.innerHTML = '';
+            dotsContainer.innerHTML = '';
+
+            activeBanners.forEach((item, index) => {
+                // Buat Elemen Slide
+                const slideDiv = document.createElement('div');
+                slideDiv.className = "min-w-full p-6 md:p-8 flex flex-col justify-between bg-gradient-to-r from-portal-600 to-portal-700 text-white";
+                
+                // Jika ada gambar latar (ImageURL), gunakan sebagai background dengan efek overlay gelap
+                if (item['ImageURL']) {
+                    slideDiv.style.backgroundImage = `linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('${item['ImageURL']}')`;
+                    slideDiv.style.backgroundSize = 'cover';
+                    slideDiv.style.backgroundPosition = 'center';
+                }
+
+                slideDiv.innerHTML = `
+                    <div>
+                        <span class="bg-white/20 text-white text-[11px] px-2.5 py-0.5 rounded-full font-semibold uppercase tracking-wider">${item['Kategori'] || 'INFO RT'}</span>
+                        <h1 class="text-xl md:text-2xl font-bold mt-2">${item['Judul'] || ''}</h1>
+                        <p class="text-portal-50 text-xs md:text-sm mt-1 max-w-xl">${item['Subjudul'] || ''}</p>
+                    </div>
+                    <div class="mt-4 flex items-center gap-2">
+                        <span class="bg-white/10 backdrop-blur-sm border border-white/20 px-3 py-1 rounded-xl text-xs font-semibold">
+                            <i class="fa-solid fa-bullhorn mr-1 text-portal-200"></i> Pengumuman Resmi
+                        </span>
+                    </div>
+                `;
+                track.appendChild(slideDiv);
+
+                // Buat Tombol Titik (Dots) Indikator
+                const dotSpan = document.createElement('span');
+                dotSpan.className = index === 0 ? "dot w-6 h-2 rounded-full bg-white cursor-pointer transition-all" : "dot w-2 h-2 rounded-full bg-white/50 cursor-pointer transition-all";
+                dotSpan.onclick = () => currentSlide(index);
+                dotsContainer.appendChild(dotSpan);
+            });
+
+            showSlide(0);
+            startSlideTimer();
+        }
+
+        function showSlide(index) {
+            const track = document.getElementById('carousel-track');
+            const dots = document.querySelectorAll('.dot');
+            
+            if (index >= totalSlides) slideIndex = 0;
+            else if (index < 0) slideIndex = totalSlides - 1;
+            else slideIndex = index;
+
+            if (track) {
+                track.style.transform = `translateX(-${slideIndex * 100}%)`;
+            }
+
+            dots.forEach((dot, idx) => {
+                if (idx === slideIndex) {
+                    dot.className = "dot w-6 h-2 rounded-full bg-white cursor-pointer transition-all";
+                } else {
+                    dot.className = "dot w-2 h-2 rounded-full bg-white/50 cursor-pointer transition-all";
+                }
+            });
+        }
+
+        function nextSlide() {
+            showSlide(slideIndex + 1);
+            resetTimer();
+        }
+
+        function prevSlide() {
+            showSlide(slideIndex - 1);
+            resetTimer();
+        }
+
+        function currentSlide(index) {
+            showSlide(index);
+            resetTimer();
+        }
+
+        function startSlideTimer() {
+            clearInterval(slideInterval);
+            slideInterval = setInterval(() => {
+                showSlide(slideIndex + 1);
+            }, 4000); // Slide otomatis berganti setiap 4 detik
+        }
+
+        function resetTimer() {
+            clearInterval(slideInterval);
+            startSlideTimer();
+        }        
     </script>
 </body>
 </html>
