@@ -56,7 +56,7 @@
         document.write('<link rel="manifest" href="' + manifestURL + '">');
     </script>
 
-    <!-- Print Specific CSS Styling -->
+    <!-- Print & Frame Specific CSS Styling -->
     <style>
         @media print {
             body {
@@ -64,7 +64,7 @@
                 color: #000000 !important;
                 padding-bottom: 0 !important;
             }
-            .bg-portal-dark, nav, #loading-state, #error-state, .no-print, footer, button, select, input {
+            .bg-portal-dark, nav, #loading-state, #error-state, .no-print, footer, button, select, input, #simulator-toolbar {
                 display: none !important;
             }
             .container {
@@ -104,9 +104,36 @@
         #print-header, #print-footer-signatures {
             display: none;
         }
+
+        /* Container Frame Simulator Mobile */
+        .mobile-frame-container {
+            max-width: 412px;
+            margin: 1.5rem auto;
+            border-radius: 2.5rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 10px #1f2937;
+            overflow: hidden;
+            background-color: #f9fafb;
+            position: relative;
+        }
     </style>
 </head>
-<body class="bg-gray-50 font-sans leading-normal tracking-normal pb-16">
+<body class="bg-gray-50 font-sans leading-normal tracking-normal pb-24 xl:pb-12 transition-all duration-300" id="app-body">
+
+    <!-- SIMULATOR TOOLBAR HEADER (Untuk Menguji Tampilan Mobile vs Desktop) -->
+    <!-- <div id="simulator-toolbar" class="bg-gray-900 text-white text-xs py-1.5 px-4 no-print flex justify-between items-center border-b border-gray-800">
+        <div class="flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span class="font-bold text-[11px] text-gray-300">Simulasi Tampilan:</span>
+        </div>
+        <div class="flex items-center bg-gray-800 p-0.5 rounded-lg text-[10px] font-semibold">
+            <button onclick="toggleMobileMode(false)" id="btn-mode-desktop" class="px-2.5 py-1 rounded-md bg-portal-600 text-white transition flex items-center gap-1">
+                <i class="fa-solid fa-desktop"></i> Desktop / Responsive
+            </button>
+            <button onclick="toggleMobileMode(true)" id="btn-mode-mobile" class="px-2.5 py-1 rounded-md text-gray-400 hover:text-white transition flex items-center gap-1">
+                <i class="fa-solid fa-mobile-screen-button"></i> Mobile Frame HP
+            </button>
+        </div>
+    </div> -->
 
     <!-- Kop Surat Khusus Mode Cetak (PDF / Print) -->
     <div id="print-header" class="mb-6 border-b-2 border-gray-800 pb-4 text-center">
@@ -127,13 +154,12 @@
                 <span id="admin-status-badge" class="bg-rose-500 text-white px-2 py-0.5 rounded text-[10px] font-bold"><i class="fa-solid fa-lock mr-1"></i> Mode Publik</span>
                 <span><i class="fa-solid fa-calendar-days mr-1 text-portal-500"></i> <span id="top-bar-bulan-tahun">Memuat...</span></span>
                 <span><i class="fa-solid fa-eye mr-1 text-portal-500"></i> <span id="top-bar-visitor">0</span> Kunjungan</span>
-                <!-- <span><i class="fa-solid fa-location-dot mr-1 text-portal-500"></i> Pekanbaru, Riau</span> -->
             </div>
         </div>
     </div>
 
-    <!-- Main Header / Navbar -->
-    <nav class="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
+    <!-- Main Header / Navbar (Sticky Top) -->
+    <nav class="bg-white/95 backdrop-blur-md border-b border-gray-200 sticky top-0 z-40 shadow-xs">
         <div class="container mx-auto px-4 py-3 flex items-center justify-between gap-4">
             <!-- Brand Logo -->
             <div class="flex items-center space-x-3 cursor-pointer" onclick="switchTab('dashboard')">
@@ -146,12 +172,15 @@
                 </div>
             </div>
 
-            <!-- Navigation Tabs (Desktop) -->
+            <!-- Navigation Tabs (Hanya Muncul di Desktop / XL) -->
             <div class="hidden xl:flex items-center space-x-1 bg-gray-100 p-1 rounded-xl text-xs font-semibold">
                 <button onclick="switchTab('dashboard')" id="nav-dashboard" class="px-3 py-2 rounded-lg bg-portal-600 text-white transition shadow-sm">Dashboard</button>
                 <button onclick="switchTab('peta')" id="nav-peta" class="px-3 py-2 rounded-lg text-gray-600 hover:text-portal-600 transition">Peta Blok</button>
                 <button onclick="switchTab('cekstatus')" id="nav-cekstatus" class="px-3 py-2 rounded-lg text-gray-600 hover:text-portal-600 transition">Cek Iuran & WA</button>
-                <button onclick="switchTab('pengaduan')" id="nav-pengaduan" class="px-3 py-2 rounded-lg text-gray-600 hover:text-portal-600 transition">Pengaduan Fasum</button>
+                <button onclick="switchTab('pengaduan')" id="nav-pengaduan" class="px-3 py-2 rounded-lg text-gray-600 hover:text-portal-600 transition relative">
+                    Pengaduan Fasum
+                    <span id="badge-dot-desktop" class="absolute -top-1 -right-1 w-2.5 h-2.5 bg-rose-500 rounded-full ring-2 ring-white"></span>
+                </button>
                 <button onclick="switchTab('cashflow')" id="nav-cashflow" class="px-3 py-2 rounded-lg text-gray-600 hover:text-portal-600 transition">Cashflow</button>
                 <button onclick="switchTab('iuran')" id="nav-iuran" class="px-3 py-2 rounded-lg text-gray-600 hover:text-portal-600 transition">Detail Iuran</button>
             </div>
@@ -166,19 +195,10 @@
                 </button>
             </div>
         </div>
-        <!-- Mobile Sub-Navigation -->
-        <div class="flex xl:hidden bg-gray-100 border-t border-gray-200 px-2 py-2 justify-around text-[10px] sm:text-xs font-semibold overflow-x-auto gap-1">
-            <button onclick="switchTab('dashboard')" id="mob-dashboard" class="text-portal-600 font-bold whitespace-nowrap px-2"><i class="fa-solid fa-chart-pie mr-1"></i> Dash</button>
-            <button onclick="switchTab('peta')" id="mob-peta" class="text-gray-600 whitespace-nowrap px-2"><i class="fa-solid fa-map mr-1"></i> Peta</button>
-            <button onclick="switchTab('cekstatus')" id="mob-cekstatus" class="text-gray-600 whitespace-nowrap px-2"><i class="fa-solid fa-magnifying-glass mr-1"></i> Warga</button>
-            <button onclick="switchTab('pengaduan')" id="mob-pengaduan" class="text-gray-600 whitespace-nowrap px-2"><i class="fa-solid fa-bullhorn mr-1"></i> Aduan</button>
-            <button onclick="switchTab('cashflow')" id="mob-cashflow" class="text-gray-600 whitespace-nowrap px-2"><i class="fa-solid fa-wallet mr-1"></i> Kas</button>
-            <button onclick="switchTab('iuran')" id="mob-iuran" class="text-gray-600 whitespace-nowrap px-2"><i class="fa-solid fa-file-invoice mr-1"></i> Iuran</button>
-        </div>
     </nav>
 
     <!-- Main Container -->
-    <div class="container mx-auto px-4 mt-6">
+    <div class="container mx-auto px-4 mt-6" id="main-content-wrapper">
         
         <!-- Loading Indicator -->
         <div id="loading-state" class="text-center py-16 text-gray-500 bg-white rounded-2xl shadow-sm border border-gray-100 mb-6">
@@ -188,29 +208,18 @@
 
         <!-- ================= PAGE 1: DASHBOARD ================= -->
         <div id="page-dashboard" class="space-y-6">
-            <!-- <div class="bg-gradient-to-r from-portal-600 to-portal-700 rounded-2xl p-6 text-white shadow-md relative overflow-hidden flex flex-col md:flex-row justify-between items-center gap-4">
-                <div>
-                    <span class="bg-white/20 text-white text-[11px] px-2.5 py-0.5 rounded-full font-semibold uppercase tracking-wider">Sistem Informasi Warga</span>
-                    <h1 class="text-xl md:text-2xl font-bold mt-2">Dashboard Rekapitulasi & Keuangan Warga</h1>
-                    <p class="text-portal-50 text-xs md:text-sm mt-1 max-w-xl">Transparansi iuran bulanan, kas operasional, dan statistik hunian perumahan secara real-time.</p>
-                </div>
-                <div class="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-3 text-center md:w-36">
-                    <span class="text-[10px] text-portal-50 block uppercase">Status Kas</span>
-                    <span class="text-xs md:text-sm font-bold text-white">Aktif & Transparan</span>
-                </div>
-            </div> -->
 
-            <!-- ================= CAROUSEL BANNER OTOMATIS ================= -->
+            <!-- CAROUSEL BANNER OTOMATIS -->
             <div class="relative w-full overflow-hidden rounded-2xl shadow-md bg-gradient-to-r from-portal-600 to-portal-700 text-white mb-6 group">
                 
-                <!-- Track Slide (Isi digeser otomatis via JavaScript) -->
+                <!-- Track Slide -->
                 <div id="carousel-track" class="flex transition-transform duration-500 ease-out">
                     <div class="min-w-full p-6 md:p-8 flex items-center justify-center text-portal-100 text-xs">
                         <i class="fa-solid fa-circle-notch fa-spin mr-2"></i> Memuat Banner...
                     </div>
                 </div>
 
-                <!-- Tombol Navigasi Manual (Muncul saat kursor diarahkan) -->
+                <!-- Tombol Navigasi Manual -->
                 <button onclick="prevSlide()" class="absolute left-2 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white w-8 h-8 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition text-xs">
                     <i class="fa-solid fa-chevron-left"></i>
                 </button>
@@ -218,7 +227,7 @@
                     <i class="fa-solid fa-chevron-right"></i>
                 </button>
 
-                <!-- Indikator Titik (Dots) di Bawah -->
+                <!-- Indikator Titik (Dots) -->
                 <div id="carousel-dots" class="absolute bottom-3 right-6 flex space-x-1.5"></div>
             </div>
             
@@ -231,8 +240,7 @@
                     </div>
                     <p class="text-xs text-gray-500 font-medium">Total Iuran Terkumpul</p>
                     <h2 id="val-iuran" class="text-lg font-bold text-gray-800 mt-1">-</h2>
-                    <!-- <span id="txt-bulan-iuran" class="text-[11px] text-gray-400 mt-1 block">Bulan Berjalan</span> -->
-                     <span class="text-[11px] text-gray-400 mt-1 block">Iuran Perumahan</span>
+                    <span class="text-[11px] text-gray-400 mt-1 block">Iuran Perumahan</span>
                 </div>
 
                 <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-200">
@@ -557,6 +565,45 @@
         </div>
     </div>
 
+    <!-- BOTTOM NAVIGATION BAR (Thumb-Friendly, Glassmorphism, Badge Notifikasi) -->
+    <nav class="fixed bottom-0 left-0 right-0 z-50 bg-white/92 backdrop-blur-md border-t border-gray-200/80 shadow-lg xl:hidden no-print transition-all">
+        <div class="grid grid-cols-6 h-16 px-1 text-center">
+            
+            <button onclick="switchTab('dashboard')" id="mob-dashboard" class="nav-btn flex flex-col items-center justify-center text-portal-600 transition-all">
+                <i class="fa-solid fa-chart-pie text-lg mb-0.5"></i>
+                <span class="text-[10px] font-bold">Dash</span>
+            </button>
+
+            <button onclick="switchTab('peta')" id="mob-peta" class="nav-btn flex flex-col items-center justify-center text-gray-400 hover:text-portal-600 transition-all">
+                <i class="fa-solid fa-map text-lg mb-0.5"></i>
+                <span class="text-[10px] font-medium">Peta</span>
+            </button>
+
+            <button onclick="switchTab('cekstatus')" id="mob-cekstatus" class="nav-btn flex flex-col items-center justify-center text-gray-400 hover:text-portal-600 transition-all">
+                <i class="fa-solid fa-users text-lg mb-0.5"></i>
+                <span class="text-[10px] font-medium">Warga</span>
+            </button>
+
+            <button onclick="switchTab('pengaduan')" id="mob-pengaduan" class="nav-btn flex flex-col items-center justify-center text-gray-400 hover:text-portal-600 transition-all relative">
+                <i class="fa-solid fa-bullhorn text-lg mb-0.5"></i>
+                <span id="badge-dot-mobile" class="absolute top-2 right-3 w-2 h-2 bg-rose-500 rounded-full animate-ping"></span>
+                <span id="badge-dot-mobile-static" class="absolute top-2 right-3 w-2 h-2 bg-rose-500 rounded-full"></span>
+                <span class="text-[10px] font-medium">Aduan</span>
+            </button>
+
+            <button onclick="switchTab('cashflow')" id="mob-cashflow" class="nav-btn flex flex-col items-center justify-center text-gray-400 hover:text-portal-600 transition-all">
+                <i class="fa-solid fa-wallet text-lg mb-0.5"></i>
+                <span class="text-[10px] font-medium">Kas</span>
+            </button>
+
+            <button onclick="switchTab('iuran')" id="mob-iuran" class="nav-btn flex flex-col items-center justify-center text-gray-400 hover:text-portal-600 transition-all">
+                <i class="fa-solid fa-file-invoice-dollar text-lg mb-0.5"></i>
+                <span class="text-[10px] font-medium">Iuran</span>
+            </button>
+
+        </div>
+    </nav>
+
     <!-- Modal Detail Rumah -->
     <div id="modal-rumah" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl relative animate-in fade-in zoom-in duration-200">
@@ -631,7 +678,7 @@
     </div>
 
     <!-- Footer -->
-    <footer class="text-center text-xs text-gray-400 mt-12 border-t border-gray-200 pt-6">
+    <footer class="text-center text-xs text-gray-400 mt-12 border-t border-gray-200 pt-6 no-print">
         &copy; 2026 Portal Warga Mutiara Intan Permai • Live Google Sheets Data
     </footer>
 
@@ -706,34 +753,70 @@
                 const pageEl = document.getElementById(`page-${t}`);
                 if(pageEl) pageEl.classList.add('hidden');
                 
+                // Reset Desktop Tab Styling
                 const nav = document.getElementById(`nav-${t}`);
                 if(nav) {
                     nav.classList.remove('bg-portal-600', 'text-white', 'shadow-sm');
                     nav.classList.add('text-gray-600');
                 }
+                
+                // Reset Bottom Navigation Bar Styling (Mobile)
                 const mob = document.getElementById(`mob-${t}`);
                 if(mob) {
-                    mob.classList.remove('text-portal-600', 'font-bold');
-                    mob.classList.add('text-gray-600');
+                    mob.classList.remove('text-portal-600');
+                    mob.classList.add('text-gray-400');
+                    const span = mob.querySelector('span:not([id^="badge"])');
+                    if (span) {
+                        span.classList.remove('font-bold');
+                        span.classList.add('font-medium');
+                    }
                 }
             });
 
+            // Tampilkan Halaman Target
             const targetPage = document.getElementById(`page-${tab}`);
             if(targetPage) targetPage.classList.remove('hidden');
 
+            // Set Active Desktop Nav Tab
             const activeNav = document.getElementById(`nav-${tab}`);
             if(activeNav) {
                 activeNav.classList.add('bg-portal-600', 'text-white', 'shadow-sm');
                 activeNav.classList.remove('text-gray-600');
             }
+
+            // Set Active Mobile Bottom Nav Tab
             const activeMob = document.getElementById(`mob-${tab}`);
             if(activeMob) {
-                activeMob.classList.add('text-portal-600', 'font-bold');
-                activeMob.classList.remove('text-gray-600');
+                activeMob.classList.add('text-portal-600');
+                activeMob.classList.remove('text-gray-400');
+                const activeSpan = activeMob.querySelector('span:not([id^="badge"])');
+                if (activeSpan) {
+                    activeSpan.classList.remove('font-medium');
+                    activeSpan.classList.add('font-bold');
+                }
             }
 
             if(tab === 'peta') {
                 renderDenahBlok('ALL');
+            }
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function toggleMobileMode(enableMobileFrame) {
+            const body = document.getElementById('app-body');
+            const wrapper = document.getElementById('main-content-wrapper');
+            const btnDesk = document.getElementById('btn-mode-desktop');
+            const btnMob = document.getElementById('btn-mode-mobile');
+
+            if (enableMobileFrame) {
+                wrapper.classList.add('mobile-frame-container');
+                btnMob.className = "px-2.5 py-1 rounded-md bg-portal-600 text-white transition flex items-center gap-1";
+                btnDesk.className = "px-2.5 py-1 rounded-md text-gray-400 hover:text-white transition flex items-center gap-1";
+            } else {
+                wrapper.classList.remove('mobile-frame-container');
+                btnDesk.className = "px-2.5 py-1 rounded-md bg-portal-600 text-white transition flex items-center gap-1";
+                btnMob.className = "px-2.5 py-1 rounded-md text-gray-400 hover:text-white transition flex items-center gap-1";
             }
         }
 
@@ -779,8 +862,6 @@
                         safeSetText('lps-terkumpul', formatRupiah(s["Iuran LPS Terkumpul Bulan Ini"]));
                         safeSetText('lps-belum', `${s["Warga Belum Bayar LPS Bulan Ini"] || 0} Warga`);
 
-                        // ==================== VISITOR COUNTER ====================
-                        // Diletakkan di dalam .then() agar variabel `s` dibaca dari respons server
                         if (s["Total Pengunjung"] !== undefined) {
                             const formattedVisitor = Number(s["Total Pengunjung"]).toLocaleString('id-ID');
                             safeSetText('top-bar-visitor', formattedVisitor);
@@ -1044,7 +1125,6 @@
                 blockCard.innerHTML = headerHtml;
 
                 const gridDiv = document.createElement('div');
-                // Menggunakan grid responsif untuk HP (4 kolom) dan komputer (7 kolom)
                 gridDiv.className = 'grid grid-cols-4 sm:grid-cols-7 gap-2 pb-2';
 
                 if (hurufBlok === 'D') {
@@ -1157,8 +1237,6 @@
         }
 
         // ================= PENGADUAN =================
-
-        // 1. Fungsi Mengirim Pengaduan Baru oleh Warga
         function submitPengaduan(e) {
             e.preventDefault();
             const btn = document.getElementById('btn-submit-adu');
@@ -1179,7 +1257,7 @@
             .then(data => {
                 alert('Laporan berhasil dikirim ke Pengurus!');
                 document.getElementById('form-pengaduan')?.reset();
-                loadLiveData(); // Refresh data live dari Google Sheets
+                loadLiveData();
             })
             .catch(err => {
                 console.error(err);
@@ -1193,7 +1271,6 @@
             });
         }
 
-        // 2. Fungsi Merender Tabel Daftar Pengaduan
         function renderPengaduanTable(rows) {
             const tbody = document.getElementById('table-pengaduan-body');
             if(!tbody) return;
@@ -1213,7 +1290,6 @@
                 const noRumah = row['No Rumah'] || row['No_Rumah'] || '';
                 const namaPelapor = row['Nama Pelapor'] || row['Nama'] || '';
 
-                // Pastikan pengecekan isAdminLoggedIn ini ada di kode Anda:
                 let statusHtml = '';
                 if (isAdminLoggedIn) {
                     statusHtml = `
@@ -1245,7 +1321,6 @@
             });
         }
 
-        // 3. Fungsi Mengirim Perubahan Status Pengaduan Langsung ke Google Sheets (Khusus Admin)
         function updateStatusPengaduan(tanggal, noRumah, nama, statusBaru) {
             const payload = {
                 action: "update_status_pengaduan",
@@ -1263,7 +1338,7 @@
             .then(data => {
                 if (data.status === "success") {
                     alert(`Status pengaduan rumah ${noRumah} berhasil diubah menjadi "${statusBaru}"!`);
-                    loadLiveData(); // Refresh data agar sinkron dengan Google Sheets
+                    loadLiveData();
                 } else {
                     alert('Gagal memperbarui status: ' + data.message);
                 }
@@ -1432,7 +1507,7 @@
             loadLiveData();
         });
 
-        // Skrip JavaScript Pengontrol Slide
+        // Carousel Controller
         let slideIndex = 0;
         let totalSlides = 0;
         let slideInterval;
@@ -1442,10 +1517,8 @@
             const dotsContainer = document.getElementById('carousel-dots');
             if (!track || !dotsContainer) return;
 
-            // Filter hanya banner yang berstatus "Aktif"
             const activeBanners = bannerList.filter(b => String(b['Status'] || '').toLowerCase() === 'aktif');
             
-            // Fallback jika sheet banner kosong
             if (activeBanners.length === 0) {
                 activeBanners.push({
                     Judul: "Portal Warga Mutiara Intan Permai",
@@ -1459,11 +1532,9 @@
             dotsContainer.innerHTML = '';
 
             activeBanners.forEach((item, index) => {
-                // Buat Elemen Slide
                 const slideDiv = document.createElement('div');
                 slideDiv.className = "min-w-full p-6 md:p-8 flex flex-col justify-between bg-gradient-to-r from-portal-600 to-portal-700 text-white";
                 
-                // Jika ada gambar latar (ImageURL), gunakan sebagai background dengan efek overlay gelap
                 if (item['ImageURL']) {
                     slideDiv.style.backgroundImage = `linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('${item['ImageURL']}')`;
                     slideDiv.style.backgroundSize = 'cover';
@@ -1484,7 +1555,6 @@
                 `;
                 track.appendChild(slideDiv);
 
-                // Buat Tombol Titik (Dots) Indikator
                 const dotSpan = document.createElement('span');
                 dotSpan.className = index === 0 ? "dot w-6 h-2 rounded-full bg-white cursor-pointer transition-all" : "dot w-2 h-2 rounded-full bg-white/50 cursor-pointer transition-all";
                 dotSpan.onclick = () => currentSlide(index);
@@ -1535,7 +1605,7 @@
             clearInterval(slideInterval);
             slideInterval = setInterval(() => {
                 showSlide(slideIndex + 1);
-            }, 5000); // Slide otomatis berganti setiap 5 detik
+            }, 5000);
         }
 
         function resetTimer() {
