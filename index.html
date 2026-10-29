@@ -30,7 +30,7 @@
     <meta name="theme-color" content="#059669">
 
     <!-- PWA Manifest & Meta Tags (Dinamis via Data URI) -->
-    <link rel="apple-touch-icon" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/svgs/solid/house-chimney.svg">
+    <link rel="apple-touch-icon" href="https://cdnjs.cloudflare.com/apple-touch-icon.png">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <script>
@@ -44,7 +44,7 @@
             theme_color: "#059669",
             icons: [
                 {
-                    src: "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/svgs/solid/house-chimney.svg",
+                    src: "https://cdnjs.cloudflare.com/svgs/solid/house-chimney.svg",
                     sizes: "512x512",
                     type: "image/svg+xml"
                 }
@@ -56,7 +56,7 @@
         document.write('<link rel="manifest" href="' + manifestURL + '">');
     </script>
 
-    <!-- Print & Frame Specific CSS Styling -->
+    <!-- Print Specific CSS Styling -->
     <style>
         @media print {
             body {
@@ -64,7 +64,7 @@
                 color: #000000 !important;
                 padding-bottom: 0 !important;
             }
-            .bg-portal-dark, nav, #loading-state, #error-state, .no-print, footer, button, select, input, #simulator-toolbar {
+            .bg-portal-dark, nav, #loading-state, #error-state, .no-print, footer, button, select, input {
                 display: none !important;
             }
             .container {
@@ -104,36 +104,9 @@
         #print-header, #print-footer-signatures {
             display: none;
         }
-
-        /* Container Frame Simulator Mobile */
-        .mobile-frame-container {
-            max-width: 412px;
-            margin: 1.5rem auto;
-            border-radius: 2.5rem;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 10px #1f2937;
-            overflow: hidden;
-            background-color: #f9fafb;
-            position: relative;
-        }
     </style>
 </head>
 <body class="bg-gray-50 font-sans leading-normal tracking-normal pb-24 xl:pb-12 transition-all duration-300" id="app-body">
-
-    <!-- SIMULATOR TOOLBAR HEADER (Untuk Menguji Tampilan Mobile vs Desktop) -->
-    <!-- <div id="simulator-toolbar" class="bg-gray-900 text-white text-xs py-1.5 px-4 no-print flex justify-between items-center border-b border-gray-800">
-        <div class="flex items-center gap-2">
-            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-            <span class="font-bold text-[11px] text-gray-300">Simulasi Tampilan:</span>
-        </div>
-        <div class="flex items-center bg-gray-800 p-0.5 rounded-lg text-[10px] font-semibold">
-            <button onclick="toggleMobileMode(false)" id="btn-mode-desktop" class="px-2.5 py-1 rounded-md bg-portal-600 text-white transition flex items-center gap-1">
-                <i class="fa-solid fa-desktop"></i> Desktop / Responsive
-            </button>
-            <button onclick="toggleMobileMode(true)" id="btn-mode-mobile" class="px-2.5 py-1 rounded-md text-gray-400 hover:text-white transition flex items-center gap-1">
-                <i class="fa-solid fa-mobile-screen-button"></i> Mobile Frame HP
-            </button>
-        </div>
-    </div> -->
 
     <!-- Kop Surat Khusus Mode Cetak (PDF / Print) -->
     <div id="print-header" class="mb-6 border-b-2 border-gray-800 pb-4 text-center">
@@ -172,7 +145,7 @@
                 </div>
             </div>
 
-            <!-- Navigation Tabs (Hanya Muncul di Desktop / XL) -->
+            <!-- Navigation Tabs (Desktop XL) -->
             <div class="hidden xl:flex items-center space-x-1 bg-gray-100 p-1 rounded-xl text-xs font-semibold">
                 <button onclick="switchTab('dashboard')" id="nav-dashboard" class="px-3 py-2 rounded-lg bg-portal-600 text-white transition shadow-sm">Dashboard</button>
                 <button onclick="switchTab('peta')" id="nav-peta" class="px-3 py-2 rounded-lg text-gray-600 hover:text-portal-600 transition">Peta Blok</button>
@@ -183,6 +156,7 @@
                 </button>
                 <button onclick="switchTab('cashflow')" id="nav-cashflow" class="px-3 py-2 rounded-lg text-gray-600 hover:text-portal-600 transition">Cashflow</button>
                 <button onclick="switchTab('iuran')" id="nav-iuran" class="px-3 py-2 rounded-lg text-gray-600 hover:text-portal-600 transition">Detail Iuran</button>
+                <button onclick="switchTab('direktori')" id="nav-direktori" class="px-3 py-2 rounded-lg text-gray-600 hover:text-portal-600 transition">Direktori & UMKM</button>
             </div>
 
             <!-- Right Actions -->
@@ -211,7 +185,6 @@
 
             <!-- CAROUSEL BANNER OTOMATIS -->
             <div class="relative w-full overflow-hidden rounded-2xl shadow-md bg-gradient-to-r from-portal-600 to-portal-700 text-white mb-6 group">
-                
                 <!-- Track Slide -->
                 <div id="carousel-track" class="flex transition-transform duration-500 ease-out">
                     <div class="min-w-full p-6 md:p-8 flex items-center justify-center text-portal-100 text-xs">
@@ -542,6 +515,36 @@
             </div>
         </div>
 
+        <!-- ================= PAGE 7: DIREKTORI & UMKM ================= -->
+        <div id="page-direktori" class="hidden space-y-6">
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 space-y-6">
+                <div>
+                    <h2 class="text-lg font-bold text-gray-800"><i class="fa-solid fa-address-book text-portal-600 mr-2"></i> Direktori Kontak & UMKM Warga</h2>
+                    <p class="text-xs text-gray-500 mt-0.5">Kontak penting darurat lingkungan serta etalase usaha mandiri warga Mutiara Intan Permai.</p>
+                </div>
+
+                <!-- Bagian 1: Kontak Penting & Darurat -->
+                <div>
+                    <h3 class="text-xs font-bold text-gray-700 uppercase tracking-wide mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-phone-volume text-rose-600"></i> Kontak Penting & Layanan Darurat
+                    </h3>
+                    <div id="direktori-kontak-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                        <!-- Dimuat otomatis via JS -->
+                    </div>
+                </div>
+
+                <!-- Bagian 2: UMKM & Jasa Warga -->
+                <div class="pt-4 border-t border-gray-100">
+                    <h3 class="text-xs font-bold text-gray-700 uppercase tracking-wide mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-store text-portal-600"></i> Etalase UMKM & Jasa Warga
+                    </h3>
+                    <div id="direktori-umkm-container" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <!-- Dimuat otomatis via JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Kolom Tanda Tangan Khusus Dokumen Cetak/PDF -->
         <div id="print-footer-signatures" class="mt-12 justify-between text-xs text-center font-semibold px-8">
             <div>
@@ -565,40 +568,45 @@
         </div>
     </div>
 
-    <!-- BOTTOM NAVIGATION BAR (Thumb-Friendly, Glassmorphism, Badge Notifikasi) -->
+    <!-- BOTTOM NAVIGATION BAR (Thumb-Friendly, Glassmorphism, 7-Kolom Grid) -->
     <nav class="fixed bottom-0 left-0 right-0 z-50 bg-white/92 backdrop-blur-md border-t border-gray-200/80 shadow-lg xl:hidden no-print transition-all">
-        <div class="grid grid-cols-6 h-16 px-1 text-center">
+        <div class="grid grid-cols-7 h-16 px-1 text-center">
             
             <button onclick="switchTab('dashboard')" id="mob-dashboard" class="nav-btn flex flex-col items-center justify-center text-portal-600 transition-all">
                 <i class="fa-solid fa-chart-pie text-lg mb-0.5"></i>
-                <span class="text-[10px] font-bold">Dash</span>
+                <span class="text-[9px] font-bold">Dash</span>
             </button>
 
             <button onclick="switchTab('peta')" id="mob-peta" class="nav-btn flex flex-col items-center justify-center text-gray-400 hover:text-portal-600 transition-all">
                 <i class="fa-solid fa-map text-lg mb-0.5"></i>
-                <span class="text-[10px] font-medium">Peta</span>
+                <span class="text-[9px] font-medium">Peta</span>
             </button>
 
             <button onclick="switchTab('cekstatus')" id="mob-cekstatus" class="nav-btn flex flex-col items-center justify-center text-gray-400 hover:text-portal-600 transition-all">
                 <i class="fa-solid fa-users text-lg mb-0.5"></i>
-                <span class="text-[10px] font-medium">Warga</span>
+                <span class="text-[9px] font-medium">Warga</span>
             </button>
 
             <button onclick="switchTab('pengaduan')" id="mob-pengaduan" class="nav-btn flex flex-col items-center justify-center text-gray-400 hover:text-portal-600 transition-all relative">
                 <i class="fa-solid fa-bullhorn text-lg mb-0.5"></i>
-                <span id="badge-dot-mobile" class="absolute top-2 right-3 w-2 h-2 bg-rose-500 rounded-full animate-ping"></span>
-                <span id="badge-dot-mobile-static" class="absolute top-2 right-3 w-2 h-2 bg-rose-500 rounded-full"></span>
-                <span class="text-[10px] font-medium">Aduan</span>
+                <span id="badge-dot-mobile" class="absolute top-2 right-2.5 w-2 h-2 bg-rose-500 rounded-full animate-ping"></span>
+                <span id="badge-dot-mobile-static" class="absolute top-2 right-2.5 w-2 h-2 bg-rose-500 rounded-full"></span>
+                <span class="text-[9px] font-medium">Aduan</span>
             </button>
 
             <button onclick="switchTab('cashflow')" id="mob-cashflow" class="nav-btn flex flex-col items-center justify-center text-gray-400 hover:text-portal-600 transition-all">
                 <i class="fa-solid fa-wallet text-lg mb-0.5"></i>
-                <span class="text-[10px] font-medium">Kas</span>
+                <span class="text-[9px] font-medium">Kas</span>
             </button>
 
             <button onclick="switchTab('iuran')" id="mob-iuran" class="nav-btn flex flex-col items-center justify-center text-gray-400 hover:text-portal-600 transition-all">
                 <i class="fa-solid fa-file-invoice-dollar text-lg mb-0.5"></i>
-                <span class="text-[10px] font-medium">Iuran</span>
+                <span class="text-[9px] font-medium">Iuran</span>
+            </button>
+
+            <button onclick="switchTab('direktori')" id="mob-direktori" class="nav-btn flex flex-col items-center justify-center text-gray-400 hover:text-portal-600 transition-all">
+                <i class="fa-solid fa-address-book text-lg mb-0.5"></i>
+                <span class="text-[9px] font-medium">Direktori</span>
             </button>
 
         </div>
@@ -690,6 +698,7 @@
         let globalIuranData = [];
         let globalWargaData = [];
         let globalPengaduanData = [];
+        let globalDirektoriData = [];
 
         let isAdminLoggedIn = false;
         let adminPasscode = localStorage.getItem('rt_admin_passcode') || '1234';
@@ -749,7 +758,7 @@
         }
 
         function switchTab(tab) {
-            ['dashboard', 'peta', 'cekstatus', 'pengaduan', 'cashflow', 'iuran'].forEach(t => {
+            ['dashboard', 'peta', 'cekstatus', 'pengaduan', 'cashflow', 'iuran', 'direktori'].forEach(t => {
                 const pageEl = document.getElementById(`page-${t}`);
                 if(pageEl) pageEl.classList.add('hidden');
                 
@@ -801,23 +810,6 @@
             }
 
             window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        function toggleMobileMode(enableMobileFrame) {
-            const body = document.getElementById('app-body');
-            const wrapper = document.getElementById('main-content-wrapper');
-            const btnDesk = document.getElementById('btn-mode-desktop');
-            const btnMob = document.getElementById('btn-mode-mobile');
-
-            if (enableMobileFrame) {
-                wrapper.classList.add('mobile-frame-container');
-                btnMob.className = "px-2.5 py-1 rounded-md bg-portal-600 text-white transition flex items-center gap-1";
-                btnDesk.className = "px-2.5 py-1 rounded-md text-gray-400 hover:text-white transition flex items-center gap-1";
-            } else {
-                wrapper.classList.remove('mobile-frame-container');
-                btnDesk.className = "px-2.5 py-1 rounded-md bg-portal-600 text-white transition flex items-center gap-1";
-                btnMob.className = "px-2.5 py-1 rounded-md text-gray-400 hover:text-white transition flex items-center gap-1";
-            }
         }
 
         function safeSetText(id, text) {
@@ -883,6 +875,9 @@
                         populateTahunIuranDropdown(globalIuranData);
                         populateNoRumahDropdown(globalIuranData, globalWargaData);
                         filterIuran();
+
+                        globalDirektoriData = data.direktori || [];
+                        renderDirektori(globalDirektoriData);
 
                         if(loading) loading.classList.add('hidden');
                         if(dashboard) dashboard.classList.remove('hidden');
@@ -1500,6 +1495,88 @@
             });
 
             renderIuranTable(filtered);
+        }
+
+        // ================= DIREKTORI & UMKM =================
+        function renderDirektori(rows) {
+            const kontakContainer = document.getElementById('direktori-kontak-container');
+            const umkmContainer = document.getElementById('direktori-umkm-container');
+            if(!kontakContainer || !umkmContainer) return;
+
+            kontakContainer.innerHTML = '';
+            umkmContainer.innerHTML = '';
+
+            const kontakList = rows.filter(r => String(r['Kategori'] || '').toLowerCase().includes('kontak') && String(r['Status'] || '').toLowerCase() === 'aktif');
+            const umkmList = rows.filter(r => String(r['Kategori'] || '').toLowerCase().includes('umkm') && String(r['Status'] || '').toLowerCase() === 'aktif');
+
+            // Render Kontak Penting
+            if(kontakList.length === 0) {
+                kontakContainer.innerHTML = '<p class="text-xs text-gray-400 italic col-span-full">Belum ada data kontak penting.</p>';
+            } else {
+                kontakList.forEach(item => {
+                    const nama = item['Nama / Usaha'] || item['Nama'] || '-';
+                    const ket = item['Subjek / Keterangan'] || '-';
+                    let telp = String(item['No Telepon / WA'] || item['No Telepon'] || '').trim();
+                    
+                    let telpClean = telp.replace(/[^0-9+]/g, '');
+                    if (telpClean.startsWith('0')) {
+                        telpClean = '62' + telpClean.substring(1);
+                    }
+
+                    const card = document.createElement('div');
+                    card.className = 'bg-gray-50 p-3.5 rounded-xl border border-gray-200 flex flex-col justify-between gap-3';
+                    card.innerHTML = `
+                        <div>
+                            <span class="text-[10px] text-gray-400 block font-semibold uppercase tracking-wider">${ket}</span>
+                            <h5 class="text-xs font-bold text-gray-800 mt-0.5">${nama}</h5>
+                            <span class="text-[11px] text-gray-500 font-mono">${telp}</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <a href="tel:${telpClean}" class="flex-1 bg-gray-800 hover:bg-gray-900 text-white px-3 py-2 rounded-xl text-[11px] font-semibold transition flex items-center justify-center gap-1.5 shadow-sm">
+                                <i class="fa-solid fa-phone text-xs"></i> <span>Telepon</span>
+                            </a>
+                            <a href="https://wa.me/${telpClean}" target="_blank" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-2 rounded-xl text-[11px] font-semibold transition flex items-center justify-center gap-1.5 shadow-sm">
+                                <i class="fa-brands fa-whatsapp text-xs"></i> <span>WhatsApp</span>
+                            </a>
+                        </div>
+                    `;
+                    kontakContainer.appendChild(card);
+                });
+            }
+
+            // Render UMKM Warga
+            if(umkmList.length === 0) {
+                umkmContainer.innerHTML = '<p class="text-xs text-gray-400 italic col-span-full">Belum ada data UMKM terdaftar.</p>';
+            } else {
+                umkmList.forEach(item => {
+                    const namaUsaha = item['Nama / Usaha'] || item['Nama'] || '-';
+                    const keterangan = item['Subjek / Keterangan'] || '-';
+                    let noWa = String(item['No Telepon / WA'] || item['No Telepon'] || '').trim();
+                    let waClean = noWa.replace(/[^0-9+]/g, '');
+                    if (waClean.startsWith('0')) {
+                        waClean = '62' + waClean.substring(1);
+                    }
+
+                    const umkmCard = document.createElement('div');
+                    umkmCard.className = 'bg-portal-50/50 border border-portal-100 p-4 rounded-xl flex items-start gap-3';
+                    umkmCard.innerHTML = `
+                        <div class="w-10 h-10 rounded-xl bg-portal-600 text-white flex items-center justify-center font-bold text-sm flex-shrink-0">
+                            <i class="fa-solid fa-store"></i>
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex justify-between items-start">
+                                <h5 class="font-bold text-xs text-gray-800">${namaUsaha}</h5>
+                                <span class="text-[9px] bg-portal-100 text-portal-700 px-2 py-0.5 rounded font-semibold">UMKM Warga</span>
+                            </div>
+                            <p class="text-[11px] text-gray-500 mt-1">${keterangan}</p>
+                            <a href="https://wa.me/${waClean}?text=${encodeURIComponent('Halo, saya melihat info usaha ' + namaUsaha + ' di Portal Warga Mutiara Intan Permai.')}" target="_blank" class="mt-3 inline-flex items-center gap-1.5 text-[11px] font-semibold text-portal-600 hover:underline bg-white px-3 py-1.5 rounded-lg border border-portal-200 shadow-xs">
+                                <i class="fa-brands fa-whatsapp text-emerald-600 text-sm"></i> Pesan via WhatsApp
+                            </a>
+                        </div>
+                    `;
+                    umkmContainer.appendChild(umkmCard);
+                });
+            }
         }
 
         window.addEventListener('DOMContentLoaded', () => {
