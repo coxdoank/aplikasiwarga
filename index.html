@@ -34,7 +34,6 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <script>
-        // Membuat manifest PWA secara otomatis dalam 1 file
         const manifestData = {
             name: "Portal Warga Mutiara Intan Permai",
             short_name: "Portal Warga",
@@ -104,6 +103,18 @@
         #print-header, #print-footer-signatures {
             display: none;
         }
+        /* Jika mode cetak matriks aktif, sembunyikan tabel log iuran */
+        body.printing-matrix #page-iuran > div > div:nth-child(2) {
+            display: none !important;
+        }
+        /* Lebarkan area matriks saat dicetak */
+        body.printing-matrix #matrix-print-area {
+            border: none !important;
+            overflow: visible !important;
+        }
+        body.printing-matrix table {
+            font-size: 9px !important;
+        }
     </style>
 </head>
 <body class="bg-gray-50 font-sans leading-normal tracking-normal pb-24 xl:pb-12 transition-all duration-300" id="app-body">
@@ -131,7 +142,7 @@
         </div>
     </div>
 
-    <!-- Main Header / Navbar (Sticky Top) -->
+    <!-- Main Header / Navbar (Sticky Top - Desktop) -->
     <nav class="bg-white/95 backdrop-blur-md border-b border-gray-200 sticky top-0 z-40 shadow-xs">
         <div class="container mx-auto px-4 py-3 flex items-center justify-between gap-4">
             <!-- Brand Logo -->
@@ -152,7 +163,7 @@
                 <button onclick="switchTab('cekstatus')" id="nav-cekstatus" class="px-3 py-2 rounded-lg text-gray-600 hover:text-portal-600 transition">Cek Iuran & WA</button>
                 <button onclick="switchTab('pengaduan')" id="nav-pengaduan" class="px-3 py-2 rounded-lg text-gray-600 hover:text-portal-600 transition relative">
                     Pengaduan Fasum
-                    <span id="badge-dot-desktop" class="absolute -top-1 -right-1 w-2.5 h-2.5 bg-rose-500 rounded-full ring-2 ring-white"></span>
+                    <span id="badge-dot-desktop" class="absolute -top-1 -right-1 w-2.5 h-2.5 bg-rose-500 rounded-full ring-2 ring-white hidden"></span>
                 </button>
                 <button onclick="switchTab('cashflow')" id="nav-cashflow" class="px-3 py-2 rounded-lg text-gray-600 hover:text-portal-600 transition">Cashflow</button>
                 <button onclick="switchTab('iuran')" id="nav-iuran" class="px-3 py-2 rounded-lg text-gray-600 hover:text-portal-600 transition">Detail Iuran</button>
@@ -185,14 +196,12 @@
 
             <!-- CAROUSEL BANNER OTOMATIS -->
             <div class="relative w-full overflow-hidden rounded-2xl shadow-md bg-gradient-to-r from-portal-600 to-portal-700 text-white mb-6 group">
-                <!-- Track Slide -->
                 <div id="carousel-track" class="flex transition-transform duration-500 ease-out">
                     <div class="min-w-full p-6 md:p-8 flex items-center justify-center text-portal-100 text-xs">
                         <i class="fa-solid fa-circle-notch fa-spin mr-2"></i> Memuat Banner...
                     </div>
                 </div>
 
-                <!-- Tombol Navigasi Manual -->
                 <button onclick="prevSlide()" class="absolute left-2 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white w-8 h-8 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition text-xs">
                     <i class="fa-solid fa-chevron-left"></i>
                 </button>
@@ -200,7 +209,6 @@
                     <i class="fa-solid fa-chevron-right"></i>
                 </button>
 
-                <!-- Indikator Titik (Dots) -->
                 <div id="carousel-dots" class="absolute bottom-3 right-6 flex space-x-1.5"></div>
             </div>
             
@@ -459,62 +467,133 @@
 
         <!-- ================= PAGE 6: DETAIL IURAN ================= -->
         <div id="page-iuran" class="hidden space-y-6">
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
-                <div class="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4 mb-6">
-                    <div>
-                        <h2 class="text-lg font-bold text-gray-800"><i class="fa-solid fa-file-invoice text-portal-600 mr-2"></i> Rincian Detail Iuran Warga</h2>
-                        <p class="text-xs text-gray-500 mt-0.5">Filter berdasarkan No Rumah, Kategori, Bulan, Tahun, dan kata kunci.</p>
-                    </div>
-                    <div class="flex flex-wrap gap-2 w-full xl:w-auto items-center no-print">
-                        <select id="filter-iuran-norumah" onchange="filterIuran()" class="bg-gray-50 border border-gray-300 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-portal-600">
-                            <option value="">Semua No Rumah</option>
-                        </select>
-                        <select id="filter-iuran-kat" onchange="filterIuran()" class="bg-gray-50 border border-gray-300 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-portal-600">
-                            <option value="">Semua Kategori</option>
-                            <option value="Iuran Sampah">Iuran Sampah</option>
-                            <option value="Iuran Perumahan">Iuran Perumahan</option>
-                        </select>
-                        <select id="filter-iuran-bulan" onchange="filterIuran()" class="bg-gray-50 border border-gray-300 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-portal-600">
-                            <option value="">Semua Bulan</option>
-                            <option value="Januari">Januari</option>
-                            <option value="Februari">Februari</option>
-                            <option value="Maret">Maret</option>
-                            <option value="April">April</option>
-                            <option value="Mei">Mei</option>
-                            <option value="Juni">Juni</option>
-                            <option value="Juli">Juli</option>
-                            <option value="Agustus">Agustus</option>
-                            <option value="September">September</option>
-                            <option value="Oktober">Oktober</option>
-                            <option value="November">November</option>
-                            <option value="Desember">Desember</option>
-                        </select>
-                        <select id="filter-iuran-tahun" onchange="filterIuran()" class="bg-gray-50 border border-gray-300 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-portal-600">
-                            <option value="">Semua Tahun</option>
-                        </select>
-                        <input type="text" id="search-iuran" onkeyup="filterIuran()" placeholder="Cari nama..." class="bg-gray-50 border border-gray-300 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-portal-600 w-full sm:w-36">
-                        <button onclick="printReport('iuran')" class="bg-gray-800 hover:bg-gray-900 text-white px-3 py-2 rounded-xl text-xs font-semibold transition flex items-center gap-1.5 shadow-sm">
-                            <i class="fa-solid fa-print"></i> <span>Cetak / PDF</span>
-                        </button>
-                    </div>
-                </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse text-xs">
-                        <thead>
-                            <tr class="bg-gray-100 text-gray-600 uppercase text-[10px]">
-                                <th class="p-3">Tanggal <i class="fa-solid fa-arrow-down-short-wide ml-1 text-portal-600 no-print"></i></th>
-                                <th class="p-3">No Rumah</th>
-                                <th class="p-3">Kategori</th>
-                                <th class="p-3">Nama Warga</th>
-                                <th class="p-3">Bulan / Tahun</th>
-                                <th class="p-3">Nominal</th>
-                            </tr>
-                        </thead>
-                        <tbody id="table-iuran-body" class="divide-y divide-gray-100"></tbody>
-                    </table>
-                </div>
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 space-y-6">
+        
+        <!-- Header & Filter -->
+        <div class="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4">
+            <div>
+                <h2 class="text-lg font-bold text-gray-800"><i class="fa-solid fa-file-invoice text-portal-600 mr-2"></i> Rincian Detail Iuran Warga</h2>
+                <p class="text-xs text-gray-500 mt-0.5">Filter berdasarkan No Rumah, Kategori, Bulan, Tahun, dan kata kunci.</p>
+            </div>
+            <div class="flex flex-wrap gap-2 w-full xl:w-auto items-center no-print">
+                <select id="filter-iuran-norumah" onchange="resetAndFilterIuran()" class="bg-gray-50 border border-gray-300 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-portal-600">
+                    <option value="">Semua No Rumah</option>
+                </select>
+                <select id="filter-iuran-kat" onchange="resetAndFilterIuran()" class="bg-gray-50 border border-gray-300 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-portal-600">
+                    <option value="">Semua Kategori</option>
+                    <option value="Iuran Sampah">Iuran Sampah</option>
+                    <option value="Iuran Perumahan">Iuran Perumahan</option>
+                </select>
+                <select id="filter-iuran-bulan" onchange="resetAndFilterIuran()" class="bg-gray-50 border border-gray-300 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-portal-600">
+                    <option value="">Semua Bulan</option>
+                    <option value="Januari">Januari</option>
+                    <option value="Februari">Februari</option>
+                    <option value="Maret">Maret</option>
+                    <option value="April">April</option>
+                    <option value="Mei">Mei</option>
+                    <option value="Juni">Juni</option>
+                    <option value="Juli">Juli</option>
+                    <option value="Agustus">Agustus</option>
+                    <option value="September">September</option>
+                    <option value="Oktober">Oktober</option>
+                    <option value="November">November</option>
+                    <option value="Desember">Desember</option>
+                </select>
+                <select id="filter-iuran-tahun" onchange="resetAndFilterIuran()" class="bg-gray-50 border border-gray-300 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-portal-600">
+                    <option value="">Semua Tahun</option>
+                </select>
+                <input type="text" id="search-iuran" onkeyup="resetAndFilterIuran()" placeholder="Cari nama..." class="bg-gray-50 border border-gray-300 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-portal-600 w-full sm:w-36">
+                <button onclick="printReport('iuran')" class="bg-gray-800 hover:bg-gray-900 text-white px-3 py-2 rounded-xl text-xs font-semibold transition flex items-center gap-1.5 shadow-sm">
+                    <i class="fa-solid fa-print"></i> <span>Cetak / PDF</span>
+                </button>
             </div>
         </div>
+
+        <!-- BAGIAN 1 (KINI DI ATAS): TABEL RINCIAN DETAIL IURAN DENGAN PAGINATION -->
+        <div class="border-t border-gray-100 pt-5 space-y-4">
+            <div class="flex flex-col sm:flex-row justify-between items-center gap-3">
+                <h3 class="font-bold text-gray-800 text-xs uppercase tracking-wide flex items-center gap-2">
+                    <i class="fa-solid fa-list-ul text-portal-600"></i> Tabel Log Transaksi Pembayaran Iuran
+                </h3>
+                <div class="flex items-center gap-2 text-xs">
+                    <span class="text-gray-500">Tampilkan:</span>
+                    <select id="iuran-per-page" onchange="changeIuranPerPage()" class="bg-gray-50 border border-gray-300 rounded-lg px-2 py-1 text-xs focus:outline-none focus:border-portal-600 font-semibold">
+                        <option value="20" selected>20 record</option>
+                        <option value="50">50 record</option>
+                        <option value="100">100 record</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse text-xs">
+                    <thead>
+                        <tr class="bg-gray-100 text-gray-600 uppercase text-[10px]">
+                            <th class="p-3">Tanggal</th>
+                            <th class="p-3">No Rumah</th>
+                            <th class="p-3">Kategori</th>
+                            <th class="p-3">Nama Warga</th>
+                            <th class="p-3">Bulan / Tahun</th>
+                            <th class="p-3">Nominal</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-iuran-body" class="divide-y divide-gray-100"></tbody>
+                </table>
+            </div>
+
+            <!-- Kontrol Navigasi Pagination -->
+            <div class="flex flex-col sm:flex-row justify-between items-center gap-3 pt-2 text-xs text-gray-500">
+                <div id="iuran-pagination-info">Menampilkan 0 dari 0 data</div>
+                <div class="flex items-center gap-1.5" id="iuran-pagination-buttons"></div>
+            </div>
+        </div>
+
+        <!-- BAGIAN 2 (KINI DI BAWAH): MATRIKS IURAN 1 TAHUN BERDASARKAN BULAN -->
+        <div class="border-t border-gray-100 pt-5">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-3">
+                <h3 class="font-bold text-gray-800 text-xs uppercase tracking-wide flex items-center gap-2">
+                    <i class="fa-solid fa-table-cells text-portal-600"></i> Matriks Rekapitulasi Iuran Warga (Per Tahun)
+                </h3>
+                <div class="flex items-center gap-2 no-print">
+                    <span class="text-xs text-gray-500 font-medium">Menampilkan status lunas/belum per bulan</span>
+                    <button onclick="printMatrixReport()" class="bg-portal-600 hover:bg-portal-700 text-white px-3 py-1.5 rounded-xl text-xs font-semibold transition flex items-center gap-1.5 shadow-sm">
+                        <i class="fa-solid fa-print"></i> <span>Cetak Matriks / PDF</span>
+                    </button>
+                </div>
+                <div id="matrix-print-area" class="overflow-x-auto border border-gray-200 rounded-xl">
+                <table class="w-full text-center border-collapse text-[11px]">
+                    <!-- Tabel Matriks -->
+                    ...
+                </table>
+            </div>
+            </div>
+            <div class="overflow-x-auto border border-gray-200 rounded-xl">
+                <table class="w-full text-center border-collapse text-[11px]">
+                    <thead>
+                        <tr class="bg-gray-100 text-gray-700 uppercase text-[10px]">
+                            <th class="p-2.5 border-b border-r text-left pl-3">No Rumah</th>
+                            <th class="p-2.5 border-b border-r text-left">Nama Warga</th>
+                            <th class="p-2.5 border-b border-r">Jan</th>
+                            <th class="p-2.5 border-b border-r">Feb</th>
+                            <th class="p-2.5 border-b border-r">Mar</th>
+                            <th class="p-2.5 border-b border-r">Apr</th>
+                            <th class="p-2.5 border-b border-r">Mei</th>
+                            <th class="p-2.5 border-b border-r">Jun</th>
+                            <th class="p-2.5 border-b border-r">Jul</th>
+                            <th class="p-2.5 border-b border-r">Ags</th>
+                            <th class="p-2.5 border-b border-r">Sep</th>
+                            <th class="p-2.5 border-b border-r">Okt</th>
+                            <th class="p-2.5 border-b border-r">Nov</th>
+                            <th class="p-2.5 border-b">Des</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-matrix-body" class="divide-y divide-gray-100"></tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</div>
 
         <!-- ================= PAGE 7: DIREKTORI & UMKM ================= -->
         <div id="page-direktori" class="hidden space-y-6">
@@ -524,24 +603,18 @@
                     <p class="text-xs text-gray-500 mt-0.5">Kontak penting darurat lingkungan serta etalase usaha mandiri warga Mutiara Intan Permai.</p>
                 </div>
 
-                <!-- Bagian 1: Kontak Penting & Darurat -->
                 <div>
                     <h3 class="text-xs font-bold text-gray-700 uppercase tracking-wide mb-3 flex items-center gap-2">
                         <i class="fa-solid fa-phone-volume text-rose-600"></i> Kontak Penting & Layanan Darurat
                     </h3>
-                    <div id="direktori-kontak-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                        <!-- Dimuat otomatis via JS -->
-                    </div>
+                    <div id="direktori-kontak-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"></div>
                 </div>
 
-                <!-- Bagian 2: UMKM & Jasa Warga -->
                 <div class="pt-4 border-t border-gray-100">
                     <h3 class="text-xs font-bold text-gray-700 uppercase tracking-wide mb-3 flex items-center gap-2">
                         <i class="fa-solid fa-store text-portal-600"></i> Etalase UMKM & Jasa Warga
                     </h3>
-                    <div id="direktori-umkm-container" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <!-- Dimuat otomatis via JS -->
-                    </div>
+                    <div id="direktori-umkm-container" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
                 </div>
             </div>
         </div>
@@ -569,49 +642,84 @@
         </div>
     </div>
 
-    <!-- BOTTOM NAVIGATION BAR (Thumb-Friendly, Glassmorphism, 7-Kolom Grid) -->
-    <nav class="fixed bottom-0 left-0 right-0 z-50 bg-white/92 backdrop-blur-md border-t border-gray-200/80 shadow-lg xl:hidden no-print transition-all">
-        <div class="grid grid-cols-7 h-16 px-1 text-center">
+    <!-- BOTTOM NAVIGATION BAR (Ringkas 5 Menu Utama + Toggle Menu Lainnya di HP) -->
+    <nav class="fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-t border-gray-200/80 shadow-lg xl:hidden no-print transition-all">
+        <div class="grid grid-cols-6 h-16 px-1 text-center items-center">
             
             <button onclick="switchTab('dashboard')" id="mob-dashboard" class="nav-btn flex flex-col items-center justify-center text-portal-600 transition-all">
-                <i class="fa-solid fa-chart-pie text-lg mb-0.5"></i>
+                <i class="fa-solid fa-chart-pie text-base mb-0.5"></i>
                 <span class="text-[9px] font-bold">Dash</span>
             </button>
 
             <button onclick="switchTab('peta')" id="mob-peta" class="nav-btn flex flex-col items-center justify-center text-gray-400 hover:text-portal-600 transition-all">
-                <i class="fa-solid fa-map text-lg mb-0.5"></i>
+                <i class="fa-solid fa-map text-base mb-0.5"></i>
                 <span class="text-[9px] font-medium">Peta</span>
             </button>
 
             <button onclick="switchTab('cekstatus')" id="mob-cekstatus" class="nav-btn flex flex-col items-center justify-center text-gray-400 hover:text-portal-600 transition-all">
-                <i class="fa-solid fa-users text-lg mb-0.5"></i>
+                <i class="fa-solid fa-users text-base mb-0.5"></i>
                 <span class="text-[9px] font-medium">Warga</span>
             </button>
 
-            <button onclick="switchTab('pengaduan')" id="mob-pengaduan" class="nav-btn flex flex-col items-center justify-center text-gray-400 hover:text-portal-600 transition-all relative">
-                <i class="fa-solid fa-bullhorn text-lg mb-0.5"></i>
-                <span id="badge-dot-mobile" class="absolute top-2 right-2.5 w-2 h-2 bg-rose-500 rounded-full animate-ping"></span>
-                <span id="badge-dot-mobile-static" class="absolute top-2 right-2.5 w-2 h-2 bg-rose-500 rounded-full"></span>
-                <span class="text-[9px] font-medium">Aduan</span>
-            </button>
-
-            <button onclick="switchTab('cashflow')" id="mob-cashflow" class="nav-btn flex flex-col items-center justify-center text-gray-400 hover:text-portal-600 transition-all">
-                <i class="fa-solid fa-wallet text-lg mb-0.5"></i>
-                <span class="text-[9px] font-medium">Kas</span>
-            </button>
-
             <button onclick="switchTab('iuran')" id="mob-iuran" class="nav-btn flex flex-col items-center justify-center text-gray-400 hover:text-portal-600 transition-all">
-                <i class="fa-solid fa-file-invoice-dollar text-lg mb-0.5"></i>
+                <i class="fa-solid fa-file-invoice-dollar text-base mb-0.5"></i>
                 <span class="text-[9px] font-medium">Iuran</span>
             </button>
 
-            <button onclick="switchTab('direktori')" id="mob-direktori" class="nav-btn flex flex-col items-center justify-center text-gray-400 hover:text-portal-600 transition-all">
-                <i class="fa-solid fa-address-book text-lg mb-0.5"></i>
-                <span class="text-[9px] font-medium">Direktori</span>
+            <button onclick="switchTab('cashflow')" id="mob-cashflow" class="nav-btn flex flex-col items-center justify-center text-gray-400 hover:text-portal-600 transition-all">
+                <i class="fa-solid fa-wallet text-base mb-0.5"></i>
+                <span class="text-[9px] font-medium">Kas</span>
+            </button>
+
+            <button onclick="toggleMoreMenu()" id="mob-more-btn" class="nav-btn flex flex-col items-center justify-center text-gray-400 hover:text-portal-600 transition-all relative">
+                <i class="fa-solid fa-ellipsis-vertical text-base mb-0.5"></i>
+                <span class="text-[9px] font-medium">Lainnya</span>
             </button>
 
         </div>
     </nav>
+
+    <!-- POPUP / DRAWER MENU LAINNYA (TOGGLE) -->
+    <div id="more-menu-modal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-end justify-center xl:hidden transition-all">
+        <div class="bg-white rounded-t-3xl w-full max-w-lg p-6 shadow-2xl space-y-4 animate-in slide-in-from-bottom duration-200">
+            <div class="flex justify-between items-center border-b border-gray-100 pb-3">
+                <h3 class="font-bold text-gray-800 text-sm flex items-center gap-2">
+                    <i class="fa-solid fa-bars-staggered text-portal-600"></i> Menu Tambahan & Lainnya
+                </h3>
+                <button onclick="toggleMoreMenu()" class="text-gray-400 hover:text-gray-600 text-lg p-1">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+                <button onclick="switchTabAndCloseMore('pengaduan')" class="bg-gray-50 hover:bg-portal-50 border border-gray-200 hover:border-portal-200 p-4 rounded-2xl text-left transition flex items-center space-x-3 group relative">
+                    <div class="bg-rose-100 text-rose-600 p-3 rounded-xl group-hover:bg-portal-600 group-hover:text-white transition">
+                        <i class="fa-solid fa-bullhorn text-base"></i>
+                    </div>
+                    <div>
+                        <span class="font-bold text-xs text-gray-800 block">Pengaduan</span>
+                        <span class="text-[10px] text-gray-500">Aduan Fasum & Warga</span>
+                    </div>
+                </button>
+
+                <button onclick="switchTabAndCloseMore('direktori')" class="bg-gray-50 hover:bg-portal-50 border border-gray-200 hover:border-portal-200 p-4 rounded-2xl text-left transition flex items-center space-x-3 group">
+                    <div class="bg-indigo-100 text-indigo-600 p-3 rounded-xl group-hover:bg-portal-600 group-hover:text-white transition">
+                        <i class="fa-solid fa-address-book text-base"></i>
+                    </div>
+                    <div>
+                        <span class="font-bold text-xs text-gray-800 block">Direktori</span>
+                        <span class="text-[10px] text-gray-500">Kontak & UMKM Warga</span>
+                    </div>
+                </button>
+            </div>
+
+            <div class="pt-2">
+                <button onclick="toggleMoreMenu()" class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-2.5 rounded-xl text-xs transition">
+                    Tutup Menu
+                </button>
+            </div>
+        </div>
+    </div>
 
     <!-- Modal Detail Rumah -->
     <div id="modal-rumah" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4">
@@ -699,8 +807,31 @@
         let globalDirektoriData = [];
 
         let isAdminLoggedIn = false;
-        // Default Passcode sementara sebelum data ditarik dari Google Sheets
         let dynamicAdminPasscode = null; 
+
+        // State Pagination Iuran
+        let currentIuranPage = 1;
+        let iuranRowsPerPage = 20;
+        let filteredIuranCache = [];
+
+        function printMatrixReport() {
+            const tahunPilih = document.getElementById('filter-iuran-tahun')?.value || new Date().getFullYear();
+            const today = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+            
+            // Ubah judul kop surat khusus untuk laporan matriks
+            safeSetText('print-doc-title', `MATRIKS REKAPITULASI IURAN WARGA TAHUN ${tahunPilih}`);
+            safeSetText('print-doc-date', `Dicetak pada: ${today}`);
+
+            // Beri tanda kelas khusus pada body untuk menyembunyikan elemen lain saat print
+            document.body.classList.add('printing-matrix');
+            
+            window.print();
+            
+            // Hapus kembali setelah dialog cetak ditutup
+            setTimeout(() => {
+                document.body.classList.remove('printing-matrix');
+            }, 500);
+        }
 
         function formatRupiah(angka) {
             if (!angka) return "Rp 0";
@@ -712,23 +843,13 @@
             let s = String(dateStr).trim();
 
             let timestampMs = Date.parse(s);
-            if (!isNaN(timestampMs)) {
-                return timestampMs;
-            }
+            if (!isNaN(timestampMs)) return timestampMs;
 
             const bulanMap = {
-                'januari': 0, 'jan': 0,
-                'februari': 1, 'feb': 1,
-                'maret': 2, 'mar': 2,
-                'april': 3, 'apr': 3,
-                'mei': 4,
-                'juni': 5, 'jun': 5,
-                'juli': 6, 'jul': 6,
-                'agustus': 7, 'ags': 7, 'agt': 7, 'aug': 7,
-                'september': 8, 'sep': 8, 'sept': 8,
-                'oktober': 9, 'okt': 9, 'oct': 9,
-                'november': 10, 'nov': 10,
-                'desember': 11, 'des': 11, 'dec': 11
+                'januari': 0, 'jan': 0, 'februari': 1, 'feb': 1, 'maret': 2, 'mar': 2,
+                'april': 3, 'apr': 3, 'mei': 4, 'juni': 5, 'jun': 5, 'juli': 6, 'jul': 6,
+                'agustus': 7, 'ags': 7, 'agt': 7, 'aug': 7, 'september': 8, 'sep': 8,
+                'oktober': 9, 'okt': 9, 'oct': 9, 'november': 10, 'nov': 10, 'desember': 11, 'des': 11
             };
 
             let partsText = s.toLowerCase().replace(/,/g, '').split(/\s+/);
@@ -752,7 +873,6 @@
                     return new Date(year, month, day).getTime();
                 }
             }
-
             return 0;
         }
 
@@ -761,14 +881,12 @@
                 const pageEl = document.getElementById(`page-${t}`);
                 if(pageEl) pageEl.classList.add('hidden');
                 
-                // Reset Desktop Tab Styling
                 const nav = document.getElementById(`nav-${t}`);
                 if(nav) {
                     nav.classList.remove('bg-portal-600', 'text-white', 'shadow-sm');
                     nav.classList.add('text-gray-600');
                 }
                 
-                // Reset Bottom Navigation Bar Styling (Mobile)
                 const mob = document.getElementById(`mob-${t}`);
                 if(mob) {
                     mob.classList.remove('text-portal-600');
@@ -781,18 +899,15 @@
                 }
             });
 
-            // Tampilkan Halaman Target
             const targetPage = document.getElementById(`page-${tab}`);
             if(targetPage) targetPage.classList.remove('hidden');
 
-            // Set Active Desktop Nav Tab
             const activeNav = document.getElementById(`nav-${tab}`);
             if(activeNav) {
                 activeNav.classList.add('bg-portal-600', 'text-white', 'shadow-sm');
                 activeNav.classList.remove('text-gray-600');
             }
 
-            // Set Active Mobile Bottom Nav Tab
             const activeMob = document.getElementById(`mob-${tab}`);
             if(activeMob) {
                 activeMob.classList.add('text-portal-600');
@@ -809,6 +924,16 @@
             }
 
             window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function toggleMoreMenu() {
+            const modal = document.getElementById('more-menu-modal');
+            if (modal) modal.classList.toggle('hidden');
+        }
+
+        function switchTabAndCloseMore(tabName) {
+            switchTab(tabName);
+            toggleMoreMenu();
         }
 
         function safeSetText(id, text) {
@@ -833,7 +958,6 @@
                     if (data.status === "success") {
                         const s = data.summary || {};
                         
-                        // AMBIL PASSCODE DINAMIS DARI GOOGLE SHEETS ("Key Pass")
                         if (s["Key Pass"]) {
                             dynamicAdminPasscode = String(s["Key Pass"]).trim();
                         }
@@ -860,8 +984,7 @@
                         safeSetText('lps-belum', `${s["Warga Belum Bayar LPS Bulan Ini"] || 0} Warga`);
 
                         if (s["Total Pengunjung"] !== undefined) {
-                            const formattedVisitor = Number(s["Total Pengunjung"]).toLocaleString('id-ID');
-                            safeSetText('top-bar-visitor', formattedVisitor);
+                            safeSetText('top-bar-visitor', Number(s["Total Pengunjung"]).toLocaleString('id-ID'));
                         }
 
                         globalWargaData = data.data_warga || [];
@@ -879,7 +1002,8 @@
                         globalIuranData = data.detail_iuran || [];
                         populateTahunIuranDropdown(globalIuranData);
                         populateNoRumahDropdown(globalIuranData, globalWargaData);
-                        filterIuran();
+                        resetAndFilterIuran();
+                        renderMatrixIuran();
 
                         globalDirektoriData = data.direktori || [];
                         renderDirektori(globalDirektoriData);
@@ -902,12 +1026,7 @@
         }
 
         function printReport(type) {
-            const today = new Date().toLocaleDateString('id-ID', {
-                day: 'numeric',
-                month: 'long',
-                year: 'numeric'
-            });
-
+            const today = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
             safeSetText('print-sign-date', today);
             safeSetText('print-doc-date', `Dicetak pada: ${today}`);
 
@@ -916,7 +1035,6 @@
             } else if (type === 'iuran') {
                 safeSetText('print-doc-title', 'LAPORAN DETAIL PEMBAYARAN IURAN WARGA');
             }
-
             window.print();
         }
 
@@ -939,16 +1057,12 @@
 
         function handleAdminLogin(e) {
             e.preventDefault();
-            
-            // Pastikan data passcode sudah berhasil dimuat dari Google Sheets
             if (!dynamicAdminPasscode) {
                 alert('Data otentikasi belum siap / sedang dimuat dari server. Silakan coba beberapa detik lagi.');
                 return;
             }
 
             const inputVal = document.getElementById('admin-passcode-input').value.trim();
-            
-            // Mencocokkan Passcode secara presisi dengan data live dari Google Sheets
             if (inputVal === dynamicAdminPasscode) {
                 isAdminLoggedIn = true;
                 alert('Berhasil Login sebagai Admin!');
@@ -1024,11 +1138,8 @@
                 }
 
                 let badgeSampahClass = 'bg-amber-100 text-amber-700';
-                if (iuranSampah.includes('Sudah')) {
-                    badgeSampahClass = 'bg-emerald-100 text-emerald-700';
-                } else if (iuranSampah === "Tidak Ikut LPS") {
-                    badgeSampahClass = 'bg-gray-100 text-gray-600';
-                }
+                if (iuranSampah.includes('Sudah')) badgeSampahClass = 'bg-emerald-100 text-emerald-700';
+                else if (iuranSampah === "Tidak Ikut LPS") badgeSampahClass = 'bg-gray-100 text-gray-600';
 
                 const tr = document.createElement('tr');
                 tr.className = 'hover:bg-gray-50';
@@ -1060,25 +1171,17 @@
                 }
 
                 let matchSampah = true;
-                if (filterSampah === "Tidak Ikut LPS") {
-                    matchSampah = rawSampah === "Tidak Ikut LPS";
-                } else if (filterSampah === "Belum Bayar") {
-                    matchSampah = !rawSampah.includes('Sudah') && rawSampah !== "Tidak Ikut LPS";
-                } else if (filterSampah === "Sudah Bayar") {
-                    matchSampah = rawSampah.includes('Sudah');
-                }
+                if (filterSampah === "Tidak Ikut LPS") matchSampah = rawSampah === "Tidak Ikut LPS";
+                else if (filterSampah === "Belum Bayar") matchSampah = !rawSampah.includes('Sudah') && rawSampah !== "Tidak Ikut LPS";
+                else if (filterSampah === "Sudah Bayar") matchSampah = rawSampah.includes('Sudah');
 
                 let rawPerum = String(item['Iuran Perumahan Bulan Ini'] || 'Belum Bayar');
                 let matchPerum = true;
-                if (filterPerum === "Belum Bayar") {
-                    matchPerum = !rawPerum.includes('Sudah');
-                } else if (filterPerum === "Sudah Bayar") {
-                    matchPerum = rawPerum.includes('Sudah');
-                }
+                if (filterPerum === "Belum Bayar") matchPerum = !rawPerum.includes('Sudah');
+                else if (filterPerum === "Sudah Bayar") matchPerum = rawPerum.includes('Sudah');
 
                 return matchKeyword && matchSampah && matchPerum;
             });
-
             renderWargaTable(filtered);
         }
 
@@ -1087,11 +1190,8 @@
             ['ALL', 'A', 'B', 'C', 'D', 'E', 'F', 'G'].forEach(b => {
                 const btn = document.getElementById(`btn-denah-${b}`);
                 if(btn) {
-                    if(b === selectedBlok) {
-                        btn.className = "px-4 py-1.5 rounded-xl text-xs font-bold bg-portal-600 text-white transition shadow-sm";
-                    } else {
-                        btn.className = "px-4 py-1.5 rounded-xl text-xs font-semibold bg-gray-100 text-gray-600 hover:bg-gray-200 transition";
-                    }
+                    if(b === selectedBlok) btn.className = "px-4 py-1.5 rounded-xl text-xs font-bold bg-portal-600 text-white transition shadow-sm";
+                    else btn.className = "px-4 py-1.5 rounded-xl text-xs font-semibold bg-gray-100 text-gray-600 hover:bg-gray-200 transition";
                 }
             });
 
@@ -1104,36 +1204,26 @@
             listBlok.forEach(hurufBlok => {
                 const blockCard = document.createElement('div');
                 blockCard.className = 'bg-gray-50 border border-gray-200 rounded-2xl p-4 shadow-sm';
-                
-                let headerHtml = `<div class="flex justify-between items-center mb-3">
+                blockCard.innerHTML = `<div class="flex justify-between items-center mb-3">
                     <h3 class="font-bold text-portal-dark text-sm uppercase tracking-wide">
                         <i class="fa-solid fa-signs-post mr-2"></i> Blok ${hurufBlok}
                     </h3>
                     <span class="text-[10px] text-gray-400 font-medium">Layout Berhadapan Atas & Bawah</span>
                 </div>`;
-                blockCard.innerHTML = headerHtml;
 
                 const gridDiv = document.createElement('div');
                 gridDiv.className = 'grid grid-cols-4 sm:grid-cols-7 gap-2 pb-2';
 
                 if (hurufBlok === 'D') {
-                    for (let i = 1; i <= 4; i++) {
-                        gridDiv.appendChild(createHouseBox('D', i));
-                    }
+                    for (let i = 1; i <= 4; i++) gridDiv.appendChild(createHouseBox('D', i));
                     const fasumBox = document.createElement('div');
                     fasumBox.className = 'col-span-3 row-span-2 bg-white border-2 border-dashed border-gray-300 rounded-xl p-4 flex flex-col items-center justify-center text-gray-400 font-bold text-xs uppercase tracking-widest min-h-[12rem]';
                     fasumBox.innerHTML = '<i class="fa-solid fa-tree-city text-2xl text-portal-500 mb-2"></i><span>FASUM</span>';
                     gridDiv.appendChild(fasumBox);
-                    for (let i = 5; i <= 8; i++) {
-                        gridDiv.appendChild(createHouseBox('D', i));
-                    }
+                    for (let i = 5; i <= 8; i++) gridDiv.appendChild(createHouseBox('D', i));
                 } else {
-                    for (let i = 1; i <= 7; i++) {
-                        gridDiv.appendChild(createHouseBox(hurufBlok, i));
-                    }
-                    for (let i = 14; i >= 8; i--) {
-                        gridDiv.appendChild(createHouseBox(hurufBlok, i));
-                    }
+                    for (let i = 1; i <= 7; i++) gridDiv.appendChild(createHouseBox(hurufBlok, i));
+                    for (let i = 14; i >= 8; i--) gridDiv.appendChild(createHouseBox(hurufBlok, i));
                 }
 
                 blockCard.appendChild(gridDiv);
@@ -1171,10 +1261,7 @@
 
             const box = document.createElement('div');
             box.className = `${bgClass} p-2.5 rounded-xl shadow-xs border cursor-pointer hover:scale-105 transition transform flex flex-col justify-between h-28 text-center`;
-            
-            if(warga) {
-                box.onclick = () => showModalRumah(warga);
-            }
+            if(warga) box.onclick = () => showModalRumah(warga);
 
             box.innerHTML = `
                 <div class="flex justify-between items-center text-[10px] opacity-90">
@@ -1200,7 +1287,6 @@
             if (!iuranSampah || iuranSampah.toString().trim() === "" || iuranSampah.toLowerCase().includes("belum / data kosong")) {
                 iuranSampah = "Tidak Ikut LPS";
             }
-
             const iuranPerumahan = data['Iuran Perumahan Bulan Ini'] || 'Belum Bayar';
 
             safeSetText('modal-no-rumah', `Rumah ${noRumah}`);
@@ -1215,14 +1301,11 @@
                     ? 'text-[10px] px-2 py-0.5 rounded font-semibold bg-indigo-100 text-indigo-700' 
                     : (statusRumah.toLowerCase().includes('kosong') ? 'text-[10px] px-2 py-0.5 rounded font-semibold bg-amber-100 text-amber-700' : 'text-[10px] px-2 py-0.5 rounded font-semibold bg-emerald-100 text-emerald-700');
             }
-
-            const modal = document.getElementById('modal-rumah');
-            if(modal) modal.classList.remove('hidden');
+            document.getElementById('modal-rumah').classList.remove('hidden');
         }
 
         function closeModalRumah() {
-            const modal = document.getElementById('modal-rumah');
-            if(modal) modal.classList.add('hidden');
+            document.getElementById('modal-rumah').classList.add('hidden');
         }
 
         // ================= PENGADUAN =================
@@ -1250,7 +1333,7 @@
             })
             .catch(err => {
                 console.error(err);
-                alert('Gagal mengirim laporan. Pastikan URL Web App mendukung method POST.');
+                alert('Gagal mengirim laporan.');
             })
             .finally(() => {
                 if(btn) {
@@ -1299,7 +1382,6 @@
                     if (statusAktif === 'Selesai') badgeClass = 'bg-emerald-100 text-emerald-800';
                     if (statusAktif === 'Ditolak') badgeClass = 'bg-rose-100 text-rose-800';
 
-                    // Menggunakan whitespace-nowrap agar teks status tidak terpotong ke bawah
                     statusHtml = `<span class="${badgeClass} px-2 py-1 rounded-md text-[10px] font-bold whitespace-nowrap inline-block">${statusAktif}</span>`;
                 }
 
@@ -1334,8 +1416,7 @@
             .then(res => res.json())
             .then(data => {
                 if (data.status === "success") {
-                    // Berikan notifikasi kecil atau biarkan langsung memperbarui data secara senyap
-                    // Ambil ulang data terbaru tanpa memindah posisi/tab halaman
+                    // Update secara senyap tanpa mereset tab/halaman aktif
                     fetch(API_URL)
                         .then(response => response.json())
                         .then(resData => {
@@ -1416,18 +1497,31 @@
             renderCashflowTable(filtered);
         }
 
-        // ================= DETAIL IURAN =================
+        // ================= DETAIL IURAN & PAGINATION =================
         function populateTahunIuranDropdown(rows) {
             const select = document.getElementById('filter-iuran-tahun');
             if(!select) return;
+            
             const tahunList = [...new Set(rows.map(r => r['Tahun']).filter(Boolean))].sort((a,b) => b - a);
             select.innerHTML = '<option value="">Semua Tahun</option>';
+            
             tahunList.forEach(thn => {
                 const opt = document.createElement('option');
                 opt.value = thn;
                 opt.innerText = thn;
                 select.appendChild(opt);
             });
+
+            // Ambil tahun sistem saat ini (tahun berjalan)
+            const currentYear = new Date().getFullYear().toString();
+
+            // Cek apakah tahun berjalan ada di dalam daftar data Sheets, jika ada set sebagai default. 
+            // Jika tidak ada, fallback ke tahun terbaru yang tersedia di data.
+            if (tahunList.includes(currentYear) || tahunList.includes(Number(currentYear))) {
+                select.value = currentYear;
+            } else if (tahunList.length > 0) {
+                select.value = tahunList[0]; 
+            }
         }
 
         function populateNoRumahDropdown(iuranRows, wargaRows) {
@@ -1455,17 +1549,71 @@
             });
         }
 
-        function renderIuranTable(rows) {
+        function resetAndFilterIuran() {
+            currentIuranPage = 1;
+            filterIuran();
+        }
+
+        function changeIuranPerPage() {
+            const select = document.getElementById('iuran-per-page');
+            if (select) iuranRowsPerPage = parseInt(select.value) || 50;
+            currentIuranPage = 1;
+            renderIuranTableWithPagination();
+        }
+
+        function filterIuran() {
+            const keyword = document.getElementById('search-iuran')?.value.toLowerCase() || '';
+            const filterNoRumah = document.getElementById('filter-iuran-norumah')?.value || '';
+            const filterKat = document.getElementById('filter-iuran-kat')?.value || '';
+            const filterBulan = document.getElementById('filter-iuran-bulan')?.value || '';
+            const filterTahun = document.getElementById('filter-iuran-tahun')?.value || '';
+
+            filteredIuranCache = globalIuranData.filter(item => {
+                const matchKeyword = Object.values(item).some(val => String(val).toLowerCase().includes(keyword));
+                const nrItem = String(item['No Rumah'] || item['No_Rumah'] || '').trim();
+                const matchNoRumah = filterNoRumah === "" || nrItem.toLowerCase() === filterNoRumah.toLowerCase();
+                const matchKat = filterKat === "" || String(item['Kategori'] || '').trim().toLowerCase() === filterKat.toLowerCase();
+                const matchBulan = filterBulan === "" || String(item['Bulan'] || '').trim().toLowerCase() === filterBulan.toLowerCase();
+                const matchTahun = filterTahun === "" || String(item['Tahun'] || '').trim() === String(filterTahun);
+
+                return matchKeyword && matchNoRumah && matchKat && matchBulan && matchTahun;
+            });
+
+            filteredIuranCache.sort((a, b) => {
+                let dateA = parseDateCustom(a['Tanggal']);
+                let dateB = parseDateCustom(b['Tanggal']);
+                return dateB - dateA;
+            });
+
+            renderIuranTableWithPagination();
+            renderMatrixIuran();
+        }
+
+        function renderIuranTableWithPagination() {
             const tbody = document.getElementById('table-iuran-body');
+            const infoEl = document.getElementById('iuran-pagination-info');
+            const btnContainer = document.getElementById('iuran-pagination-buttons');
             if(!tbody) return;
+
             tbody.innerHTML = '';
-            
-            if(!rows || rows.length === 0) {
+
+            if(!filteredIuranCache || filteredIuranCache.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="6" class="p-4 text-center text-gray-400">Tidak ada data rincian iuran yang sesuai.</td></tr>';
+                if(infoEl) infoEl.innerText = "Menampilkan 0 dari 0 data";
+                if(btnContainer) btnContainer.innerHTML = '';
                 return;
             }
 
-            rows.forEach(row => {
+            const totalData = filteredIuranCache.length;
+            const totalPages = Math.ceil(totalData / iuranRowsPerPage);
+            if (currentIuranPage > totalPages) currentIuranPage = totalPages;
+            if (currentIuranPage < 1) currentIuranPage = 1;
+
+            const startIndex = (currentIuranPage - 1) * iuranRowsPerPage;
+            const endIndex = Math.min(startIndex + iuranRowsPerPage, totalData);
+            const paginatedItems = filteredIuranCache.slice(startIndex, endIndex);
+
+            paginatedItems.forEach(row => {
                 const tr = document.createElement('tr');
                 tr.className = 'hover:bg-gray-50';
                 tr.innerHTML = `
@@ -1478,33 +1626,138 @@
                 `;
                 tbody.appendChild(tr);
             });
+
+            if(infoEl) {
+                infoEl.innerText = `Menampilkan ${startIndex + 1} - ${endIndex} dari total ${totalData} data`;
+            }
+
+            if(btnContainer) {
+                btnContainer.innerHTML = '';
+                
+                const prevBtn = document.createElement('button');
+                prevBtn.className = `px-2.5 py-1 rounded-lg border text-xs font-semibold ${currentIuranPage === 1 ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-white text-gray-700 hover:bg-gray-50'}`;
+                prevBtn.innerHTML = '<i class="fa-solid fa-chevron-left"></i>';
+                prevBtn.disabled = currentIuranPage === 1;
+                prevBtn.onclick = () => { if(currentIuranPage > 1) { currentIuranPage--; renderIuranTableWithPagination(); } };
+                btnContainer.appendChild(prevBtn);
+
+                let maxVisiblePages = 5;
+                let startPage = Math.max(1, currentIuranPage - Math.floor(maxVisiblePages / 2));
+                let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+                if (endPage - startPage + 1 < maxVisiblePages) {
+                    startPage = Math.max(1, endPage - maxVisiblePages + 1);
+                }
+
+                for (let i = startPage; i <= endPage; i++) {
+                    const pageBtn = document.createElement('button');
+                    pageBtn.className = `px-3 py-1 rounded-lg border text-xs font-semibold ${i === currentIuranPage ? 'bg-portal-600 text-white border-portal-600' : 'bg-white text-gray-700 hover:bg-gray-50'}`;
+                    pageBtn.innerText = i;
+                    pageBtn.onclick = () => { currentIuranPage = i; renderIuranTableWithPagination(); };
+                    btnContainer.appendChild(pageBtn);
+                }
+
+                const nextBtn = document.createElement('button');
+                nextBtn.className = `px-2.5 py-1 rounded-lg border text-xs font-semibold ${currentIuranPage === totalPages ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-white text-gray-700 hover:bg-gray-50'}`;
+                nextBtn.innerHTML = '<i class="fa-solid fa-chevron-right"></i>';
+                nextBtn.disabled = currentIuranPage === totalPages;
+                nextBtn.onclick = () => { if(currentIuranPage < totalPages) { currentIuranPage++; renderIuranTableWithPagination(); } };
+                btnContainer.appendChild(nextBtn);
+            }
         }
 
-        function filterIuran() {
-            const keyword = document.getElementById('search-iuran')?.value.toLowerCase() || '';
+        // Render Matriks Iuran 1 Tahun Berdasarkan Bulan (Centang Lunas & X untuk Belum Bayar)
+        function renderMatrixIuran() {
+            const matrixBody = document.getElementById('table-matrix-body');
+            if(!matrixBody) return;
+            matrixBody.innerHTML = '';
+
+            const filterTahun = document.getElementById('filter-iuran-tahun')?.value || new Date().getFullYear().toString();
             const filterNoRumah = document.getElementById('filter-iuran-norumah')?.value || '';
-            const filterKat = document.getElementById('filter-iuran-kat')?.value || '';
-            const filterBulan = document.getElementById('filter-iuran-bulan')?.value || '';
-            const filterTahun = document.getElementById('filter-iuran-tahun')?.value || '';
 
-            let filtered = globalIuranData.filter(item => {
-                const matchKeyword = Object.values(item).some(val => String(val).toLowerCase().includes(keyword));
-                const nrItem = String(item['No Rumah'] || item['No_Rumah'] || '').trim();
-                const matchNoRumah = filterNoRumah === "" || nrItem.toLowerCase() === filterNoRumah.toLowerCase();
-                const matchKat = filterKat === "" || String(item['Kategori'] || '').trim().toLowerCase() === filterKat.toLowerCase();
-                const matchBulan = filterBulan === "" || String(item['Bulan'] || '').trim().toLowerCase() === filterBulan.toLowerCase();
-                const matchTahun = filterTahun === "" || String(item['Tahun'] || '').trim() === String(filterTahun);
+            let listWarga = globalWargaData.filter(w => {
+                let daftarLps = w['Daftar LPS'] || w['Daftar_LPS'] || '';
+                let isLpsTrue = (daftarLps === true || String(daftarLps).trim().toLowerCase() === 'true');
+                
+                const statusRumah = String(w['Status Rumah'] || w['Status'] || '').trim().toLowerCase();
+                const namaWarga = String(w['Nama Warga'] || w['Nama'] || '').trim();
 
-                return matchKeyword && matchNoRumah && matchKat && matchBulan && matchTahun;
+                return isLpsTrue && statusRumah !== 'kosong' && namaWarga !== '' && namaWarga !== '-';
             });
 
-            filtered.sort((a, b) => {
-                let dateA = parseDateCustom(a['Tanggal']);
-                let dateB = parseDateCustom(b['Tanggal']);
-                return dateB - dateA;
-            });
+            if (filterNoRumah) {
+                listWarga = listWarga.filter(w => String(w['No Rumah'] || w['No_Rumah'] || '').trim().toLowerCase() === filterNoRumah.toLowerCase());
+            }
 
-            renderIuranTable(filtered);
+            if (listWarga.length === 0) {
+                matrixBody.innerHTML = '<tr><td colspan="14" class="p-4 text-center text-gray-400">Tidak ada data warga dengan status Daftar LPS (True) untuk ditampilkan dalam matriks.</td></tr>';
+                return;
+            }
+
+            const daftarBulan = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+            
+            // Tentukan bulan berjalan jika tahun yang dipilih adalah tahun sekarang
+            const currentYearNum = new Date().getFullYear();
+            const currentMonthIndex = new Date().getMonth(); // 0 = Januari, 11 = Desember
+
+            listWarga.forEach(warga => {
+                const noRumah = String(warga['No Rumah'] || warga['No_Rumah'] || '-').trim();
+                const namaWarga = warga['Nama Warga'] || warga['Nama'] || '-';
+
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-gray-50';
+
+                let tdHtml = `
+                    <td class="p-2.5 border-b border-r font-bold text-portal-700 text-left pl-3 whitespace-nowrap">${noRumah}</td>
+                    <td class="p-2.5 border-b border-r text-gray-800 font-medium text-left truncate max-w-[140px]" title="${namaWarga}">${namaWarga}</td>
+                `;
+
+                // Cari tahu indeks bulan terakhir di mana warga ini sudah membayar pada tahun tersebut
+                let lastPaidIndex = -1;
+                daftarBulan.forEach((bulan, idx) => {
+                    const bayar = globalIuranData.find(item => {
+                        const itemRumah = String(item['No Rumah'] || item['No_Rumah'] || '').trim();
+                        const itemBulan = String(item['Bulan'] || '').trim().toLowerCase();
+                        const itemTahun = String(item['Tahun'] || '').trim();
+                        return itemRumah.toLowerCase() === noRumah.toLowerCase() && 
+                            itemBulan === bulan.toLowerCase() && 
+                            itemTahun === filterTahun;
+                    });
+                    if (bayar) {
+                        lastPaidIndex = idx;
+                    }
+                });
+
+                // Batas bulan yang akan ditandai 'X' (jika tahun ini, sampai bulan berjalan; jika tahun lalu/lampau, sampai Desember)
+                let maxMonthToCheck = 11;
+                // if (parseInt(filterTahun) === currentYearNum) {
+                //     maxMonthToCheck = currentMonthIndex;
+                // }
+
+                daftarBulan.forEach((bulan, idx) => {
+                    const bayar = globalIuranData.find(item => {
+                        const itemRumah = String(item['No Rumah'] || item['No_Rumah'] || '').trim();
+                        const itemBulan = String(item['Bulan'] || '').trim().toLowerCase();
+                        const itemTahun = String(item['Tahun'] || '').trim();
+                        return itemRumah.toLowerCase() === noRumah.toLowerCase() && 
+                            itemBulan === bulan.toLowerCase() && 
+                            itemTahun === filterTahun;
+                    });
+
+                    if (bayar) {
+                        // Sudah bayar (Lunas)
+                        tdHtml += `<td class="p-2.5 border-b border-r text-center bg-emerald-50 text-emerald-700 font-bold" title="Lunas (${formatRupiah(bayar['Nominal'])})"><i class="fa-solid fa-check text-emerald-600"></i></td>`;
+                    } else if (idx > lastPaidIndex && idx <= maxMonthToCheck) {
+                        // Belum bayar dari bulan terakhir pembayaran sampai bulan berjalan (ditandai X)
+                        tdHtml += `<td class="p-2.5 border-b border-r text-center bg-rose-50 text-rose-600 font-bold" title="Belum Bayar"><i class="fa-solid fa-xmark text-rose-500"></i></td>`;
+                    } else {
+                        // Bulan sebelum mulai bayar atau bulan di masa depan (kosong/-)
+                        tdHtml += `<td class="p-2.5 border-b border-r text-center text-gray-300">-</td>`;
+                    }
+                });
+
+                tr.innerHTML = tdHtml;
+                matrixBody.appendChild(tr);
+            });
         }
 
         // ================= DIREKTORI & UMKM =================
@@ -1519,7 +1772,6 @@
             const kontakList = rows.filter(r => String(r['Kategori'] || '').toLowerCase().includes('kontak') && String(r['Status'] || '').toLowerCase() === 'aktif');
             const umkmList = rows.filter(r => String(r['Kategori'] || '').toLowerCase().includes('umkm') && String(r['Status'] || '').toLowerCase() === 'aktif');
 
-            // Render Kontak Penting
             if(kontakList.length === 0) {
                 kontakContainer.innerHTML = '<p class="text-xs text-gray-400 italic col-span-full">Belum ada data kontak penting.</p>';
             } else {
@@ -1527,11 +1779,8 @@
                     const nama = item['Nama / Usaha'] || item['Nama'] || '-';
                     const ket = item['Subjek / Keterangan'] || item['Keterangan'] || '-';
                     let telp = String(item['No Telepon / WA'] || item['No Telepon'] || '').trim();
-                    
                     let telpClean = telp.replace(/[^0-9+]/g, '');
-                    if (telpClean.startsWith('0')) {
-                        telpClean = '62' + telpClean.substring(1);
-                    }
+                    if (telpClean.startsWith('0')) telpClean = '62' + telpClean.substring(1);
 
                     const card = document.createElement('div');
                     card.className = 'bg-gray-50 p-3.5 rounded-xl border border-gray-200 flex flex-col justify-between gap-3';
@@ -1554,7 +1803,6 @@
                 });
             }
 
-            // Render UMKM Warga
             if(umkmList.length === 0) {
                 umkmContainer.innerHTML = '<p class="text-xs text-gray-400 italic col-span-full">Belum ada data UMKM terdaftar.</p>';
             } else {
@@ -1563,9 +1811,7 @@
                     const keterangan = item['Subjek / Keterangan'] || item['Keterangan'] || '-';
                     let noWa = String(item['No Telepon / WA'] || item['No Telepon'] || '').trim();
                     let waClean = noWa.replace(/[^0-9+]/g, '');
-                    if (waClean.startsWith('0')) {
-                        waClean = '62' + waClean.substring(1);
-                    }
+                    if (waClean.startsWith('0')) waClean = '62' + waClean.substring(1);
 
                     const umkmCard = document.createElement('div');
                     umkmCard.className = 'bg-portal-50/50 border border-portal-100 p-4 rounded-xl flex items-start gap-3';
@@ -1605,7 +1851,6 @@
             if (!track || !dotsContainer) return;
 
             const activeBanners = bannerList.filter(b => String(b['Status'] || '').toLowerCase() === 'aktif');
-            
             if (activeBanners.length === 0) {
                 activeBanners.push({
                     Judul: "Portal Warga Mutiara Intan Permai",
@@ -1660,39 +1905,21 @@
             else if (index < 0) slideIndex = totalSlides - 1;
             else slideIndex = index;
 
-            if (track) {
-                track.style.transform = `translateX(-${slideIndex * 100}%)`;
-            }
+            if (track) track.style.transform = `translateX(-${slideIndex * 100}%)`;
 
             dots.forEach((dot, idx) => {
-                if (idx === slideIndex) {
-                    dot.className = "dot w-6 h-2 rounded-full bg-white cursor-pointer transition-all";
-                } else {
-                    dot.className = "dot w-2 h-2 rounded-full bg-white/50 cursor-pointer transition-all";
-                }
+                if (idx === slideIndex) dot.className = "dot w-6 h-2 rounded-full bg-white cursor-pointer transition-all";
+                else dot.className = "dot w-2 h-2 rounded-full bg-white/50 cursor-pointer transition-all";
             });
         }
 
-        function nextSlide() {
-            showSlide(slideIndex + 1);
-            resetTimer();
-        }
-
-        function prevSlide() {
-            showSlide(slideIndex - 1);
-            resetTimer();
-        }
-
-        function currentSlide(index) {
-            showSlide(index);
-            resetTimer();
-        }
+        function nextSlide() { showSlide(slideIndex + 1); resetTimer(); }
+        function prevSlide() { showSlide(slideIndex - 1); resetTimer(); }
+        function currentSlide(index) { showSlide(index); resetTimer(); }
 
         function startSlideTimer() {
             clearInterval(slideInterval);
-            slideInterval = setInterval(() => {
-                showSlide(slideIndex + 1);
-            }, 5000);
+            slideInterval = setInterval(() => { showSlide(slideIndex + 1); }, 5000);
         }
 
         function resetTimer() {
